@@ -1,4 +1,4 @@
-# 💡 LuzAlerta — Sistema de Reporte e Gestão de Postes
+# 💡 Yehi Or — Sistema de Reporte e Gestão de Postes
 
 > Plataforma web colaborativa que conecta cidadãos e equipes de manutenção para resolução ágil de problemas em postes de iluminação pública.
 

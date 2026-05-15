@@ -1,0 +1,366 @@
+services:
+  # Serviço do Nginx, responsável por receber as requisições HTTP
+  nginx:
+    # Imagem oficial do Nginx, baseada em Alpine Linux
+    image: nginx:1.30-alpine3.23
+
+    # Nome fixo do container para facilitar identificação e debug
+    container_name: app_nginx
+
+    # Reinicia o container automaticamente caso ele pare por falha inesperada
+    restart: unless-stopped
+
+    # Mapeia a porta 80 do host para a porta 80 do container
+    ports:
+      - "80:80"
+
+    volumes:
+      # Monta apenas o arquivo de configuração do Nginx, somente leitura
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Monta apenas o diretório público, que é o único que o Nginx precisa servir
+      # O sufixo :ro impede qualquer escrita acidental dentro do container
+      - ./public:/var/www/public:ro
+
+    # Sistemas de arquivos temporários montados em RAM, eliminando I/O de disco
+    tmpfs:
+      # Diretório temporário geral do sistema, usado pelo Nginx para arquivos transitórios
+      - /tmp:size=32m,mode=1777
+      # Diretório de cache do Nginx: client_body_temp, proxy_temp e fastcgi_temp vão para RAM
+      - /var/cache/nginx:size=64m,uid=101,gid=101
+
+    # Limites de recursos do container para evitar consumo excessivo de CPU e memória
+    deploy:
+      resources:
+        limits:
+          # Limite máximo de memória RAM que o container pode consumir
+          memory: 64M
+          # Limite máximo de uso de CPU em relação ao host
+          cpus: "0.50"
+        reservations:
+          # Memória mínima garantida ao container pelo Docker antes de qualquer alocação
+          memory: 16M
+
+    # Limite de file descriptors do container, cada conexão HTTP consome um descritor
+    # Sem esse ajuste o kernel limita a 1024 e o Nginx rejeita conexões silenciosamente
+    ulimits:
+      nofile:
+        # Limite flexível aplicado ao processo durante a execução normal
+        soft: 65536
+        # Limite rígido máximo que o processo pode atingir sem privilégios de root
+        hard: 65536
+
+    # Controle do driver e tamanho dos logs gerados pelo container
+    logging:
+      # Driver padrão do Docker, grava logs em JSON no disco do host
+      driver: json-file
+      options:
+        # Tamanho máximo de cada arquivo de log antes de rotacionar
+        max-size: "10m"
+        # Número máximo de arquivos de log mantidos após a rotação
+        max-file: "3"
+
+    # Verificação ativa de saúde do container via requisição HTTP real
+    healthcheck:
+      # Faz uma requisição HEAD silenciosa para verificar se o Nginx está respondendo
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/" ]
+      # Intervalo entre cada verificação de saúde
+      interval: 30s
+      # Tempo máximo de espera por resposta antes de considerar falha
+      timeout: 5s
+      # Número de falhas consecutivas antes de marcar o container como unhealthy
+      retries: 3
+      # Tempo de carência após a inicialização antes de começar as verificações
+      start_period: 10s
+
+    # Define que o container PHP deve estar saudável antes do Nginx iniciar
+    depends_on:
+      - php
+
+    # Conecta o container à rede interna do projeto
+    networks:
+      - app_network
+
+  # Serviço do PHP, responsável por executar a aplicação
+  # Serviço do PHP, responsável por executar a aplicação
+  php:
+    # Define o diretório de trabalho padrão dentro do container
+    working_dir: /var/www
+
+    # Define que a imagem será construída a partir de um Dockerfile local
+    build:
+      # Contexto de build aponta para a raiz do projeto onde o Dockerfile está
+      context: .
+      # Caminho do Dockerfile responsável por montar o ambiente PHP
+      dockerfile: docker/php/Dockerfile
+
+    # Nome fixo do container PHP para facilitar identificação e debug
+    container_name: app_php
+
+    # Reinicia o container automaticamente caso o processo PHP-FPM pare por falha
+    restart: unless-stopped
+
+    # Permite que o container acesse o VS Code no host para debug via Xdebug
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # Monta o código da aplicação para refletir alterações em tempo real durante o desenvolvimento
+    volumes:
+      - ./:/var/www/
+
+    # Instala dependências e inicia o PHP-FPM em sequência garantida
+    command: >+
+      sh -c "composer install --no-interaction &&
+             composer dump-autoload -o &&
+             php-fpm"
+
+    # Variáveis de ambiente do container e tuning do PHP-FPM via variáveis suportadas pela imagem oficial
+    environment:
+      # Aplicação
+      TZ: ${TZ}
+      APP_ENV: ${APP_ENV:-development}
+      APP_DEBUG: ${APP_DEBUG:-true}
+      XDEBUG_MODE: ${APP_DEBUG:+debug}
+      
+      COMPOSER_PROCESS_TIMEOUT: 1800 #Retirar em produção
+      COMPOSER_MEMORY_LIMIT: -1      #Retirar em produção
+      COMPOSER_ALLOW_SUPERUSER: 1    #Retirar em produção
+
+      # Banco de dados
+      DB_CONNECTION: ${DB_CONNECTION}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # Redis
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_DATABASE: ${REDIS_DATABASE:-1}
+      REDIS_PREFIX: ${REDIS_PREFIX:-SESS:}
+      REDIS_TIMEOUT: ${REDIS_TIMEOUT:-2.5}
+      REDIS_READ_TIMEOUT: ${REDIS_READ_TIMEOUT:-2.5}
+      REDIS_PERSISTENT: ${REDIS_PERSISTENT:-1}
+
+      # PHP-FPM process manager
+      PHP_FPM_PM: dynamic
+      PHP_FPM_PM_MAX_CHILDREN: 10
+      PHP_FPM_PM_START_SERVERS: 2
+      PHP_FPM_PM_MIN_SPARE_SERVERS: 1
+      PHP_FPM_PM_MAX_SPARE_SERVERS: 3
+      PHP_FPM_PM_MAX_REQUESTS: 500
+
+    # Sistemas de arquivos temporários montados em RAM, eliminando I/O de disco
+    tmpfs:
+      # Sessões PHP, uploads temporários e arquivos transitórios vão para RAM
+      - /tmp:size=1g,mode=1777
+
+    # Limites de recursos do container calculados com base no tuning do PHP-FPM
+    # 10 workers × memory_limit 256MB = 2.5GB teórico; 512MB cobre o ambiente de desenvolvimento
+    deploy:
+      resources:
+        limits:
+          # Limite máximo de memória RAM compatível com max_children=10 em desenvolvimento
+          memory: 1024M
+
+          # Limite máximo de uso de CPU em relação ao host
+          cpus: "2.00"
+
+        reservations:
+          # Memória mínima garantida ao container antes de qualquer alocação do Docker
+          memory: 512M
+
+    # Limite de file descriptors, o PHP-FPM abre múltiplos descritores por worker ativo
+    ulimits:
+      nofile:
+        # Limite flexível aplicado ao processo durante a execução normal
+        soft: 65536
+
+        # Limite rígido máximo que o processo pode atingir sem privilégios de root
+        hard: 65536
+
+    # Controle do driver e tamanho dos logs gerados pelo container
+    logging:
+      # Driver padrão do Docker, grava logs em JSON no disco do host
+      driver: json-file
+      options:
+        # Tamanho máximo de cada arquivo de log antes de rotacionar
+        max-size: "10m"
+
+        # Número máximo de arquivos de log mantidos após a rotação
+        max-file: "3"
+
+    # Verificação ativa de saúde checando se o PHP-FPM está aceitando conexões na porta 9000
+    healthcheck:
+      # nc (netcat) testa se a porta 9000 do PHP-FPM está aberta e aceitando conexões TCP
+      test: [ "CMD-SHELL", "nc -z localhost 9000 || exit 1" ]
+
+      # Intervalo entre cada verificação de saúde
+      interval: 30s
+
+      # Tempo máximo de espera por resposta antes de considerar falha
+      timeout: 5s
+
+      # Número de falhas consecutivas antes de marcar o container como unhealthy
+      retries: 3
+
+      # Tempo de carência estendido pois o composer install pode levar mais de 60s na primeira execução
+      start_period: 90s
+
+    # Define que o PostgreSQL deve estar saudável antes do PHP-FPM iniciar
+    depends_on:
+      postgres:
+        # Aguarda o health check do PostgreSQL passar antes de executar o composer install
+        condition: service_healthy
+
+    # Conecta o container à rede interna do projeto
+    networks:
+      - app_network
+
+  redis:
+    image: redis:8.6-alpine3.23
+    container_name: app_redis
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
+    environment:
+      TZ: ${TZ}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+    command: >
+      sh -c "exec redis-server --requirepass \"$${REDIS_PASSWORD}\""
+
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli -h 127.0.0.1 -p 6379 -a \"$${REDIS_PASSWORD}\" ping | grep PONG || exit 1" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+
+    volumes:
+      - ./docker/redis:/data
+
+    networks:
+      - app_network
+
+  # Serviço do banco de dados PostgreSQL
+  postgres:
+    # Imagem oficial do PostgreSQL baseada em Alpine Linux
+    image: postgres:18.3-alpine3.23
+
+    # Nome fixo do container do banco
+    container_name: app_postgres
+
+    # Reinicia o container automaticamente caso ele pare por falha inesperada
+    restart: unless-stopped
+
+    # Parâmetros de tuning passados diretamente ao processo postgres na inicialização
+    # Evita necessidade de arquivo postgresql.conf externo para configurações essenciais
+    command: >
+      postgres
+        -c shared_buffers=128MB
+        -c effective_cache_size=384MB
+        -c work_mem=4MB
+        -c maintenance_work_mem=64MB
+        -c wal_buffers=16MB
+        -c max_connections=50
+        -c checkpoint_completion_target=0.9
+        -c synchronous_commit=off
+        -c log_min_duration_statement=1000
+        -c log_timezone=${TZ}
+        -c temp_file_limit=256MB
+
+    # Variáveis de ambiente usadas pelo PostgreSQL na inicialização
+    environment:
+      # Nome do banco de dados, vindo do arquivo .env
+      POSTGRES_DB: ${DB_NAME}
+
+      # Usuário do banco, vindo do arquivo .env
+      POSTGRES_USER: ${DB_USER}
+
+      # Senha do banco, vindo do arquivo .env
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+      # Define o fuso horário do container
+      TZ: ${TZ}
+
+      # Define o diretório de dados explicitamente para evitar ambiguidade entre versões do PostgreSQL
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    # Volumes persistentes e scripts de inicialização
+    volumes:
+      # Volume nomeado para persistir os dados do banco no caminho correto definido pelo PGDATA
+      - ./docker/postgres/storage:/var/lib/postgresql/data/pgdata
+
+      # Script SQL executado automaticamente na primeira inicialização do container
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+
+    # Sistema de arquivos temporário montado em RAM para operações de sort e hash join
+    tmpfs:
+      # Elimina I/O de disco nas operações temporárias internas do PostgreSQL
+      - /tmp:size=64m,mode=1777
+
+    # Limites de recursos do container para evitar consumo excessivo de CPU e memória
+    deploy:
+      resources:
+        limits:
+          # Limite máximo de memória RAM compatível com shared_buffers=128MB + effective_cache_size=384MB
+          memory: 512M
+
+          # Limite máximo de uso de CPU em relação ao host
+          cpus: "1.00"
+        reservations:
+          # Memória mínima garantida ao container antes de qualquer alocação do Docker
+          memory: 256M
+
+    # Limite de file descriptors, o PostgreSQL abre múltiplos descritores por conexão ativa
+    ulimits:
+      nofile:
+        # Limite flexível aplicado ao processo durante a execução normal
+        soft: 65536
+
+        # Limite rígido máximo que o processo pode atingir sem privilégios de root
+        hard: 65536
+
+    # Controle do driver e tamanho dos logs gerados pelo container
+    logging:
+      # Driver padrão do Docker, grava logs em JSON no disco do host
+      driver: json-file
+      options:
+        # Tamanho máximo de cada arquivo de log antes de rotacionar
+        max-size: "10m"
+
+        # Número máximo de arquivos de log mantidos após a rotação
+        max-file: "3"
+
+    # Verificação ativa de saúde usando o utilitário nativo do PostgreSQL
+    healthcheck:
+      # pg_isready verifica se o servidor está aceitando conexões no banco e usuário corretos
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+
+      # Intervalo entre cada verificação de saúde
+      interval: 30s
+
+      # Tempo máximo de espera por resposta antes de considerar falha
+      timeout: 5s
+
+      # Número de falhas consecutivas antes de marcar o container como unhealthy
+      retries: 3
+
+      # Tempo de carência após a inicialização antes de começar as verificações
+      start_period: 30s
+
+    # Expõe a porta do banco apenas para acesso externo via ferramenta cliente durante o desenvolvimento
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+
+    # Conecta o container à rede interna do projeto
+    networks:
+      - app_network
+
+# Definição das redes do projeto
+networks:
+  # Rede bridge interna para comunicação entre os containers
+  app_network:
+    driver: bridge

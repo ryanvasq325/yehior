@@ -94,9 +94,9 @@ O sistema identifica o tipo de usuário no momento do login e redireciona para a
 
 | Nome | Função |
 |---|---|
-| Allan | — |
-| Athos | — |
-| Ryan | — |
+| Allan | Tabelas e Banco |
+| Athos | Frontend |
+| Ryan | Backend |
 
 ---
 

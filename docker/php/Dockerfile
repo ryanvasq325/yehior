@@ -1,36 +1,35 @@
-# ============================================================================
-# Estágio 1: Build de assets frontend (Node.js)
-# Vite 8.0.10 exige Node 20.19+ ou 22.12+ — usamos LTS atual (22)
-# alpine3.21 alinhado com seu PHP em alpine3.23 (ambos musl libc compatíveis)
-# ============================================================================
-FROM node:22-alpine3.21 AS assets
+# Estágio 1 — compila os assets do frontend com Node 22 e Vite
+FROM node:24-alpine3.23 AS assets
 
+# Diretório de trabalho do build de assets
 WORKDIR /build
 
-# Copia primeiro só metadados — maximiza cache de layer Docker.
-# Se package.json não mudou, npm ci é reutilizado de builds anteriores.
+# Copia metadados do npm antes do código para maximizar cache de layer
 COPY package.json package-lock.json ./
 
-# npm ci (não npm install) — build determinístico a partir do lockfile.
-# --no-audit --no-fund acelera CI sem comprometer segurança (rode 'npm audit'
-# em pipeline separado se quiser auditar).
+# Instala dependências de forma determinística pelo lockfile
 RUN npm ci --no-audit --no-fund
 
-# Copia config + fontes
+# Copia o arquivo de configuração do Vite
 COPY vite.config.js ./
+
+# Copia o diretório de fontes do frontend
 COPY resources ./resources
 
-# Build de produção — Rolldown gera public/assets/ com hashes
+# Gera os assets de produção com hash em public/assets
 RUN npm run build
 
-# ============================================================================
-# Estágio 2: Runtime PHP (Alpine + PHP-FPM 8.5.6)
-# ============================================================================
-FROM php:8.5.6-fpm-alpine3.22
+# Estágio 2 — runtime do PHP-FPM 8.5 sobre Alpine 3.23
+FROM php:8.5.6-fpm-alpine3.23
 
+# Variáveis de ambiente fixadas na imagem
 ENV TZ=${TZ} \
-    COMPOSER_ALLOW_SUPERUSER=1
+    COMPOSER_ALLOW_SUPERUSER=1 \
+    COMPOSER_HOME=/root/.composer \
+    COMPOSER_CACHE_DIR=/root/.composer/cache \
+    COMPOSER_NO_INTERACTION=1
 
+# Pacotes runtime essenciais que ficam permanentes na imagem
 RUN apk add --no-cache \
     bash \
     git \
@@ -40,30 +39,50 @@ RUN apk add --no-cache \
     oniguruma-dev \
     tzdata
 
+# Instala todas as extensões PHP em um único bloco para reduzir layers
 RUN apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
     freetype-dev libjpeg-turbo-dev libpng-dev \
     postgresql-dev icu-dev oniguruma-dev \
+    curl-dev libzip-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo_pgsql intl mbstring gd \
+    && docker-php-ext-install -j$(nproc) \
+    pdo_pgsql intl mbstring gd curl zip \
+    && (php -m | grep -qi '^Zend OPcache$' || docker-php-ext-enable opcache) \
     && pecl install igbinary && docker-php-ext-enable igbinary \
     && pecl install redis    && docker-php-ext-enable redis \
     && pecl install pcov     && docker-php-ext-enable pcov \
     && apk add --no-cache --virtual .runtime-deps \
     libpq icu-libs oniguruma libjpeg-turbo libpng freetype \
+    libcurl libzip \
     && apk del .build-deps \
     && rm -rf /tmp/pear ~/.pearrc /var/cache/apk/*
 
+# Cria o diretório de cache em disco usado pelo OPcache file_cache
+RUN mkdir -p /tmp/opcache && chmod 1777 /tmp/opcache
+
+# Copia o php.ini customizado para a pasta de configurações adicionais
 COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+
+# Copia o binário do Composer da imagem oficial sem instalar manualmente
 COPY --from=composer:2.9 /usr/bin/composer /usr/bin/composer
 
+# Define padrões globais do Composer para builds rápidos
+RUN composer config --global process-timeout 1800 \
+    && composer config --global preferred-install dist \
+    && composer config --global optimize-autoloader true \
+    && mkdir -p /root/.composer/cache
+
+# Diretório padrão de trabalho dentro do container
 WORKDIR /var/www
 
-# Copia o código da aplicação PHP
+# Copia o código da aplicação PHP para a imagem
 COPY . .
 
-# Copia APENAS os assets compilados do estágio 1 — sobrescreve public/assets/
-# A imagem final NÃO contém Node, npm, /build/, nem resources/.
+# Copia os assets já compilados do estágio 1 sobre o diretório public/assets
 COPY --from=assets /build/public/assets ./public/assets
 
+# Porta TCP onde o PHP-FPM escuta
 EXPOSE 9000
+
+# Comando padrão do container — inicia o PHP-FPM em foreground
 CMD ["php-fpm"]

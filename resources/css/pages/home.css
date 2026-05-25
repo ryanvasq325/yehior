@@ -1,136 +1,105 @@
-/* ==========================================================
-   1. HEADER DARK (PRETO COM DESFOQUE)
-   ========================================================== */
-.navbar {
-    background-color: rgba(15, 15, 15, 0.95) !important;
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 0.7rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-    position: relative;
-    z-index: 1050 !important;
+/* ===== VARIÁVEIS ===== */
+:root {
+  --amarelo: #F5C518;
+  --cinza-card: #1e2130;
 }
 
-.navbar-brand {
-    font-weight: 800;
-    color: #ffffff !important;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+
+
+/* ===== NAVBAR ===== */
+#navbar-main {
+  background: rgba(13, 15, 26, .92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
 }
 
-.nav-link {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-weight: 600;
-    transition: all 0.3s ease;
+/* ===== UTILITÁRIOS ===== */
+.text-amarelo { color: var(--amarelo) !important; }
+
+.btn-amarelo {
+  background: var(--amarelo);
+  color: #0D0F1A;
+  font-weight: 700;
+  border: none;
+}
+.btn-amarelo:hover {
+  background: #ffd740;
+  color: #0D0F1A;
 }
 
-.nav-link:hover, .nav-link.active {
-    color: #ffffff !important;
-    transform: translateY(-1px);
+/* ===== HERO ===== */
+.hero {
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, #f5c51818 0%, transparent 70%);
+  min-height: 60vh;
+  margin-top: -1rem; /* compensa o g-3 do row do layout */
 }
 
-/* ==========================================================
-   2. CARDS COLORIDOS VIBRANTES (GLASSMORPHISM)
-   ========================================================== */
-.card {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border-radius: 16px;
-    overflow: hidden;
-    position: relative;
-    z-index: 1;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+.hero h1 {
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 800;
+  line-height: 1.15;
 }
 
-/* Opacidade dos fundos para o efeito Glass */
-.text-bg-primary { background-color: rgba(13, 110, 253, 0.65) !important; }
-.text-bg-warning { background-color: rgba(255, 193, 7, 0.7) !important; }
-.text-bg-danger  { background-color: rgba(220, 53, 69, 0.65) !important; }
-.text-bg-info    { background-color: rgba(13, 202, 240, 0.65) !important; }
-.text-bg-light   { background-color: rgba(248, 249, 250, 0.4) !important; }
+.hero h1 span { color: var(--amarelo); }
 
-.card:hover {
-    transform: translateY(-12px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7) !important;
-    z-index: 10;
+.hero-desc { color: #9ca3c8; max-width: 480px; }
+
+.lamp-icon {
+  font-size: 5rem;
+  color: var(--amarelo);
+  filter: drop-shadow(0 0 24px #f5c51866);
 }
 
-/* ==========================================================
-   3. ANIMAÇÃO DOS ÍCONES (BRANCO SUAVE E MOVIMENTO)
-   ========================================================== */
+/* ===== STATS ===== */
+.stat-block { border-left: 3px solid var(--amarelo); }
+.stat-value  { color: var(--amarelo); }
+.stat-label  { color: #9ca3c8; }
 
-/* Seleciona os ícones e resolve o problema do "branco forte" e do card Empresas */
-.card .card-body i.fa-solid,
-.card .card-body i.fas,
-.card .card-body .icon-container i {
-    display: inline-block !important; /* Permite a animação de subir/descer */
-    transition: all 0.5s ease-in-out;
-    
-    /* Branco suavizado (cinza azulado bem translúcido) */
-    color: rgba(200, 200, 220, 0.25) !important; 
-    
-    /* Inicia a flutuação */
-    animation: iconFloatSway 3s ease-in-out infinite !important;
+/* ===== SEÇÕES ALTERNADAS ===== */
+.section-alt { background: rgba(255,255,255,.03); }
+
+/* ===== STEPS ===== */
+.step-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid var(--amarelo);
+  background: #f5c51812;
+  color: var(--amarelo);
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Efeito no Hover: ícone ganha nitidez e para de flutuar */
-.card:hover .card-body i.fa-solid,
-.card:hover .card-body i.fas,
-.card:hover .card-body .icon-container i {
-    color: rgba(255, 255, 255, 0.8) !important; 
-    transform: scale(1.25) rotate(10deg) !important;
-    animation-play-state: paused !important; 
+/* ===== FEATURE CARD ===== */
+.feature-card {
+  background: var(--cinza-card);
+  border: 1px solid #ffffff0f;
+  border-radius: 16px;
+  transition: transform .2s, border-color .2s;
+}
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: #f5c51844;
+}
+.feature-icon {
+  font-size: 2rem;
+  color: var(--amarelo);
 }
 
-@keyframes iconFloatSway {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-15px) rotate(8deg); }
+/* ===== PROBLEM BADGES ===== */
+.problem-badge {
+  background: var(--cinza-card);
+  border: 1px solid #ffffff10;
+  border-radius: 12px;
+  transition: border-color .2s;
 }
+.problem-badge:hover { border-color: #f5c51855; }
 
-/* ==========================================================
-   4. TEXTOS E RODAPÉ
-   ========================================================== */
-.display-5 {
-    font-weight: 900;
-    color: #ffffff !important;
-    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.6);
+/* ===== CTA ===== */
+.cta-section {
+  background: linear-gradient(135deg, rgba(255,255,255,.04) 0%, transparent 100%);
+  border-top: 1px solid #ffffff0a;
 }
-
-/* Garante legibilidade no card de Empresas (Light) */
-.text-bg-light .display-5,
-.text-bg-light .card-text {
-    color: #212529 !important;
-    text-shadow: none;
-}
-
-.card-text {
-    color: #ffffff !important;
-    font-weight: 700;
-}
-
-.card-footer {
-    background-color: rgba(0, 0, 0, 0.2) !important;
-    border-top: 1px solid rgba(255, 255, 255, 0.05) !important;
-    font-weight: 700;
-    color: rgba(255, 255, 255, 0.5) !important;
-    padding: 12px !important;
-}
-
-.card:hover .card-footer {
-    background-color: rgba(0, 0, 0, 0.4) !important;
-    color: #ffffff !important;
-}
-
-.card-footer i {
-    animation: none !important;
-    display: inline-block !important;
-    transition: transform 0.3s ease;
-}
-
-.card:hover .card-footer i {
-    transform: translateX(6px) !important;
-}
-
-.navbar-toggler-icon { filter: invert(1); }

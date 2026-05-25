@@ -11,7 +11,7 @@ final class Home extends Base
     {
         return $this->getTwig()
             ->render($response, $this->setView('home'), [
-                'titulo' => 'Bem-Vindo ao Yehi Or',
+                'titulo' => '',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);

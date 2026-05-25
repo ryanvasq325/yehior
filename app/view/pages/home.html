@@ -1,14 +1,207 @@
 {% extends 'layouts/main.html' %}
 
-{% block breadcrumbs %}
-<ol class="breadcrumb float-sm-end">
-    <li class="breadcrumb-item active" aria-current="page">Início</li>
-</ol>
+{% block css %}
+{{ vite('resources/css/pages/home.css') }}
 {% endblock %}
 
 {% block main %}
 
+<!-- ===================== HERO ===================== -->
+<section class="hero col-12 d-flex align-items-center py-5">
+  <div class="container-fluid px-4">
+    <div class="row align-items-center g-5">
+
+      <div class="col-lg-6">
+        <span class="badge text-bg-warning text-dark fw-semibold mb-3 px-3 py-2 rounded-pill">
+          <i class="fa-solid fa-location-dot me-1"></i> Plataforma Municipal
+        </span>
+        <h1 class="mb-4">
+          Reporte postes com<br><span>defeito em segundos.</span>
+        </h1>
+        <p class="lead mb-4 hero-desc">
+          Conectamos cidadãos às equipes de manutenção para resolver problemas de iluminação pública de forma rápida, transparente e eficiente.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="#" class="btn btn-amarelo btn-lg px-4">
+            <i class="fa-solid fa-bullhorn me-2"></i>Reportar agora
+          </a>
+          <a href="#como-funciona" class="btn btn-outline-light btn-lg px-4">
+            Como funciona <i class="fa-solid fa-arrow-down ms-1"></i>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-6 text-center">
+        <i class="fa-solid fa-lightbulb lamp-icon d-block mb-4"></i>
+        <div class="row g-3 text-start justify-content-center">
+          <div class="col-4">
+            <div class="stat-block ps-3">
+              <div class="fs-3 fw-bold stat-value">+120</div>
+              <div class="small stat-label">Reportes feitos</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-block ps-3">
+              <div class="fs-3 fw-bold stat-value">87%</div>
+              <div class="small stat-label">Resolvidos</div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-block ps-3">
+              <div class="fs-3 fw-bold stat-value">3 dias</div>
+              <div class="small stat-label">Tempo médio</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMO FUNCIONA ===================== -->
+<section id="como-funciona" class="col-12 py-5 section-alt">
+  <div class="container-fluid px-4">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold fs-2">Como funciona</h2>
+      <p class="text-secondary">Três passos simples para melhorar sua cidade</p>
+    </div>
+    <div class="row g-4 text-center justify-content-center">
+
+      <div class="col-md-4">
+        <div class="step-circle mx-auto mb-3">1</div>
+        <h5 class="fw-semibold mt-2">Crie sua conta</h5>
+        <p class="small text-secondary">Cadastro rápido, sem burocracia. Apenas nome, e-mail e senha.</p>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-circle mx-auto mb-3">2</div>
+        <h5 class="fw-semibold mt-2">Reporte o problema</h5>
+        <p class="small text-secondary">Informe o endereço, o tipo de defeito e, se quiser, envie uma foto.</p>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-circle mx-auto mb-3">3</div>
+        <h5 class="fw-semibond mt-2">Acompanhe em tempo real</h5>
+        <p class="small text-secondary">Veja o status da sua ocorrência e receba notificação quando for resolvida.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FUNCIONALIDADES ===================== -->
+<section id="funcionalidades" class="col-12 py-5">
+  <div class="container-fluid px-4">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold fs-2">O que você pode fazer</h2>
+      <p class="text-secondary">Tudo que o cidadão precisa em um só lugar</p>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="feature-card p-4">
+          <div class="d-flex align-items-center gap-3 mb-4">
+            <i class="fa-solid fa-house feature-icon"></i>
+            <h4 class="mb-0 fw-bold">Cidadão</h4>
+            <span class="badge text-bg-secondary ms-auto">Acesso público</span>
+          </div>
+          <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
+            <li class="d-flex gap-3">
+              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
+              <span>Criar conta e fazer login com segurança</span>
+            </li>
+            <li class="d-flex gap-3">
+              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
+              <span>Reportar problema informando tipo, endereço e foto opcional</span>
+            </li>
+            <li class="d-flex gap-3">
+              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
+              <span>Acompanhar o status do reporte em tempo real</span>
+            </li>
+            <li class="d-flex gap-3">
+              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
+              <span>Receber notificação quando o problema for resolvido</span>
+            </li>
+            <li class="d-flex gap-3">
+              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
+              <span>Histórico completo de reportes realizados</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TIPOS DE PROBLEMA ===================== -->
+<section id="problemas" class="col-12 py-5 section-alt">
+  <div class="container-fluid px-4">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold fs-2">Tipos de problema suportados</h2>
+      <p class="text-secondary">Selecione a categoria ao fazer seu reporte</p>
+    </div>
+    <div class="row g-3 justify-content-center">
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">💡</div>
+          <div class="small fw-semibold">Lâmpada apagada</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">🔴</div>
+          <div class="small fw-semibold">Luz piscando / com defeito</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">✂️</div>
+          <div class="small fw-semibold">Fio cortado ou exposto</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">🏚️</div>
+          <div class="small fw-semibold">Estrutura danificada</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">🌑</div>
+          <div class="small fw-semibold">Trecho sem iluminação</div>
+        </div>
+      </div>
+      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+        <div class="problem-badge p-3 text-center h-100">
+          <div class="fs-2 mb-2">❓</div>
+          <div class="small fw-semibold">Outro problema</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA ===================== -->
+<section class="col-12 cta-section py-5">
+  <div class="container-fluid px-4 text-center">
+    <i class="fa-solid fa-lightbulb fs-1 mb-3 d-block text-amarelo"></i>
+    <h2 class="fw-bold fs-2 mb-3">Viu o poste apagado? Reporte agora.</h2>
+    <p class="mb-4 text-secondary mx-auto" style="max-width:480px;">
+      A cidade agradece. Em poucos cliques você contribui para uma iluminação pública melhor para todos.
+    </p>
+    <div class="d-flex flex-wrap gap-3 justify-content-center">
+      <a href="#" class="btn btn-amarelo btn-lg px-5">
+        <i class="fa-solid fa-user-plus me-2"></i>Criar conta grátis
+      </a>
+      <a href="#" class="btn btn-outline-light btn-lg px-4">
+        Já tenho conta <i class="fa-solid fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
+
 {% block script %}
-<script></script>
+{{ vite('resources/js/home.js') }}
 {% endblock %}

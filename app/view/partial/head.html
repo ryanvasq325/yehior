@@ -1,18 +1,48 @@
-<nav class="navbar bg-primary navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">Yehi Or</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+<nav class="navbar navbar-expand-lg navbar-dark" id="navbar-main">
+    <div class="container-fluid px-4">
+
+        <a class="navbar-brand fw-bold fs-4" href="/">
+            <i class="fa-solid fa-lightbulb me-2 text-amarelo"></i>
+            Yehi<span class="text-amarelo">Or</span>
+        </a>
+
+        <button class="navbar-toggler border-0" type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="/">
-                        <i class="fa-solid fa-house"></i>
-                        Home
+                        <i class="fa-solid fa-house me-1"></i> Home
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#como-funciona">
+                        <i class="fa-solid fa-circle-info me-1"></i> Como funciona
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#problemas">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i> Problemas
+                    </a>
+                </li>
+            </ul>
+
+            <div class="d-flex gap-2 align-items-center">
+                <a href="/login" class="btn btn-outline-light btn-sm px-3">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Entrar
+                </a>
+                <a href="/register" class="btn btn-amarelo btn-sm px-3">
+                    <i class="fa-solid fa-user-plus me-1"></i> Criar conta
+                </a>
+            </div>
         </div>
+
     </div>
 </nav>

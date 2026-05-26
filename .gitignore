@@ -4,6 +4,8 @@
 /tmp
 /logs
 /docker/postgres/storage
+/docker/traefik/
+/docker/traefik/certs
 /docker/redis/storage
 .env
 # Node.js / Vite

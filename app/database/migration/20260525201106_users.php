@@ -40,3 +40,4 @@ final class Version20260525201106 extends AbstractMigration
         $schema->dropTable('users');
     }
 }
+

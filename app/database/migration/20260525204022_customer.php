@@ -22,8 +22,6 @@ final class Version20260525204022 extends AbstractMigration
         $table->addColumn('nome_fantasia', 'string',  ['length' => 255]);
         $table->addColumn('sobrenome_razao', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('cpf',      'string',  ['length' => 18]);
-        $table->addColumn('inscricao_estadual', 'string', ['length' => 30, 'notnull' => false]);
-        $table->addColumn('nascimento_fundacao', 'date', ['notnull' => false]);
         $table->addColumn('ativo',         'boolean', ['default' => true]);
         $table->addColumn('criado_em',     'datetime', ['default' => 'CURRENT_TIMESTAMP']);
         $table->addColumn('atualizado_em', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);

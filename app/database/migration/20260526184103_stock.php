@@ -31,6 +31,8 @@ final class Version20260526184103 extends AbstractMigration
         $table->addColumn('atualizado_em',        'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
         $table->setPrimaryKey(['id']);
+        $table->addUniqueIndex(['codigo_barra']);
+        $table->addIndex(['nome']);
     }
 
 

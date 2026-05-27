@@ -22,8 +22,7 @@ final class Version20260526184103 extends AbstractMigration
         $table->addColumn('nome',                 'string',   ['length' => 255, 'notnull' => true]);
         $table->addColumn('codigo_barra',         'string',   ['length' => 255, 'notnull' => false]);
         $table->addColumn('unidade',              'string',   ['length' => 18,  'notnull' => true]);
-        $table->addColumn('preco_compra',         'decimal',   ['length' => 18, 'precision' => 18, 'scale' => 4, 'notnull' => true, 'default' => 0]);
-        $table->addColumn('total_imposto',        'decimal',   ['length' => 18, 'precision' => 18, 'scale' => 4, 'notnull' => true, 'default' => 0]);
+        $table->addColumn('preco_compra',         'decimal',  ['length' => 18, 'precision' => 18, 'scale' => 4, 'notnull' => true, 'default' => 0]);
         $table->addColumn('descricao',            'string',   ['length' => 255, 'notnull' => true]);
         $table->addColumn('ativo',                'boolean',  ['default' => true,  'notnull' => true]);
         $table->addColumn('excluido',             'boolean',  ['default' => false,  'notnull' => true]);

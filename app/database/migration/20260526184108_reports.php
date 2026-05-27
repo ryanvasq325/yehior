@@ -19,6 +19,7 @@ final class Version20260526184108 extends AbstractMigration
         $table = $schema->createTable('reports');
 
         $table->addColumn('id',            'bigint', ['autoincrement' => true]);
+        $table->addColumn('id_customer',       'bigint', ['notnull' => true]);
         $table->addColumn('id_stock',       'bigint', ['notnull' => true]);
         $table->addColumn('problema',          'string',  ['length' => 255]);
         $table->addColumn('descricao',     'string', ['length' => 255, 'notnull' => false]);
@@ -29,6 +30,7 @@ final class Version20260526184108 extends AbstractMigration
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['resolvido']);
         $table->addIndex(['problema']);
+        $table->addIndex(['id_customer']);
         $table->addIndex(['id_stock']);
 
         $table->addForeignKeyConstraint(
@@ -37,6 +39,13 @@ final class Version20260526184108 extends AbstractMigration
             ['id'],
             ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
             'fk_reports_stock'
+        );
+        $table->addForeignKeyConstraint(
+            'customer',
+            ['id_customer'],
+            ['id'],
+            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            'fk_reports_customer'
         );
     }
 

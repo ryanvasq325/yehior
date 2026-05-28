@@ -20,7 +20,6 @@ final class Version20260526184108 extends AbstractMigration
 
         $table->addColumn('id',            'bigint', ['autoincrement' => true]);
         $table->addColumn('id_customer',       'bigint', ['notnull' => true]);
-        $table->addColumn('id_stock',       'bigint', ['notnull' => true]);
         $table->addColumn('problema',          'string',  ['length' => 255]);
         $table->addColumn('descricao',     'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('resolvido',         'boolean', ['default' => false]);
@@ -31,7 +30,6 @@ final class Version20260526184108 extends AbstractMigration
         $table->addUniqueIndex(['resolvido']);
         $table->addIndex(['problema']);
         $table->addIndex(['id_customer']);
-        $table->addIndex(['id_stock']);
 
         $table->addForeignKeyConstraint(
             'stock',

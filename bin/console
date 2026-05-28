@@ -33,7 +33,7 @@ $dependencyFactory->setService(
     new RecursiveRegexFinder('/^.+\.php$/i')
 );
 
-$app = new Application('Migrations — Jaiminho3');
+$app = new Application('Migrations — Yehior');
 
 $app->addCommands([
     new Command\ExecuteCommand($dependencyFactory),

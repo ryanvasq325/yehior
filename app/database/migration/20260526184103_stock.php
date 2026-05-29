@@ -19,6 +19,7 @@ final class Version20260526184103 extends AbstractMigration
         $table = $schema->createTable('stock');
 
         $table->addColumn('id',                   'bigint',   ['autoincrement' => true, 'notnull' => true]);
+        $table->addColumn('id_supplier',          'bigint',   ['notnull' => true]);
         $table->addColumn('nome',                 'string',   ['length' => 255, 'notnull' => true]);
         $table->addColumn('codigo_barra',         'string',   ['length' => 255, 'notnull' => false]);
         $table->addColumn('unidade',              'string',   ['length' => 18,  'notnull' => true]);
@@ -32,6 +33,16 @@ final class Version20260526184103 extends AbstractMigration
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['codigo_barra']);
         $table->addIndex(['nome']);
+        $table->addIndex(['id_supplier']);
+
+
+        $table->addForeignKeyConstraint(
+            'supplier',
+            ['id_supplier'],
+            ['id'],
+            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            'fk_stock_supplier'
+        );
     }
 
 

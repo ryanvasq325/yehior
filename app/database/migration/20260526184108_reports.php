@@ -18,26 +18,20 @@ final class Version20260526184108 extends AbstractMigration
     {
         $table = $schema->createTable('reports');
 
-        $table->addColumn('id',            'bigint', ['autoincrement' => true]);
+        $table->addColumn('id',                'bigint', ['autoincrement' => true]);
         $table->addColumn('id_customer',       'bigint', ['notnull' => true]);
         $table->addColumn('problema',          'string',  ['length' => 255]);
-        $table->addColumn('descricao',     'string', ['length' => 255, 'notnull' => false]);
+        $table->addColumn('cep',               'string',  ['length' => 255]);
+        $table->addColumn('descricao',         'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('resolvido',         'boolean', ['default' => false]);
-        $table->addColumn('criado_em',     'datetime', ['default' => 'CURRENT_TIMESTAMP']);
-        $table->addColumn('atualizado_em', 'datetime', ['default' => 'CURRENT_TIMESTAMP']);
+        $table->addColumn('criado_em',         'datetime', ['default' => 'CURRENT_TIMESTAMP']);
+        $table->addColumn('atualizado_em',     'datetime', ['default' => 'CURRENT_TIMESTAMP']);
 
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['resolvido']);
         $table->addIndex(['problema']);
         $table->addIndex(['id_customer']);
 
-        $table->addForeignKeyConstraint(
-            'stock',
-            ['id_stock'],
-            ['id'],
-            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
-            'fk_reports_stock'
-        );
         $table->addForeignKeyConstraint(
             'customer',
             ['id_customer'],
@@ -52,4 +46,3 @@ final class Version20260526184108 extends AbstractMigration
         $schema->dropTable('reports');
     }
 }
-

@@ -2,6 +2,6 @@
 
 declare(strict_types=1);
 
-$app->get('/', app\controller\Home::class . ':home');
-$app->get('/home', app\controller\Home::class . ':home');
-$app->get('/login', app\controller\Login::class . ':login');
+$app->get('/', App\Controller\Home::class . ':home');
+$app->get('/home', App\Controller\Home::class . ':home');
+$app->get('/login', App\Controller\Login::class . ':login');

@@ -18,7 +18,7 @@ $debug = ($_ENV['APP_DEBUG'] ?? 'false') === 'true';
 
 $app->addErrorMiddleware($debug, $debug, $debug);
 
-require __DIR__ . '/Helpers/Settings.php';
-require __DIR__ . '/Routes/Routes.php';
+require __DIR__ . '/Helpers/settings.php';
+require __DIR__ . '/Routes/routes.php';
 
 return $app;

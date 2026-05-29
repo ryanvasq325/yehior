@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace app\database;
+namespace App\Database;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -14,12 +14,12 @@ final class MakeMigrationCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setName('make:migration')
-            ->setDescription('Cria um arquivo de migration com nome no formato YYYYMMDDHHmmss_nome.php')
+            ->setName('make:Migration')
+            ->setDescription('Cria um arquivo de Migration com nome no formato YYYYMMDDHHmmss_nome.php')
             ->addArgument(
                 'name',
                 InputArgument::REQUIRED,
-                'Nome da migration em snake_case (ex: create_users_table)'
+                'Nome da Migration em snake_case (ex: create_users_table)'
             );
     }
 
@@ -29,7 +29,7 @@ final class MakeMigrationCommand extends Command
         $timestamp = date('YmdHis');
         $className = 'Version' . $timestamp;
         $fileName  = $timestamp . '_' . $name . '.php';
-        $dir       = dirname(__DIR__) . '/database/migration';
+        $dir       = dirname(__DIR__) . '/Database/Migration';
         $filePath  = $dir . '/' . $fileName;
 
         if (!is_dir($dir)) {
@@ -47,7 +47,7 @@ final class MakeMigrationCommand extends Command
         $output->writeln("<info>✔ Migration criada com sucesso!</info>");
         $output->writeln("<comment>  Arquivo : </comment>{$fileName}");
         $output->writeln("<comment>  Classe  : </comment>{$className}");
-        $output->writeln("<comment>  Caminho : </comment>app/database/migration/{$fileName}");
+        $output->writeln("<comment>  Caminho : </comment>App/Database/Migration/{$fileName}");
         $output->writeln('');
 
         return Command::SUCCESS;
@@ -60,7 +60,7 @@ final class MakeMigrationCommand extends Command
 
             declare(strict_types=1);
 
-            namespace app\database\migration;
+            namespace App\Database\Migration;
 
             use Doctrine\DBAL\Schema\Schema;
             use Doctrine\Migrations\AbstractMigration;

@@ -19,7 +19,7 @@ final class Version20260526204718 extends AbstractMigration
         $table = $schema->createTable('employee');
 
         $table->addColumn('id',                 'bigint',  ['autoincrement' => true, 'notnull' => true]);
-        $table->addColumn('id_employee',        'bigint',   ['notnull' => true]);
+        $table->addColumn('id_fleet',        'bigint',   ['notnull' => true]);
         $table->addColumn('nome',               'text',  ['length' => 255, 'notnull' => true]);
         $table->addColumn('sobrenome',          'text',  ['length' => 255, 'notnull' => false]);
         $table->addColumn('cpf',                'text',  ['length' => 14,  'notnull' => false]);

@@ -28,7 +28,7 @@ final class Version20260526184108 extends AbstractMigration
         $table->addColumn('atualizado_em',     'datetime', ['default' => 'CURRENT_TIMESTAMP']);
 
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['resolvido']);
+        $table->addIndex(['resolvido']);
         $table->addIndex(['problema']);
         $table->addIndex(['id_customer']);
 
@@ -43,6 +43,6 @@ final class Version20260526184108 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $schema->dropTable('reports');
+        $this->addSql('DROP TABLE reports CASCADE');
     }
 }

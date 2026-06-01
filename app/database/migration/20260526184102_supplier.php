@@ -35,6 +35,6 @@ final class Version20260526184102 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $schema->dropTable('supplier');
+        $this->addSql('DROP TABLE supplier CASCADE');
     }
 }

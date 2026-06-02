@@ -2,8 +2,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 DO $$
 BEGIN
-  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'Senac') THEN
-    CREATE ROLE senac LOGIN PASSWORD 'Senac';
+  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'senac') THEN
+    CREATE ROLE senac LOGIN PASSWORD 'senac';
   END IF;
 END
 $$;

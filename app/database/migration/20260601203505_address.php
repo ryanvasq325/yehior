@@ -46,6 +46,6 @@ final class Version20260601203505 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $schema->dropTable('address');
+       # $schema->dropTable('address');
     }
 }

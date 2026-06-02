@@ -29,6 +29,6 @@ final class Version20260601203412 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        $schema->dropTable('pole');
+       # $schema->dropTable('pole');
     }
 }

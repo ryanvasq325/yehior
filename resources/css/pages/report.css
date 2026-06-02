@@ -5,7 +5,9 @@
 }
 
 /* ===== UTILITÁRIOS ===== */
-.text-amarelo { color: var(--amarelo) !important; }
+.text-amarelo {
+  color: var(--amarelo) !important;
+}
 
 .btn-amarelo {
   background: var(--amarelo);
@@ -13,6 +15,7 @@
   font-weight: 700;
   border: none;
 }
+
 .btn-amarelo:hover {
   background: #ffd740;
   color: #0D0F1A;
@@ -28,6 +31,7 @@
   background: var(--cinza-card);
   border: 1px solid rgba(255, 255, 255, .07);
   border-radius: 16px;
+  padding: 3rem 3.5rem;
 }
 
 /* ===== BOTÕES DE TIPO DE PROBLEMA ===== */
@@ -52,7 +56,7 @@
 }
 
 /* Estado selecionado */
-.btn-check:checked + .btn-problem {
+.btn-check:checked+.btn-problem {
   border-color: var(--amarelo);
   background: rgba(245, 197, 24, .15);
   color: var(--amarelo);

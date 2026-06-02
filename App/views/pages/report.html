@@ -8,10 +8,10 @@
 
 <div class="col-12">
   <div class="row justify-content-center">
-    <div class="col-lg-7 col-md-9">
+    <div class="col-lg-9 col-md-11">
 
       <!-- Cabeçalho -->
-      <div class="report-header mb-4">
+      <div class="report-header mb-">
         <span class="badge text-bg-warning text-dark fw-semibold px-3 py-2 rounded-pill mb-3">
           <i class="fa-solid fa-lightbulb me-1"></i> Novo Reporte
         </span>
@@ -28,7 +28,7 @@
       {% endif %}
 
       <!-- Formulário -->
-      <div class="report-card p-4 p-md-5">
+      <div class="report-card p-5">
         <form action="/report" method="POST" novalidate>
 
           <!-- Tipo do problema -->
@@ -39,54 +39,36 @@
             </label>
             <div class="row g-2">
 
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p1" value="lampada_apagada" required
-                  {{ old_problema == 'lampada_apagada' ? 'checked' : '' }}>
+              <div class="col-4 col-md-2">
+                <input type="radio" class="btn-check" name="problema" id="p1" value="lampada_apagada" required {{
+                  old_problema=='lampada_apagada' ? 'checked' : '' }}>
                 <label class="btn btn-problem w-100" for="p1">
                   <span class="problem-emoji">💡</span>
                   <span class="problem-label">Lâmpada apagada</span>
                 </label>
               </div>
 
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p2" value="luz_piscando"
-                  {{ old_problema == 'luz_piscando' ? 'checked' : '' }}>
+              <div class="col-4 col-md-2">
+                <input type="radio" class="btn-check" name="problema" id="p2" value="luz_piscando" {{
+                  old_problema=='luz_piscando' ? 'checked' : '' }}>
                 <label class="btn btn-problem w-100" for="p2">
                   <span class="problem-emoji">🔴</span>
                   <span class="problem-label">Luz piscando</span>
                 </label>
               </div>
 
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p3" value="fio_cortado"
-                  {{ old_problema == 'fio_cortado' ? 'checked' : '' }}>
-                <label class="btn btn-problem w-100" for="p3">
-                  <span class="problem-emoji">✂️</span>
-                  <span class="problem-label">Fio cortado</span>
-                </label>
-              </div>
-
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p4" value="estrutura_danificada"
-                  {{ old_problema == 'estrutura_danificada' ? 'checked' : '' }}>
+              <div class="col-4 col-md-2">
+                <input type="radio" class="btn-check" name="problema" id="p4" value="estrutura_danificada" {{
+                  old_problema=='estrutura_danificada' ? 'checked' : '' }}>
                 <label class="btn btn-problem w-100" for="p4">
                   <span class="problem-emoji">🏚️</span>
                   <span class="problem-label">Estrutura danificada</span>
                 </label>
               </div>
 
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p5" value="trecho_sem_luz"
-                  {{ old_problema == 'trecho_sem_luz' ? 'checked' : '' }}>
-                <label class="btn btn-problem w-100" for="p5">
-                  <span class="problem-emoji">🌑</span>
-                  <span class="problem-label">Trecho sem luz</span>
-                </label>
-              </div>
-
-              <div class="col-6 col-md-4">
-                <input type="radio" class="btn-check" name="problema" id="p6" value="outro"
-                  {{ old_problema == 'outro' ? 'checked' : '' }}>
+              <div class="col-4 col-md-2">
+                <input type="radio" class="btn-check" name="problema" id="p6" value="outro" {{ old_problema=='outro'
+                  ? 'checked' : '' }}>
                 <label class="btn btn-problem w-100" for="p6">
                   <span class="problem-emoji">❓</span>
                   <span class="problem-label">Outro</span>
@@ -107,19 +89,86 @@
               <span class="input-group-text bg-transparent border-end-0">
                 <i class="fa-solid fa-magnifying-glass text-secondary"></i>
               </span>
-              <input
-                type="text"
-                class="form-control border-start-0 ps-0"
-                id="cep"
-                name="cep"
-                placeholder="00000-000"
-                maxlength="9"
-                value="{{ old_cep ?? '' }}"
-                required
-              >
+              <input type="text" class="form-control border-start-0 ps-0" id="cep" name="cep" placeholder="00000-000"
+                maxlength="9" value="{{ old_cep ?? '' }}" required>
             </div>
             <div class="form-text text-secondary mt-1" id="cep-info">
               Digite o CEP do local com o problema.
+            </div>
+          </div>
+
+          <!-- LOGRADOURO + NUMERO na mesma linha -->
+          <div class="mb-4">
+            <div class="row g-3">
+
+              <!-- LOGRADOURO -->
+              <div class="col-8">
+                <label for="address" class="form-label fw-semibold">
+                  <i class="fa-solid fa-map-location-dot text-amarelo"></i>
+                  LOGRADOURO <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                    <i class="fa-solid fa-map-location-dot"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0 ps-0" id="address" name="address"
+                    placeholder="RUA/AVENIDA PIONEIROS" maxlength="80" value="{{ old_address ?? '' }}" required>
+                </div>
+              </div>
+
+              <!-- NUMERO -->
+              <div class="col-4">
+                <label for="numero" class="form-label fw-semibold">
+                  <i class="fa-solid fa-hashtag text-amarelo"></i>
+                  NÚMERO <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text bg-transparent border-end-0">
+                   <i class="fa-solid fa-hashtag text-amarelo"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0 ps-0" id="numero" name="numero"
+                    placeholder="123" maxlength="8" value="{{ old_numero ?? '' }}" required>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- BAIRRO-->
+          <div class="mb-4">
+            <label for="district" class="form-label fw-semibold">
+              <i class="fa-solid fa-map-location-dot text-amarelo"></i>
+              BAIRRO
+              <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-end-0">
+                <i class="fa-solid fa-map-location-dot"></i>
+              </span>
+              <input type="text" class="form-control border-start-0 ps-0" id="district" name="district"
+                placeholder="BA-001" maxlength="30" value="{{ old_cep ?? '' }}" required>
+            </div>
+            <div class="form-text text-secondary mt-1" id="district-info">
+              Digite o BAIRRO.
+            </div>
+          </div>
+
+          <!-- NUMERO DO POSTE -->
+          <div class="mb-4">
+            <label for="pole" class="form-label fw-semibold">
+              <i class="fa-solid fa-tenge-sign text-amarelo"></i>
+              POSTE
+              <span class="text-danger">*</span>
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-end-0">
+                <i class="fa-solid fa-tenge-sign"></i>
+              </span>
+              <input type="text" class="form-control border-start-0 ps-0" id="pole" name="pole  " placeholder="BA-001"
+                maxlength="9" value="{{ old_cep ?? '' }}" required>
+            </div>
+            <div class="form-text text-secondary mt-1" id="pole-info">
+              Digite o numero do POSTE.
             </div>
           </div>
 
@@ -129,14 +178,8 @@
               <i class="fa-solid fa-pen-to-square me-1 text-amarelo"></i>
               Descrição <span class="text-secondary fw-normal">(opcional)</span>
             </label>
-            <textarea
-              class="form-control"
-              id="descricao"
-              name="descricao"
-              rows="4"
-              maxlength="255"
-              placeholder="Descreva o problema com mais detalhes, ponto de referência, etc."
-            >{{ old_descricao ?? '' }}</textarea>
+            <textarea class="form-control" id="descricao" name="descricao" rows="4" maxlength="255"
+              placeholder="Descreva o problema com mais detalhes, ponto de referência, etc.">{{ old_descricao ?? '' }}</textarea>
             <div class="d-flex justify-content-end mt-1">
               <small class="text-secondary" id="char-count">0 / 255</small>
             </div>

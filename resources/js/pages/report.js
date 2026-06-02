@@ -51,7 +51,8 @@ const form = document.querySelector('form');
 
 if (form) {
   form.addEventListener('submit', (e) => {
-    const selecionado = form.querySelector('input[name="problema"]:checked');
+    // O name agora é id_tipo_problema (id vindo do banco)
+    const selecionado = form.querySelector('input[name="id_tipo_problema"]:checked');
     const errorEl     = document.getElementById('problema-error');
 
     if (!selecionado) {

@@ -7,7 +7,7 @@
 /docker/traefik/
 /docker/traefik/certs
 /docker/redis/storage
-/docker/redis/dump.rdb
+/docker/redis/dump.rd
 .env
 # Node.js / Vite
 /node_modules

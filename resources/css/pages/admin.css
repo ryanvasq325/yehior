@@ -1,0 +1,99 @@
+/* ===== VARIÁVEIS (já declaradas no app.css, repetidas aqui por segurança) ===== */
+:root {
+  --amarelo: #F5C518;
+  --cinza-card: #1e2130;
+}
+
+/* ===== UTILITÁRIOS ===== */
+.text-amarelo {
+  color: var(--amarelo) !important;
+}
+
+.btn-amarelo {
+  background: var(--amarelo);
+  color: #0D0F1A;
+  font-weight: 700;
+  border: none;
+}
+
+.btn-amarelo:hover {
+  background: #ffd740;
+  color: #0D0F1A;
+}
+
+/* ===== CABEÇALHO ===== */
+.report-header h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+/* ===== CARD DO FORMULÁRIO ===== */
+.report-card {
+  background: var(--cinza-card);
+  border: 1px solid rgba(255, 255, 255, .07);
+  border-radius: 16px;
+  padding: 3rem 3.5rem;
+}
+
+/* ===== BOTÕES DE TIPO DE PROBLEMA ===== */
+.btn-problem {
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 12px;
+  color: #e8e8f0;
+  padding: .75rem .5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  transition: border-color .2s, background .2s, color .2s;
+  cursor: pointer;
+}
+
+.btn-problem:hover {
+  border-color: var(--amarelo);
+  background: rgba(245, 197, 24, .08);
+  color: #fff;
+}
+
+/* Estado selecionado */
+.btn-check:checked+.btn-problem {
+  border-color: var(--amarelo);
+  background: rgba(245, 197, 24, .15);
+  color: var(--amarelo);
+  font-weight: 600;
+}
+
+.problem-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.problem-label {
+  font-size: .8rem;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* ===== INPUTS ===== */
+.form-control,
+.input-group-text {
+  background: rgba(255, 255, 255, .05);
+  border-color: rgba(255, 255, 255, .12);
+  color: #e8e8f0;
+}
+
+.form-control:focus {
+  background: rgba(255, 255, 255, .07);
+  border-color: var(--amarelo);
+  box-shadow: 0 0 0 .2rem rgba(245, 197, 24, .15);
+  color: #fff;
+}
+
+.form-control::placeholder {
+  color: #6b7280;
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}

@@ -16,6 +16,7 @@ use Doctrine\Migrations\Finder\RecursiveRegexFinder;
 use Doctrine\Migrations\Tools\Console\Command;
 use Symfony\Component\Console\Application;
 use App\Database\Connection;
+use App\Database\MakeSeedCommand;
 use App\Database\MakeMigrationCommand;
 
 $config = new PhpFile(__DIR__ . '/../doctrine-migrations.php');
@@ -44,6 +45,8 @@ $app->addCommands([
     new Command\LatestCommand($dependencyFactory),
     new Command\SyncMetadataCommand($dependencyFactory),
     new Command\VersionCommand($dependencyFactory),
+    new MakeSeedCommand(Connection::get(), MakeSeedCommand::MAKE_NAME), // make:seed
+    new MakeSeedCommand(Connection::get(), MakeSeedCommand::RUN_NAME),  // migrations:seed
     new MakeMigrationCommand(),
 ]);
 

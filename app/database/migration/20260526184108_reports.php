@@ -20,7 +20,7 @@ final class Version20260526184108 extends AbstractMigration
 
         $table->addColumn('id',                'bigint', ['autoincrement' => true]);
         $table->addColumn('id_customer',       'bigint', ['notnull' => true]);
-        $table->addColumn('problema',          'string',  ['length' => 255]);
+        $table->addColumn('id_tipo_problema', 'bigint', ['notnull' => true]);
         $table->addColumn('cep',               'string',  ['length' => 255]);
         $table->addColumn('descricao',         'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('resolvido',         'boolean', ['default' => false]);
@@ -36,8 +36,15 @@ final class Version20260526184108 extends AbstractMigration
             'customer',
             ['id_customer'],
             ['id'],
-            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'],
             'fk_reports_customer'
+        );
+        $table->addForeignKeyConstraint(
+            'tipo_problema',
+            ['id_tipo_problema'],
+            ['id'],
+            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            'fk_reports_tipo_problema'
         );
     }
 

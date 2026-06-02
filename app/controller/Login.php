@@ -132,11 +132,17 @@ final class Login extends Base
             $_SESSION['user']['sessao_criada_em'] = (new \DateTime())->format('Y-m-d H:i:s');
             $_SESSION['user']['sessao_expira_em'] = (new \DateTime())->modify("+{$lifetime} seconds")->format('Y-m-d H:i:s');
 
+            # Define a rota de redirecionamento com base no perfil do usuário:
+            # administrador = true  → painel administrativo
+            # administrador = false → home do cidadão
+            $redirect = !empty($user['administrador']) ? '/admin/home' : '/home';
+
             # Retorna a resposta de sucesso ao cliente
             return $this->json($response, [
                 'status'           => true,
                 'msg'              => 'Seja bem vindo de volta!',
                 'id'               => $user['id'],
+                'redirect'         => $redirect,
                 'sessao_expira_em' => $_SESSION['user']['sessao_expira_em']
             ], 200);
         } catch (\PDOException $e) {

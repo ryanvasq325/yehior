@@ -23,12 +23,15 @@ final class Version20260601203412 extends AbstractMigration
         $table->addColumn('criado_em',     'datetime',         ['notnull'       => true, 'default' => 'CURRENT_TIMESTAMP']);
         $table->addColumn('atualizado_em', 'datetime',         ['notnull'       => true, 'default' => 'CURRENT_TIMESTAMP']);
 
+
+        $table->setPrimaryKey(['id']);
+        $table->addIndex(['id_bairro']);
         $table->addForeignKeyConstraint('address', ['id_bairro'], ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_pole_bairro');
 
     }
 
     public function down(Schema $schema): void
     {
-       # $schema->dropTable('pole');
+       $schema->dropTable('pole');
     }
 }

@@ -39,7 +39,7 @@ final class Version20260526204718 extends AbstractMigration
             'fleet',
             ['id_fleet'],
             ['id'],
-            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'],
             'fk_reports_fleet'
         );
     }

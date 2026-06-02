@@ -37,15 +37,13 @@ final class Version20260601203505 extends AbstractMigration
         $table->addIndex(['id_supplier']);
         $table->addIndex(['id_enterprise']);
 
-        $table->addForeignKeyConstraint('city',       ['id_city'],       ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_address_city');
-        $table->addForeignKeyConstraint('customer',   ['id_customer'],   ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_address_customer');
-        $table->addForeignKeyConstraint('supplier',   ['id_supplier'],   ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_address_supplier');
-        $table->addForeignKeyConstraint('enterprise', ['id_enterprise'], ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_address_enterprise');
+        $table->addForeignKeyConstraint('customer',   ['id_customer'],   ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'], 'fk_address_customer');
+        $table->addForeignKeyConstraint('supplier',   ['id_supplier'],   ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'], 'fk_address_supplier');
     }
     
 
     public function down(Schema $schema): void
     {
-       # $schema->dropTable('address');
+       $schema->dropTable('address');
     }
 }

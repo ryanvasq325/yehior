@@ -40,7 +40,7 @@ final class Version20260526184103 extends AbstractMigration
             'supplier',
             ['id_supplier'],
             ['id'],
-            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'],
             'fk_stock_supplier'
         );
     }

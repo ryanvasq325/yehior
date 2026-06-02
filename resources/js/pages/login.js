@@ -52,7 +52,9 @@ buttonLogin.addEventListener('click', async () => {
             timer: 1500,
             timerProgressBar: true
         }).then(() => {
-            window.location.href = '/home';
+            // Redireciona para /admin/home (administrador) ou /home (cidadão)
+            // conforme o campo "redirect" retornado pelo backend
+            window.location.href = response.redirect;
         });
 
     } catch (error) {

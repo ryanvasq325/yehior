@@ -29,8 +29,6 @@ final class Version20260526184108 extends AbstractMigration
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['resolvido']);
-        $table->addIndex(['problema']);
-        $table->addIndex(['id_customer']);
 
         $table->addForeignKeyConstraint(
             'customer',

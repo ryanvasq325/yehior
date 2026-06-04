@@ -38,3 +38,13 @@
   color: #f9fafb;
   box-shadow: none;
 }
+
+.google-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.google-wrapper > div {
+  width: 100% !important;
+}

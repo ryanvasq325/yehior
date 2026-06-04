@@ -26,7 +26,6 @@ final class Version20260602150131 extends AbstractMigration
         $table->addColumn('criado_em',  'datetime', ['default' => 'CURRENT_TIMESTAMP']);
  
         $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(['descricao'], 'uq_tipo_problema_descricao');
     }
     
 

@@ -203,26 +203,37 @@
               <input type="password" id="senhaLogin" name="senha" class="form-control input-dark" placeholder="" />
             </div>
 
-            <button  id="buttonLogin" class="btn btn-warning w-100 fw-medium">Entrar</button>
+            <div class="google-wrapper">
+              <div id="g_id_onload"
+                data-client_id="414851404931-ec2r6pon8qfflbktv10tmefhutunt3nv.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-login_uri="/authentication/google"
+                data-itp_support="true">
+              </div>
+              <div class="g_id_signin" data-type="standard" data-shape="rectangular" data-theme="filled_light"
+                data-text="signin_with" data-size="large" data-logo_alignment="left" data-width="360">
+              </div>
+            </div>
+            <br>
+            <button id="buttonLogin" class="btn btn-warning w-100 fw-medium">Entrar</button>
 
             <div class="d-flex align-items-center gap-2 my-3">
               <hr class="flex-grow-1 border-secondary" />
               <span class="text-secondary small">ou</span>
               <hr class="flex-grow-1 border-secondary" />
             </div>
-
             <button type="button" class="btn btn-link" id="mdPreRegister">
               Pré-cadastro
             </button>
-
           </div>
         </div>
 
       </div>
   </form>
+  <!-- Google GSI -->
+  <script src="https://accounts.google.com/gsi/client" async></script>
   </div>
-  {{ vite('resources/js/app.js') }}
-  {{ vite('resources/js/pages/login.js') }}
 </body>
+{{ vite('resources/js/app.js') }}
+{{ vite('resources/js/pages/login.js') }}
 
 </html>

@@ -4,9 +4,9 @@ import Request from "../components/requests.js";
 Inputmask('999.999.999-99').mask('#cpf');
 Inputmask('(99) 9999-9999').mask('#telefone');
 
-const mdPreRegister     = document.getElementById('mdPreRegister');
+const mdPreRegister = document.getElementById('mdPreRegister');
 const buttonPreRegister = document.getElementById('buttonPreRegister');
-const buttonLogin       = document.getElementById('buttonLogin');
+const buttonLogin = document.getElementById('buttonLogin');
 
 mdPreRegister.addEventListener('click', () => {
     $('#modalPreRegisterUser').modal('show');
@@ -25,12 +25,12 @@ buttonLogin.addEventListener('click', async () => {
         return;
     }
 
-    const requests     = new Request();
+    const requests = new Request();
     const originalText = buttonLogin.textContent;
 
     try {
         buttonLogin.textContent = 'Autenticando, por favor aguarde...';
-        buttonLogin.disabled    = true;
+        buttonLogin.disabled = true;
 
         const response = await requests.setForm('form').post('/authentication/authenticate');
 
@@ -76,7 +76,7 @@ buttonLogin.addEventListener('click', async () => {
             timerProgressBar: true
         });
     } finally {
-        buttonLogin.disabled    = false;
+        buttonLogin.disabled = false;
         buttonLogin.textContent = originalText;
     }
 });
@@ -94,12 +94,12 @@ buttonPreRegister.addEventListener('click', async () => {
         return;
     }
 
-    const requests     = new Request();
+    const requests = new Request();
     const originalText = buttonPreRegister.textContent;
 
     try {
         buttonPreRegister.textContent = 'Cadastrando, por favor aguarde...';
-        buttonPreRegister.disabled    = true;
+        buttonPreRegister.disabled = true;
 
         const response = await requests.setForm('form').post('/authentication/preregister');
 
@@ -137,7 +137,18 @@ buttonPreRegister.addEventListener('click', async () => {
             timerProgressBar: true
         });
     } finally {
-        buttonPreRegister.disabled    = false;
+        buttonPreRegister.disabled = false;
         buttonPreRegister.textContent = originalText;
     }
+
+    // Ajusta largura do botão Google para bater com o botão Entrar
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnEntrar = buttonLogin; // já tem a referência no topo
+        const googleBtn = document.querySelector('.g_id_signin');
+
+        if (googleBtn && btnEntrar) {
+            const width = btnEntrar.offsetWidth;
+            googleBtn.setAttribute('data-width', width);
+        }
+    });
 });

@@ -16,22 +16,7 @@
   color: #0D0F1A;
 }
 
-/* ===== METRIC CARDS ===== */
-.metric-card {
-  transition: transform .15s, box-shadow .15s;
-  cursor: pointer;
-}
-.metric-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.3) !important;
-}
-.metric-card .card-footer {
-  background: rgba(0,0,0,.15);
-  border-top: 1px solid rgba(255,255,255,.1);
-  color: rgba(255,255,255,.8);
-}
-
-/* ===== ADMIN CARD (tabela / lista) ===== */
+/* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);
   border: 1px solid rgba(255,255,255,.07);
@@ -48,20 +33,41 @@
   padding: 1.25rem;
 }
 
+/* ===== FILTROS ===== */
+.form-select,
+.form-control {
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.12);
+  color: #e8e8f0;
+}
+
+.form-select:focus,
+.form-control:focus {
+  background: rgba(255,255,255,.08);
+  border-color: var(--amarelo);
+  box-shadow: 0 0 0 .2rem rgba(245,197,24,.15);
+  color: #fff;
+}
+
+.form-select option {
+  background: #1e2130;
+  color: #e8e8f0;
+}
+
 /* ===== TABELA ===== */
 .table-dark {
   --bs-table-bg: transparent;
   --bs-table-hover-bg: rgba(255,255,255,.04);
-  --bs-table-hover-color: #fff; /* evita texto sumindo no hover */
 }
 
 .table thead th {
-  font-size: .8rem; /* era .75rem — muito apertado com uppercase */
+  font-size: .72rem;
   text-transform: uppercase;
-  letter-spacing: .05em;
+  letter-spacing: .06em;
   color: #6b7280;
   border-bottom-color: rgba(255,255,255,.07);
   font-weight: 600;
+  white-space: nowrap;
 }
 
 .table td {

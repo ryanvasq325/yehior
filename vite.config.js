@@ -8,7 +8,7 @@ const HOT_FILE = resolve(__dirname, 'public/hot');
 
 function writeHotFilePlugin() {
     return {
-        name: 'posteweb-write-hot-file',
+        name: 'yehior-write-hot-file',
         apply: 'serve',
         configureServer(server) {
             server.httpServer?.once('listening', () => {

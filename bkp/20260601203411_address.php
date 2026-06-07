@@ -16,7 +16,7 @@ final class Version20260601203505 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-         $table = $schema->createTable('address');
+        $table = $schema->createTable('address');
 
         $table->addColumn('id',            'bigint',  ['autoincrement' => true,  'notnull' => true]);
         $table->addColumn('id_city',       'bigint',  [ 'notnull' => false]);
@@ -32,10 +32,8 @@ final class Version20260601203505 extends AbstractMigration
         $table->addColumn('atualizado_em', 'datetime', ['notnull' => true, 'default' => 'CURRENT_TIMESTAMP']);
 
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['id_city']);
         $table->addIndex(['id_customer']);
         $table->addIndex(['id_supplier']);
-        $table->addIndex(['id_enterprise']);
 
         $table->addForeignKeyConstraint('customer',   ['id_customer'],   ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'], 'fk_address_customer');
         $table->addForeignKeyConstraint('supplier',   ['id_supplier'],   ['id'], ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'], 'fk_address_supplier');

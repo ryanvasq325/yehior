@@ -16,7 +16,7 @@ final class Version20260601203412 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-      $table = $schema->createTable('pole');
+        $table = $schema->createTable('pole');
         $table->addColumn('id',            'bigint',           ['autoincrement' => true, 'notnull' => true]);
         $table->addColumn('id_bairro',       'bigint',           [ 'notnull'      => false]);
         $table->addColumn('numero',        'string',           ['length'        => 255,  'notnull' => true]);

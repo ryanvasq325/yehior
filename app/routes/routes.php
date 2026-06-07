@@ -15,6 +15,8 @@ $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group
     $group->post('/preregister', App\Controller\Login::class . ':preRegister');
 });
 $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
-    $group->get('/list-report', App\Controller\Admin::class . ':listreport');
+    $group->get('/listreport', App\Controller\Admin::class . ':listreport');
+    $group->get('/stock', App\Controller\Admin::class . ':stock');
+    $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
     $group->get('/home', App\Controller\Admin::class . ':home');
 });

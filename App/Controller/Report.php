@@ -9,7 +9,7 @@ final class Report extends Base
     public function home($request, $response)
     {
         $tipos = \App\Database\DB::select('id', 'descricao')
-            ->from('tipo_problema')
+            ->from('type_problem')
             ->where('ativo = true')
             ->orderBy('id', 'ASC')
             ->fetchAllAssociative();

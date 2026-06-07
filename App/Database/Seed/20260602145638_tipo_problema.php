@@ -16,24 +16,26 @@ final class Seed20260602145638 extends AbstractSeed
 
     # Executa os inserts padrão do sistema
     # Use $this->insertIfNotExists() para que rodar a seed mais de uma vez seja seguro
-    public function run(): void
+   public function run(): void
     {
+        // Adicionamos IDs fixos para que o "insertIfNotExists" saiba o que comparar
         $tipos = [
-            'Lâmpada apagada',
-            'Luz piscando',
-            'Estrutura danificada',
-            'Outro',
+            1 => 'Lâmpada apagada',
+            2 => 'Luz piscando',
+            3 => 'Estrutura danificada',
+            4 => 'Outro',
         ];
 
-        foreach ($tipos as $descricao) {
+        foreach ($tipos as $id => $descricao) {
             $this->insertIfNotExists(
-                'tipo_problema',
+                'type_problem',
                 [
+                    'id'        => $id, // Passa o ID aqui
                     'descricao' => $descricao,
                     'ativo'     => true,
                     'criado_em' => date('Y-m-d H:i:s'),
                 ],
-                ['descricao'] // coluna UNIQUE na tabela
+                ['id'] // Altera de 'descricao' para 'id'
             );
         }
     }

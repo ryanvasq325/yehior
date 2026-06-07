@@ -13,11 +13,11 @@
   </h1>
 
   <!-- ===================== CARDS DE MÉTRICAS ===================== -->
-  <div class="row g-4 mb-4">
+  <div class="row g-4 mb-4 justify-content-center">
 
     <div class="col-lg-3 col-md-6">
       <div class="card text-bg-primary shadow-sm h-100 metric-card" role="button"
-           onclick="location.href='/admin/report'">
+           onclick="location.href='/admin/listreport'">
         <div class="card-body d-flex justify-content-between align-items-start p-4">
           <div>
             <h3 class="display-5 fw-bold mb-0">{{ totalReports | default(0) }}</h3>
@@ -33,48 +33,32 @@
 
     <div class="col-lg-3 col-md-6">
       <div class="card text-bg-success shadow-sm h-100 metric-card" role="button"
-           onclick="location.href='/admin/reports?resolvido=1'">
+           onclick="location.href='/admin/stock'">
         <div class="card-body d-flex justify-content-between align-items-start p-4">
           <div>
             <h3 class="display-5 fw-bold mb-0">{{ totalResolved | default(0) }}</h3>
-            <p class="card-text fs-6 mt-1 mb-0">Resolvidos</p>
+            <p class="card-text fs-6 mt-1 mb-0">Stock</p>
           </div>
           <i class="fa-solid fa-circle-check fa-3x opacity-50"></i>
         </div>
         <div class="card-footer text-center py-2 small">
-          Ver resolvidos <i class="fa-solid fa-circle-arrow-right ms-1"></i>
+          Ver Stock <i class="fa-solid fa-circle-arrow-right ms-1"></i>
         </div>
       </div>
     </div>
 
     <div class="col-lg-3 col-md-6">
       <div class="card text-bg-warning shadow-sm h-100 metric-card" role="button"
-           onclick="location.href='/admin/reports?resolvido=0'">
+           onclick="location.href='/admin/relatorio'">
         <div class="card-body d-flex justify-content-between align-items-start p-4">
           <div>
             <h3 class="display-5 fw-bold mb-0">{{ totalPending | default(0) }}</h3>
-            <p class="card-text fs-6 mt-1 mb-0">Pendentes</p>
+            <p class="card-text fs-6 mt-1 mb-0">Relatorio Geral</p>
           </div>
           <i class="fa-solid fa-clock fa-3x opacity-50"></i>
         </div>
         <div class="card-footer text-center py-2 small">
-          Ver pendentes <i class="fa-solid fa-circle-arrow-right ms-1"></i>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6">
-      <div class="card text-bg-info shadow-sm h-100 metric-card" role="button"
-           onclick="location.href='/admin/customers'">
-        <div class="card-body d-flex justify-content-between align-items-start p-4">
-          <div>
-            <h3 class="display-5 fw-bold mb-0">{{ totalCustomers | default(0) }}</h3>
-            <p class="card-text fs-6 mt-1 mb-0">Cidadãos</p>
-          </div>
-          <i class="fa-solid fa-user-group fa-3x opacity-50"></i>
-        </div>
-        <div class="card-footer text-center py-2 small">
-          Ver cidadãos <i class="fa-solid fa-circle-arrow-right ms-1"></i>
+          Ver Relatorio <i class="fa-solid fa-circle-arrow-right ms-1"></i>
         </div>
       </div>
     </div>
@@ -177,6 +161,7 @@
     </div>
 
   </div>
+
 </div>
 
 {% endblock %}

@@ -1,0 +1,90 @@
+#!/usr/bin/env php
+<?php
+
+# Ativa a checagem estrita de tipos em todo este arquivo
+declare(strict_types=1);
+
+# Carrega o autoloader do Composer (todas as classes do projeto e das libs)
+require __DIR__ . '/../vendor/autoload.php';
+
+# Cria o leitor de variáveis de ambiente apontando para a raiz do projeto
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+# Lê o arquivo .env e popula $_ENV de forma imutável (não pode ser sobrescrito)
+$dotenv->load();
+
+# Conexão DBAL existente que o Doctrine Migrations vai reutilizar
+use Doctrine\Migrations\Configuration\Connection\ExistingConnection;
+# Leitor de configuração de migrations a partir de um arquivo PHP
+use Doctrine\Migrations\Configuration\Migration\PhpFile;
+# Fábrica que monta todas as dependências do Doctrine Migrations
+use Doctrine\Migrations\DependencyFactory;
+# Interface do localizador de arquivos de migration
+use Doctrine\Migrations\Finder\MigrationFinder;
+# Localizador recursivo por expressão regular (suporta nomes timestamp_Nome.php)
+use Doctrine\Migrations\Finder\RecursiveRegexFinder;
+# Conjunto de comandos prontos do Doctrine Migrations
+use Doctrine\Migrations\Tools\Console\Command;
+# Aplicação de linha de comando do Symfony Console
+use Symfony\Component\Console\Application;
+# Singleton de conexão do projeto
+use App\Database\Connection;
+# Comando que gera arquivos de migration
+use App\Database\MakeMigrationCommand;
+# Comando único de seed (atende make:seed e migrations:seed)
+use App\Database\MakeSeedCommand;
+
+# Carrega a configuração das migrations a partir do arquivo na raiz do projeto
+$config = new PhpFile(__DIR__ . '/../doctrine-migrations.php');
+
+# Obtém a conexão singleton uma única vez para reaproveitar em todos os comandos
+$connection = Connection::get();
+
+# Monta a fábrica de dependências do Doctrine reutilizando a conexão já aberta
+$dependencyFactory = DependencyFactory::fromConnection(
+    # Configuração lida acima
+    $config,
+    # Envolve a conexão existente para o Doctrine não abrir outra
+    new ExistingConnection($connection)
+);
+
+# RecursiveRegexFinder com pattern que captura o CAMINHO COMPLETO do arquivo.
+# O ^.+ é essencial: sem ele, o RegexIterator retorna apenas ".php" (o trecho que casa),
+# e o Doctrine tenta fazer require_once('.php'), causando fatal error.
+$dependencyFactory->setService(
+    # Serviço a ser substituído: o localizador de migrations
+    MigrationFinder::class,
+    # Implementação que casa qualquer arquivo .php pelo caminho completo
+    new RecursiveRegexFinder('/^.+\.php$/i')
+);
+
+# Cria a aplicação de console com um nome amigável
+$App = new Application('Migrations — Jaiminho3');
+
+# Registra todos os comandos disponíveis na aplicação
+$App->addCommands([
+    # Executa uma migration específica
+    new Command\ExecuteCommand($dependencyFactory),
+    # Aplica as migrations pendentes
+    new Command\MigrateCommand($dependencyFactory),
+    # Mostra o status das migrations
+    new Command\StatusCommand($dependencyFactory),
+    # Compacta migrations antigas em uma só
+    new Command\RollupCommand($dependencyFactory),
+    # Lista as migrations conhecidas
+    new Command\ListCommand($dependencyFactory),
+    # Mostra a última versão disponível
+    new Command\LatestCommand($dependencyFactory),
+    # Sincroniza os metadados de versão no banco
+    new Command\SyncMetadataCommand($dependencyFactory),
+    # Marca ou desmarca versões manualmente
+    new Command\VersionCommand($dependencyFactory),
+    # Comando próprio que cria arquivos de migration
+    new MakeMigrationCommand(),
+    # Mesmo comando de seed registrado como make:seed (cria arquivo de seed)
+    new MakeSeedCommand($connection, MakeSeedCommand::MAKE_NAME),
+    # Mesmo comando de seed registrado como migrations:seed (executa as seeds)
+    new MakeSeedCommand($connection, MakeSeedCommand::RUN_NAME),
+]);
+
+# Inicia a aplicação e processa o comando digitado pelo usuário
+$App->run();

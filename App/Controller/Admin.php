@@ -25,4 +25,22 @@ final class Admin extends Base
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
+     public function stock($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('stock'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
+     public function relatorio($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('relatorio'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
 }

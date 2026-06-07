@@ -7,20 +7,22 @@ namespace App\Database\Migration;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-final class Version20260526184108 extends AbstractMigration
+final class Version20260607155925 extends AbstractMigration
 {
+    # Descrição curta e legível do que esta migration faz
     public function getDescription(): string
     {
         return 'reports';
     }
 
+    # Aplica as alterações no banco (criação ou mudança de estrutura)
     public function up(Schema $schema): void
     {
         $table = $schema->createTable('reports');
 
         $table->addColumn('id',                'bigint', ['autoincrement' => true]);
         $table->addColumn('id_customer',       'bigint', ['notnull' => true]);
-        $table->addColumn('id_tipo_problema', 'bigint', ['notnull' => true]);
+        $table->addColumn('id_tipo_problema',       'bigint', ['notnull' => true]);
         $table->addColumn('cep',               'string',  ['length' => 255]);
         $table->addColumn('descricao',         'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('resolvido',         'boolean', ['default' => false]);
@@ -29,25 +31,13 @@ final class Version20260526184108 extends AbstractMigration
 
         $table->setPrimaryKey(['id']);
         $table->addIndex(['resolvido']);
-
-        $table->addForeignKeyConstraint(
-            'customer',
-            ['id_customer'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE'],
-            'fk_reports_customer'
-        );
-        $table->addForeignKeyConstraint(
-            'tipo_problema',
-            ['id_tipo_problema'],
-            ['id'],
-            ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'],
-            'fk_reports_tipo_problema'
-        );
+        $table->addForeignKeyConstraint('customer', ['id_customer'], ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_reports_customer');
+        $table->addForeignKeyConstraint('type_problem', ['id_tipo_problema'], ['id'], ['onDelete' => 'RESTRICT', 'onUpdate' => 'CASCADE'], 'fk_reports_tipo_problema');
     }
 
+    # Desfaz exatamente o que o método up() fez (rollback)
     public function down(Schema $schema): void
     {
-        $this->addSql('DROP TABLE reports CASCADE');
+        # escreva aqui o rollback do up()
     }
 }

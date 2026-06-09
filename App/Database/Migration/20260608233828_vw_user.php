@@ -2,24 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Database\Migration;
+use Phinx\Migration\AbstractMigration;
 
-use Doctrine\DBAL\Schema\Schema;
-use Doctrine\Migrations\AbstractMigration;
-
-final class Version20260607160108 extends AbstractMigration
+final class VwUser extends AbstractMigration
 {
-    # Descrição curta e legível do que esta migration faz
-    public function getDescription(): string
-    {
-        return 'vw_user';
-    }
 
-    # Aplica as alterações no banco (criação ou mudança de estrutura)
-    public function up(Schema $schema): void
+     /**
+     * Aplica as alterações no banco (Cria a View)
+     */
+    public function up(): void
     {
-       {
-            $this->addSql(<<<'SQL'
+        $this->execute(<<<'SQL'
             CREATE OR REPLACE VIEW vw_user AS
             SELECT
                 u.id,
@@ -33,11 +26,11 @@ final class Version20260607160108 extends AbstractMigration
                 MAX(c.contato) FILTER (WHERE c.tipo = 'EMAIL')    AS email,
                 MAX(c.contato) FILTER (WHERE c.tipo = 'CELULAR')  AS celular,
                 MAX(c.contato) FILTER (WHERE c.tipo = 'TELEFONE') AS telefone,
-                u.criado_em,
-                u.atualizado_em
+                u.data_cadastro,
+                u.data_atualizacao
             FROM public.users u
             LEFT JOIN public.contact c
-                   ON c.id_usuario = u.id
+                   ON c.id_users = u.id
             GROUP BY
                 u.id,
                 u.nome,
@@ -47,16 +40,17 @@ final class Version20260607160108 extends AbstractMigration
                 u.senha,
                 u.ativo,
                 u.administrador,
-                u.criado_em,
-                u.atualizado_em
+                u.data_cadastro,
+                u.data_atualizacao
         SQL);
-        }
     }
-    
 
-    # Desfaz exatamente o que o método up() fez (rollback)
-    public function down(Schema $schema): void
+    /**
+     * Desfaz as alterações (Remove a View no Rollback)
+     */
+    public function down(): void
     {
-        # escreva aqui o rollback do up()
+        $this->execute('DROP VIEW IF EXISTS vw_user');
     }
 }
+

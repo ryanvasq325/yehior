@@ -8,7 +8,6 @@ $app->get('/login', App\Controller\Login::class . ':login'); #->add(App\Middlewa
 $app->get('/report', App\Controller\Report::class . ':home'); #->add(App\Middleware\Middleware::web());
 
 
-
 $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/logout', App\Controller\Login::class . ':logout');
     $group->post('/authenticate', App\Controller\Login::class . ':authenticate');

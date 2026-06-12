@@ -1,12 +1,21 @@
 import Swal from "sweetalert2";
 import Validate from "../components/validate.js";
 import Request from "../components/requests.js";
+
 Inputmask('999.999.999-99').mask('#cpf');
 Inputmask('(99) 9999-9999').mask('#telefone');
 
-const mdPreRegister = document.getElementById('mdPreRegister');
+const mdPreRegister     = document.getElementById('mdPreRegister');
 const buttonPreRegister = document.getElementById('buttonPreRegister');
-const buttonLogin = document.getElementById('buttonLogin');
+const buttonLogin       = document.getElementById('buttonLogin');
+
+// Ajusta largura do botão Google para bater com o botão Entrar
+document.addEventListener('DOMContentLoaded', () => {
+    const googleBtn = document.querySelector('.g_id_signin');
+    if (googleBtn && buttonLogin) {
+        googleBtn.setAttribute('data-width', buttonLogin.offsetWidth);
+    }
+});
 
 mdPreRegister.addEventListener('click', () => {
     $('#modalPreRegisterUser').modal('show');
@@ -25,12 +34,12 @@ buttonLogin.addEventListener('click', async () => {
         return;
     }
 
-    const requests = new Request();
+    const requests     = new Request();
     const originalText = buttonLogin.textContent;
 
     try {
         buttonLogin.textContent = 'Autenticando, por favor aguarde...';
-        buttonLogin.disabled = true;
+        buttonLogin.disabled    = true;
 
         const response = await requests.setForm('form').post('/authentication/authenticate');
 
@@ -52,37 +61,25 @@ buttonLogin.addEventListener('click', async () => {
             timer: 1500,
             timerProgressBar: true
         }).then(() => {
-            // Redireciona para /admin/home (administrador) ou /home (cidadão)
-            // conforme o campo "redirect" retornado pelo backend
             window.location.href = response.redirect;
         });
 
     } catch (error) {
         let texto = 'Ocorreu um erro ao autenticar. Tente novamente!';
 
-        if (error.message?.includes('403')) {
-            texto = 'Verifique seu login e senha ou seu acesso ainda não foi liberado pelo administrador.';
-        } else if (error.message?.includes('429')) {
-            texto = 'Muitas tentativas. Tente novamente em alguns minutos.';
-        } else if (error.message?.includes('500')) {
-            texto = 'Erro interno. Tente novamente mais tarde.';
-        }
+        if (error.message?.includes('403'))      texto = 'Verifique seu login e senha ou seu acesso ainda não foi liberado pelo administrador.';
+        else if (error.message?.includes('429')) texto = 'Muitas tentativas. Tente novamente em alguns minutos.';
+        else if (error.message?.includes('500')) texto = 'Erro interno. Tente novamente mais tarde.';
 
-        Swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: texto,
-            timer: 2500,
-            timerProgressBar: true
-        });
+        Swal.fire({ icon: 'error', title: 'Ops...', text: texto, timer: 2500, timerProgressBar: true });
     } finally {
-        buttonLogin.disabled = false;
+        buttonLogin.disabled    = false;
         buttonLogin.textContent = originalText;
     }
 });
 
 buttonPreRegister.addEventListener('click', async () => {
-    const validou = Validate.SetForm('form').Validate();
+    const validou = Validate.SetForm('formPreRegister').Validate();
     if (!validou) {
         Swal.fire({
             icon: 'error',
@@ -94,14 +91,14 @@ buttonPreRegister.addEventListener('click', async () => {
         return;
     }
 
-    const requests = new Request();
+    const requests     = new Request();
     const originalText = buttonPreRegister.textContent;
 
     try {
         buttonPreRegister.textContent = 'Cadastrando, por favor aguarde...';
-        buttonPreRegister.disabled = true;
+        buttonPreRegister.disabled    = true;
 
-        const response = await requests.setForm('form').post('/authentication/preregister');
+        const response = await requests.setForm('formPreRegister').post('/authentication/preregister');
 
         if (!response.status) {
             Swal.fire({
@@ -125,30 +122,10 @@ buttonPreRegister.addEventListener('click', async () => {
         });
 
     } catch (error) {
-        const texto = error.data?.msg
-            || error.message
-            || 'Ocorreu um erro ao cadastrar o usuário!';
-
-        Swal.fire({
-            icon: 'error',
-            title: 'Ops...',
-            text: texto,
-            timer: 2500,
-            timerProgressBar: true
-        });
+        const texto = error.data?.msg || error.message || 'Ocorreu um erro ao cadastrar o usuário!';
+        Swal.fire({ icon: 'error', title: 'Ops...', text: texto, timer: 2500, timerProgressBar: true });
     } finally {
-        buttonPreRegister.disabled = false;
+        buttonPreRegister.disabled    = false;
         buttonPreRegister.textContent = originalText;
     }
-
-    // Ajusta largura do botão Google para bater com o botão Entrar
-    document.addEventListener('DOMContentLoaded', () => {
-        const btnEntrar = buttonLogin; // já tem a referência no topo
-        const googleBtn = document.querySelector('.g_id_signin');
-
-        if (googleBtn && btnEntrar) {
-            const width = btnEntrar.offsetWidth;
-            googleBtn.setAttribute('data-width', width);
-        }
-    });
 });

@@ -18,7 +18,8 @@
         "firebase/php-jwt": "^7.0",
         "league/oauth2-client": "^2.9",
         "league/oauth2-google": "^5.0",
-        "robmorgan/phinx": "*"
+        "robmorgan/phinx": "*",
+        "doctrine/dbal": "^4.4"
     },
     "require-dev": {
         "pestphp/pest": "^4.0",

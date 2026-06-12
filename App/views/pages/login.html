@@ -10,7 +10,9 @@
 </head>
 
 <body>
-  <form id="form">
+
+  <!-- MODAL FORA DO FORM DE LOGIN -->
+  <form id="formPreRegister">
     <div class="modal fade" id="modalPreRegisterUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
       aria-labelledby="modalPreRegisterUserLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -29,8 +31,7 @@
               </div>
               <div class="col-6">
                 <div class="form-floating mb-3">
-                  <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome"
-                    required>
+                  <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome" required>
                   <label for="sobrenome">Digite seu sobrenome *</label>
                 </div>
               </div>
@@ -60,8 +61,7 @@
               </div>
               <div class="col-6">
                 <div class="form-floating mb-3">
-                  <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control"
-                    placeholder="Senha" required>
+                  <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control" placeholder="Senha" required>
                   <label for="senhaCadastro">Informe sua senha *</label>
                 </div>
               </div>
@@ -75,8 +75,10 @@
         </div>
       </div>
     </div>
+  </form>
 
-
+  <!-- FORM DE LOGIN -->
+  <form id="form">
     <div class="container-fluid vh-100">
       <div class="row h-100">
 
@@ -99,82 +101,42 @@
                 <stop offset="100%" stop-color="#ffe94d" stop-opacity="0" />
               </radialGradient>
             </defs>
-
             <!-- chão -->
             <rect x="0" y="400" width="300" height="60" fill="#8fa882" />
-            <path d="M0 400 Q40 390 80 402 Q120 412 160 398 Q200 386 240 400 Q270 410 300 400 L300 420 L0 420 Z"
-              fill="#7a9870" />
+            <path d="M0 400 Q40 390 80 402 Q120 412 160 398 Q200 386 240 400 Q270 410 300 400 L300 420 L0 420 Z" fill="#7a9870" />
             <ellipse cx="200" cy="415" rx="55" ry="18" fill="url(#groundglow)" />
-
-            <!-- sombra da haste -->
-            <path d="M62 408 Q58 360 56 280 Q54 200 60 92" stroke="#4a5568" stroke-width="3" fill="none"
-              stroke-linecap="round" opacity="0.25" />
-
-            <!-- haste principal -->
-            <path d="M60 408 Q56 360 54 280 Q51 200 60 92" stroke="#2d3748" stroke-width="9" fill="none"
-              stroke-linecap="round" />
-            <path d="M60 408 Q56 360 54 280 Q51 200 60 92" stroke="#4a5a72" stroke-width="6" fill="none"
-              stroke-linecap="round" />
-            <path d="M61 405 Q57 357 55 277 Q52 197 61 90" stroke="#6b7e96" stroke-width="2" fill="none"
-              stroke-linecap="round" opacity="0.6" />
-
-            <!-- braço -->
-            <path d="M60 105 C62 88 70 75 95 68 C120 62 160 60 195 60" stroke="#2d3748" stroke-width="9" fill="none"
-              stroke-linecap="round" />
-            <path d="M60 105 C62 88 70 75 95 68 C120 62 160 60 195 60" stroke="#4a5a72" stroke-width="6" fill="none"
-              stroke-linecap="round" />
-            <path d="M61 103 C63 87 71 74 96 67 C121 61 161 59 196 59" stroke="#7a8fa8" stroke-width="2" fill="none"
-              stroke-linecap="round" opacity="0.5" />
-
-            <!-- haste vertical da luminária -->
+            <path d="M62 408 Q58 360 56 280 Q54 200 60 92" stroke="#4a5568" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.25" />
+            <path d="M60 408 Q56 360 54 280 Q51 200 60 92" stroke="#2d3748" stroke-width="9" fill="none" stroke-linecap="round" />
+            <path d="M60 408 Q56 360 54 280 Q51 200 60 92" stroke="#4a5a72" stroke-width="6" fill="none" stroke-linecap="round" />
+            <path d="M61 405 Q57 357 55 277 Q52 197 61 90" stroke="#6b7e96" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6" />
+            <path d="M60 105 C62 88 70 75 95 68 C120 62 160 60 195 60" stroke="#2d3748" stroke-width="9" fill="none" stroke-linecap="round" />
+            <path d="M60 105 C62 88 70 75 95 68 C120 62 160 60 195 60" stroke="#4a5a72" stroke-width="6" fill="none" stroke-linecap="round" />
+            <path d="M61 103 C63 87 71 74 96 67 C121 61 161 59 196 59" stroke="#7a8fa8" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5" />
             <line x1="195" y1="60" x2="196" y2="88" stroke="#2d3748" stroke-width="8" stroke-linecap="round" />
             <line x1="195" y1="60" x2="196" y2="88" stroke="#4a5a72" stroke-width="5" stroke-linecap="round" />
-
-            <!-- corpo da luminária -->
-            <path d="M170 88 Q183 84 210 84 Q227 84 238 88 L236 100 Q224 104 198 104 Q178 104 168 100 Z"
-              fill="#2d3748" />
+            <path d="M170 88 Q183 84 210 84 Q227 84 238 88 L236 100 Q224 104 198 104 Q178 104 168 100 Z" fill="#2d3748" />
             <path d="M172 89 Q184 85 210 85 Q226 85 236 89 L234 97 Q222 101 198 101 Q179 101 170 97 Z" fill="#3d4f68" />
             <path d="M175 90 Q186 87 210 87 Q224 87 233 90 L232 94 Q221 97 198 97 Q181 97 173 94 Z" fill="#4f6480" />
-            <path d="M178 88 Q185 86 198 86 Q210 86 220 88" stroke="#6b7e96" stroke-width="1.5" fill="none"
-              stroke-linecap="round" opacity="0.7" />
-
-            <!-- vidro/lente -->
+            <path d="M178 88 Q185 86 198 86 Q210 86 220 88" stroke="#6b7e96" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.7" />
             <path d="M168 100 Q183 110 198 112 Q215 110 236 100" stroke="#2d3748" stroke-width="2.5" fill="none" />
             <path d="M170 101 Q184 110 198 112 Q214 110 234 101" fill="#fffbe0" stroke="#e8c030" stroke-width="1.5" />
             <ellipse cx="198" cy="108" rx="24" ry="9" fill="#fff5a0" />
             <ellipse cx="198" cy="107" rx="15" ry="6" fill="#ffe84d" />
             <ellipse cx="198" cy="106" rx="7" ry="3" fill="#ffd200" />
             <ellipse cx="193" cy="105" rx="3" ry="2" fill="#fff8c0" opacity="0.8" />
-
-            <!-- halo de luz -->
             <ellipse cx="198" cy="108" rx="48" ry="40" fill="url(#glow)" opacity="0.85" />
-
-            <!-- raios de luz para baixo -->
-            <path d="M180 116 L165 165" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5"
-              stroke-linecap="round" opacity="0.55" />
-            <path d="M188 118 L178 170" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5"
-              stroke-linecap="round" opacity="0.5" />
-            <path d="M198 119 L198 172" stroke="#f5d060" stroke-width="1.8" stroke-dasharray="6,5"
-              stroke-linecap="round" opacity="0.55" />
-            <path d="M208 118 L218 170" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5"
-              stroke-linecap="round" opacity="0.5" />
-            <path d="M216 116 L231 163" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5"
-              stroke-linecap="round" opacity="0.55" />
-            <path d="M172 114 L150 158" stroke="#f5d060" stroke-width="1" stroke-dasharray="5,5" stroke-linecap="round"
-              opacity="0.3" />
-            <path d="M224 114 L246 157" stroke="#f5d060" stroke-width="1" stroke-dasharray="5,5" stroke-linecap="round"
-              opacity="0.3" />
-
-            <!-- halo no chão -->
+            <path d="M180 116 L165 165" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5" stroke-linecap="round" opacity="0.55" />
+            <path d="M188 118 L178 170" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5" stroke-linecap="round" opacity="0.5" />
+            <path d="M198 119 L198 172" stroke="#f5d060" stroke-width="1.8" stroke-dasharray="6,5" stroke-linecap="round" opacity="0.55" />
+            <path d="M208 118 L218 170" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5" stroke-linecap="round" opacity="0.5" />
+            <path d="M216 116 L231 163" stroke="#f5d060" stroke-width="1.5" stroke-dasharray="6,5" stroke-linecap="round" opacity="0.55" />
+            <path d="M172 114 L150 158" stroke="#f5d060" stroke-width="1" stroke-dasharray="5,5" stroke-linecap="round" opacity="0.3" />
+            <path d="M224 114 L246 157" stroke="#f5d060" stroke-width="1" stroke-dasharray="5,5" stroke-linecap="round" opacity="0.3" />
             <ellipse cx="198" cy="175" rx="42" ry="10" fill="#ffe566" opacity="0.22" />
             <ellipse cx="198" cy="178" rx="28" ry="6" fill="#ffd200" opacity="0.14" />
-
-            <!-- base do poste -->
             <rect x="48" y="404" width="26" height="7" rx="3" fill="#2d3748" />
             <rect x="44" y="409" width="34" height="5" rx="2" fill="#3d4f68" />
             <rect x="40" y="412" width="42" height="4" rx="2" fill="#4a5a72" opacity="0.7" />
-
-            <!-- árvores -->
             <ellipse cx="240" cy="395" rx="18" ry="22" fill="#4a7040" opacity="0.7" />
             <ellipse cx="252" cy="388" rx="15" ry="19" fill="#5a8050" opacity="0.65" />
             <ellipse cx="245" cy="382" rx="20" ry="22" fill="#6a9060" opacity="0.6" />
@@ -186,10 +148,8 @@
         </div>
 
         <!-- LADO DIREITO -->
-
         <div class="col-7 d-flex align-items-center justify-content-center right-panel">
           <div class="w-100" style="max-width: 360px;">
-
             <h2 class="text-white fw-medium mb-1">Entrar na plataforma</h2>
             <p class="text-secondary mb-4">Acesse sua conta para continuar</p>
 
@@ -228,11 +188,12 @@
         </div>
 
       </div>
+    </div>
   </form>
+
   <!-- Google GSI -->
   <script src="https://accounts.google.com/gsi/client" async></script>
-  </div>
-</body>
+
 {{ vite('resources/js/app.js') }}
 {{ vite('resources/js/pages/login.js') }}
 

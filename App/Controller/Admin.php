@@ -7,7 +7,7 @@ namespace App\Controller;
 
 final class Admin extends Base
 {
-    public function home($request, $response)
+    public function gestao($request, $response)
     {
         return $this->getTwig()
             ->render($response, $this->setView('admin'), [

@@ -1,38 +1,39 @@
 import Requests from './requests.js';
 
-const Charts = (() => {
-    let _id   = null;
-    let _url  = null;
-    let _type = null;
+export default class Charts {
 
-    const request = new Requests();
+    #id = null;
+    #url = null;
+    #type = null;
 
-    function setId(id) {
-        _id   = id;
-        _url  = null;
-        _type = null;
-        return api;
+    #request = new Requests();
+
+    setId(id) {
+        this.#id = id;
+        this.#url = null;
+        this.#type = null;
+        return this;
     }
 
-    function getData(url) {
-        _url = url;
-        return api;
+    getData(url) {
+        this.#url = url;
+        return this;
     }
 
-    function BAR() {
-        _type = 'bar';
-        return api;
+    BAR() {
+        this.#type = 'bar';
+        return this;
     }
 
-    function PIE() {
-        _type = 'pie';
-        return api;
+    PIE() {
+        this.#type = 'pie';
+        return this;
     }
 
-    async function render() {
-        const el = document.getElementById(_id);
+    async render() {
+        const el = document.getElementById(this.#id);
         if (!el) {
-            console.error(`Charts: elemento #${_id} não encontrado.`);
+            console.error(`Charts: elemento #${this.#id} não encontrado.`);
             return;
         }
 
@@ -40,18 +41,18 @@ const Charts = (() => {
         chart.showLoading();
 
         try {
-            const json   = await request.get(_url);
-            const option = _type === 'bar' ? buildBAR(json) : buildPIE(json);
+            const json = await this.#request.get(this.#url);
+            const option = this.#type === 'bar' ? this.#buildBAR(json) : this.#buildPIE(json);
             chart.hideLoading();
             chart.setOption(option);
             window.addEventListener('resize', () => chart.resize());
         } catch (err) {
             chart.hideLoading();
-            console.error(`Charts: erro ao buscar "${_url}" →`, err.message);
+            console.error(`Charts: erro ao buscar "${this.#url}" →`, err.message);
         }
     }
 
-    function buildBAR(json) {
+    #buildBAR(json) {
         return {
             tooltip: {
                 trigger: 'axis',
@@ -61,26 +62,26 @@ const Charts = (() => {
             xAxis: [{ type: 'category', data: json.labels }],
             yAxis: [{ type: 'value' }],
             series: json.series.map(s => ({
-                name:     s.name,
-                type:     'bar',
-                stack:    s.stack ?? null,
+                name: s.name,
+                type: 'bar',
+                stack: s.stack ?? null,
                 emphasis: { focus: 'series' },
-                data:     s.values,
+                data: s.values,
             })),
         };
     }
 
-    function buildPIE(json) {
+    #buildPIE(json) {
         return {
             tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
             legend: { orient: 'vertical', left: 'left' },
             series: [{
-                type:       'pie',
-                radius:     ['40%', '70%'],
-                padAngle:   5,
-                itemStyle:  { borderRadius: 8 },
-                data:       json.labels.map((label, i) => ({
-                    name:  label,
+                type: 'pie',
+                radius: ['40%', '70%'],
+                padAngle: 5,
+                itemStyle: { borderRadius: 8 },
+                data: json.labels.map((label, i) => ({
+                    name: label,
                     value: json.values[i],
                 })),
                 emphasis: {
@@ -89,9 +90,4 @@ const Charts = (() => {
             }],
         };
     }
-
-    const api = { setId, getData, BAR, PIE, render };
-    return api;
-})();
-
-window.Charts = Charts;
+}

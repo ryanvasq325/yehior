@@ -1,0 +1,78 @@
+<?php
+
+declare(strict_types=1);
+
+arch('Todos os arquivos usam strict types')
+    ->expect('App')
+    ->toUseStrictTypes();
+
+arch('Sem debug no código de produção')
+    ->expect('App')
+    ->not->toUse(['var_dump', 'die', 'dd', 'dump', 'print_r', 'dump_r']);
+
+arch('Sem funções perigosas')
+    ->expect('App')
+    ->not->toUse([
+        'eval',
+        'exec',
+        'shell_exec',
+        'system',
+        'passthru',
+        'proc_open',
+        'popen',
+    ]);
+
+//Controllers
+
+arch('Controllers devem ser classes finais')
+    ->expect('App\Controller')
+    ->toBeFinal()
+    ->ignoring('App\Controller\Base');
+
+arch('Controllers não acessam banco diretamente')
+    ->expect('App\Controller')
+    ->not->toUse(['PDO']);
+
+
+//Database
+arch('Database não depende de Controllers')
+    ->expect('App\Database')
+    ->not->toUse('App\Controller');
+
+arch('Database não depende de Middleware')
+    ->expect('App\Database')
+    ->not->toUse('App\Middleware');
+
+
+// Middleware
+arch('Middleware não acessa banco diretamente')
+    ->expect('App\Middleware')
+    ->not->toUse(['PDO']);
+
+arch('Middleware não depende de Controllers')
+    ->expect('App\Middleware')
+    ->not->toUse('App\Controller');
+
+
+//Helpers
+arch('Helpers não dependem de Controllers')
+    ->expect('App\Helpers')
+    ->not->toUse('App\Controller');
+
+arch('Helpers não acessam banco diretamente')
+    ->expect('App\Helpers')
+    ->not->toUse(['PDO']);
+
+//Traits
+arch('Traits devem ser traits')
+    ->expect('App\Trait')
+    ->toBeTraits();
+
+//Routes
+arch('Routes não acessam banco diretamente')
+    ->expect('App\Routes')
+    ->not->toUse(['PDO']);
+
+arch('Routes não instanciam Database diretamente')
+    ->expect('App\Routes')
+    ->not->toUse('App\Database');

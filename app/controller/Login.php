@@ -16,7 +16,6 @@ final class Login extends Base
                 ->withHeader('Content-Type', 'text/html')
                 ->withStatus(200);
         } catch (\Exception $e) {
-            
         }
     }
 
@@ -113,7 +112,6 @@ final class Login extends Base
                 'redirect'         => $user['administrador'] ? '/admin/home' : '/home',
                 'sessao_expira_em' => $_SESSION['user']['sessao_expira_em'],
             ], 200);
-
         } catch (\PDOException $e) {
             error_log('[auth][DB] ' . $e->getMessage());
             return $this->json($response, ['status' => false, 'msg' => 'Não foi possível concluir o login. Tente novamente.', 'id' => 0], 500);
@@ -198,7 +196,6 @@ final class Login extends Base
                 'msg'    => 'Pré-cadastro realizado com sucesso!',
                 'id'     => $id_usuario,
             ], 201);
-
         } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
             $conn->rollBack();
             return $this->json($response, [

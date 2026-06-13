@@ -6,9 +6,59 @@ arch('Todos os arquivos usam strict types')
     ->expect('App')
     ->toUseStrictTypes();
 
-arch('Sem debug no código de produção')
-    ->expect('App')
-    ->not->toUse(['var_dump', 'die', 'dd', 'dump', 'print_r', 'dump_r']);
+it('Sem debug no código de produção', function () {
+    $functions   = ['var_dump', 'dd', 'dump', 'print_r', 'dump_r'];
+    $exitTokens  = ['die', 'exit',];
+
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator(__DIR__ . '/../../App')
+    );
+
+    $found = [];
+
+    foreach ($files as $file) {
+        if ($file->getExtension() !== 'php') continue;
+
+        $content = file_get_contents($file->getRealPath());
+        $tokens  = token_get_all($content);
+
+        foreach ($tokens as $i => $token) {
+            if (!is_array($token)) continue;
+
+            // Detecta die/exit pelo token T_EXIT
+            if ($token[0] === T_EXIT) {
+                $found[] = sprintf(
+                    '%s na linha %d → %s',
+                    str_replace(__DIR__ . '/../../', '', $file->getRealPath()),
+                    $token[2],
+                    $token[1]
+                );
+                continue;
+            }
+
+            // Detecta funções de debug comuns
+            if ($token[0] !== T_STRING) continue;
+            if (!in_array($token[1], $functions, true)) continue;
+
+            for ($j = $i + 1; $j < count($tokens); $j++) {
+                if (is_array($tokens[$j]) && $tokens[$j][0] === T_WHITESPACE) continue;
+                if ($tokens[$j] === '(') {
+                    $found[] = sprintf(
+                        '%s na linha %d → %s()',
+                        str_replace(__DIR__ . '/../../', '', $file->getRealPath()),
+                        $token[2],
+                        $token[1]
+                    );
+                }
+                break;
+            }
+        }
+    }
+
+    expect($found)->toBeEmpty(
+        "Funções de debug encontradas:\n" . implode("\n", $found)
+    );
+});
 
 arch('Sem funções perigosas')
     ->expect('App')

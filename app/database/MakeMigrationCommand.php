@@ -1,7 +1,8 @@
 <?php
 
-# Ativa a checagem estrita de tipos em todo este arquivo
 declare(strict_types=1);
+
+# Ativa a checagem estrita de tipos em todo este arquivo
 
 # Namespace da camada de banco de dados (mapeia para a pasta app/database via PSR-4)
 namespace App\Database;

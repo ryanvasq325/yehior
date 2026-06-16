@@ -109,7 +109,7 @@ final class Login extends Base
                 'status'           => true,
                 'msg'              => 'Seja bem vindo de volta!',
                 'id'               => $user['id'],
-                'redirect'         => $user['administrador'] ? '/admin/status' : '/home',
+                'redirect'         => $user['administrador'] ? '/admin/gestao' : '/home',
                 'sessao_expira_em' => $_SESSION['user']['sessao_expira_em'],
             ], 200);
         } catch (\PDOException $e) {

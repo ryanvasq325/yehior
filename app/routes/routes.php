@@ -20,6 +20,7 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/listusers', App\Controller\Admin::class . ':listusers');
     $group->get('/stock', App\Controller\Admin::class . ':stock');
     $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
+    $group->get('/listsupplier', App\Controller\Admin::class . ':listsupplier');
 
     $group->group('/status', function (Slim\Routing\RouteCollectorProxy $group) {
         $group->get('/getsalesdata', App\Controller\Admin::class . ':getsalesdata');

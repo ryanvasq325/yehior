@@ -14,12 +14,14 @@ $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group
     $group->post('/preregister', App\Controller\Login::class . ':preRegister');
 });
 $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
-    $group->get('/status', App\Controller\Admin::class . ':gestao');
+    $group->get('/gestao', App\Controller\Admin::class . ':gestao');
     $group->get('/listreport', App\Controller\Admin::class . ':listreport');
+    $group->get('/users', App\Controller\Admin::class . ':users');
+    $group->get('/listusers', App\Controller\Admin::class . ':listusers');
     $group->get('/stock', App\Controller\Admin::class . ':stock');
     $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
 
-    $group->group('/gestao', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->group('/status', function (Slim\Routing\RouteCollectorProxy $group) {
         $group->get('/getsalesdata', App\Controller\Admin::class . ':getsalesdata');
         $group->get('/getabcranking', App\Controller\Admin::class . ':getabcranking');
     });

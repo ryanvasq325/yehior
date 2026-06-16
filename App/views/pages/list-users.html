@@ -1,0 +1,219 @@
+{% extends 'layouts/main.html' %}
+
+{% block css %}
+{{ vite('resources/css/pages/list-users.css') }}
+{% endblock %}
+
+{% block main %}
+
+<div class="modal fade" id="modalRegisterUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="modalRegisterUserLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalRegisterUserLabel">Cadastro de Usuário</h1>
+        <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
+              <label for="nome">Digite seu primeiro nome *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome" required>
+              <label for="sobrenome">Digite seu sobrenome *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="logradouro" name="logradourocpf" class="form-control" placeholder="CPF" required>
+              <label for="cpf">Logradouro *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="bairro" name="rg" class="form-control" placeholder="RG">
+              <label for="rg">Bairro *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
+              <label for="telefone">Digite seu telefone *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
+              <label for="email">Digite seu e-mail *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control" placeholder="Senha"
+                required>
+              <label for="senhaCadastro">Informe sua senha *</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="buttonRegister" class="btn btn-outline-success">
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-12 p-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0 text-white">
+      <i class="fa-solid fa-list-check me-2 text-amarelo"></i>Lista de Usuário
+    </h1>
+    <span class="badge text-bg-secondary fs-6 px-3 py-2">
+      {{ reports|length }} Usuarios(s)
+    </span>
+  </div>
+
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0 text-white">
+    </h1>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-amarelo px-4" id="mdRegister">
+        Novo Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+
+
+  <!-- ===================== FILTROS ===================== -->
+  <div class="admin-card mb-4">
+    <div class="admin-card-header">
+      <h6 class="mb-0 fw-semibold">
+        <i class="fa-solid fa-filter me-2 text-amarelo"></i>Filtros
+      </h6>
+    </div>
+    <div class="admin-card-body">
+      <form method="GET" action="/admin/list-users">
+        <div class="row g-3 align-items-end">
+
+          <div class="col-md-4">
+            <label class="form-label small text-secondary">Nome do Usuario</label>
+            <input type="text" name="nome" class="form-control form-control-sm" placeholder="Buscar por nome..."
+              value="{{ app.request.get('nome') }}">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label small text-secondary">Status</label>
+            <select name="ativo" class="form-select form-select-sm">
+              <option value="">Todos</option>
+              <option value="1" {{ app.request.get('ativo')=='1' ? 'selected' : '' }}>Ativo</option>
+              <option value="0" {{ app.request.get('ativo')=='0' ? 'selected' : '' }}>Inativo</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-amarelo btn-sm px-3 w-100">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <a href="/admin/listusers" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
+              <i class="fa-solid fa-xmark"></i>
+            </a>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TABELA -->
+  <div class="admin-card">
+    <div class="admin-card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">#</th>
+              <th>Nome</th>
+              <th>Cep</th>
+              <th>Logradouro</th>
+              <th>Bairro</th>
+              <th>Contato</th>
+              <th>E-mail</th>
+              <th>Data</th>
+              <th>Administrador</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL DETALHES -->
+<div class="modal fade" id="modalReport" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background:#1e2130; border:1px solid rgba(255,255,255,.1);">
+      <div class="modal-header border-bottom border-secondary">
+        <h5 class="modal-title fw-bold">
+          <i class="fa-solid fa-street-view me-2 text-amarelo"></i>Detalhes do Reporte
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">ID</span>
+            <strong id="m-id"></strong>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">Cidadao</span>
+            <strong id="m-cidadao"></strong>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">Tipo de problema</span>
+            <strong id="m-tipo"></strong>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">CEP</span>
+            <strong id="m-cep"></strong>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">Status</span>
+            <strong id="m-status"></strong>
+          </li>
+          <li class="d-flex justify-content-between">
+            <span class="text-secondary">Criado em</span>
+            <strong id="m-criado"></strong>
+          </li>
+          <li>
+            <span class="text-secondary d-block mb-1">Descricao</span>
+            <p id="m-descricao" class="mb-0 small p-3 rounded" style="background:rgba(255,255,255,.05)"></p>
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer border-top border-secondary">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{{ vite('resources/js/pages/list-users.js') }}
+{% endblock %}

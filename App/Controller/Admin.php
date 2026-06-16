@@ -16,6 +16,27 @@ final class Admin extends Base
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
+
+    public function users($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('users'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
+
+    public function listusers($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('list-users'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
+
     public function listreport($request, $response)
     {
         return $this->getTwig()

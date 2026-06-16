@@ -16,6 +16,11 @@
   color: #0D0F1A;
 }
 
+.bg-supplier {
+background: rgb(155, 121, 187);
+color
+
+}
 /* ===== METRIC CARDS ===== */
 .metric-card {
   transition: transform .15s, box-shadow .15s;

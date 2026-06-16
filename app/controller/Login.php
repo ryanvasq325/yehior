@@ -109,7 +109,7 @@ final class Login extends Base
                 'status'           => true,
                 'msg'              => 'Seja bem vindo de volta!',
                 'id'               => $user['id'],
-                'redirect'         => $user['administrador'] ? '/admin/home' : '/home',
+                'redirect'         => $user['administrador'] ? '/admin/status' : '/home',
                 'sessao_expira_em' => $_SESSION['user']['sessao_expira_em'],
             ], 200);
         } catch (\PDOException $e) {
@@ -165,6 +165,7 @@ final class Login extends Base
             'data_atualizacao' => date('Y-m-d H:i:s'),
         ];
 
+
         $conn = \App\Database\DB::connection();
 
         try {
@@ -209,6 +210,119 @@ final class Login extends Base
             return $this->json($response, [
                 'status' => false,
                 'msg'    => 'Erro ao realizar pré-cadastro. Tente novamente.',
+                'id'     => 0,
+            ], 500);
+        }
+    }
+    public function google($request, $response)
+    {
+        $form = $request->getParsedBody();
+
+        $credential        = $form['credential']    ?? null;
+        $form_g_csrf_token = $form['g_csrf_token']  ?? null;
+        $cookie_g_csrf_token = $_COOKIE['g_csrf_token'] ?? null;
+        $google_client_id  = $_ENV['GOOGLE_CLIENT_ID'] ?? null;
+
+        // Valida presença dos dados obrigatórios
+        if (is_null($credential) || is_null($form_g_csrf_token) || is_null($cookie_g_csrf_token)) {
+            return $this->json($response, ['status' => false, 'msg' => 'Dados do Google ausentes.', 'id' => 0], 400);
+        }
+
+        // Valida o CSRF token do Google (cookie deve bater com o campo do formulário)
+        if (!hash_equals($cookie_g_csrf_token, $form_g_csrf_token)) {
+            return $this->json($response, ['status' => false, 'msg' => 'Token CSRF inválido.', 'id' => 0], 403);
+        }
+
+        try {
+            $provider = new \League\OAuth2\Client\Provider\Google([
+                'clientId'     => $google_client_id,
+                'clientSecret' => '',
+                'redirectUri'  => '',
+            ]);
+
+            $httpResponse = $provider->getHttpClient()->request(
+                'GET',
+                'https://oauth2.googleapis.com/tokeninfo?id_token=' . urlencode($credential),
+                ['timeout' => 3, 'connect_timeout' => 2]
+            );
+
+            $claims = json_decode((string) $httpResponse->getBody(), true, flags: JSON_THROW_ON_ERROR);
+
+            // Valida que o token foi emitido para o seu app
+            if (($claims['aud'] ?? '') !== $google_client_id) {
+                return $this->json($response, ['status' => false, 'msg' => 'Token inválido.', 'id' => 0], 403);
+            }
+
+            $email = $claims['email'] ?? null;
+
+            if (is_null($email)) {
+                return $this->json($response, ['status' => false, 'msg' => 'E-mail não disponível na conta Google.', 'id' => 0], 400);
+            }
+
+            // Busca o usuário na vw_user pelo e-mail do Google
+            $qb = \App\Database\DB::select('*')->from('vw_user');
+            $qb->where('email = ' . $qb->createNamedParameter($email));
+            $user = $qb->fetchAssociative();
+
+            // Nenhuma conta encontrada com esse e-mail
+            if (!$user) {
+                return $this->json($response, [
+                    'status' => false,
+                    'msg'    => 'Nenhuma conta encontrada com este e-mail do Google. Faça o pré-cadastro.',
+                    'id'     => 0,
+                ], 404);
+            }
+
+            // Conta encontrada mas ainda não aprovada pelo administrador
+            if (!$user['ativo']) {
+                return $this->json($response, [
+                    'status' => false,
+                    'msg'    => 'Por enquanto você ainda não está autorizado, por favor aguarde...',
+                    'id'     => 0,
+                ], 403);
+            }
+
+            // Login válido — cria a sessão
+            session_regenerate_id(true);
+
+            unset($user['senha']);
+            $_SESSION['user']           = $user;
+            $_SESSION['user']['logado'] = true;
+
+            $lifetime = (int) (ini_get('session.gc_maxlifetime') ?: 3600);
+
+            $payload_jwt = [
+                'iat' => time(),
+                'exp' => time() + $lifetime,
+                'sub' => (string) $user['id'],
+            ];
+
+            $jwt      = \Firebase\JWT\JWT::encode($payload_jwt, SECRET_KEY, 'HS256');
+            $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+
+            setcookie('auth_token', $jwt, [
+                'expires'  => time() + $lifetime,
+                'path'     => '/',
+                'domain'   => $_SERVER['HTTP_HOST'],
+                'secure'   => $isSecure,
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]);
+
+            $_SESSION['user']['sessao_criada_em'] = (new \DateTime())->format('Y-m-d H:i:s');
+            $_SESSION['user']['sessao_expira_em'] = (new \DateTime())->modify("+{$lifetime} seconds")->format('Y-m-d H:i:s');
+
+            // Direciona para /adm se administrador, ou /home para usuários comuns
+            $destino = $user['administrador'] ? '/adm' : '/home';
+
+            return $response
+                ->withHeader('Location', $destino)
+                ->withStatus(302);
+        } catch (\Throwable $e) {
+            error_log('[auth][GOOGLE] ' . $e->getMessage());
+            return $this->json($response, [
+                'status' => false,
+                'msg'    => 'Falha na autenticação com o Google. Tente novamente.',
                 'id'     => 0,
             ], 500);
         }

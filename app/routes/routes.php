@@ -18,7 +18,7 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/listreport', App\Controller\Admin::class . ':listreport');
     $group->get('/users', App\Controller\Admin::class . ':users');
     $group->get('/listusers', App\Controller\Admin::class . ':listusers');
-    $group->get('/stock', App\Controller\Admin::class . ':stock');
+    $group->get('/products', App\Controller\Admin::class . ':products');
     $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
     $group->get('/listsupplier', App\Controller\Admin::class . ':listsupplier');
 

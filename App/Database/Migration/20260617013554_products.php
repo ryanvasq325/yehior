@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 use Phinx\Migration\AbstractMigration;
 
-final class Stock extends AbstractMigration
+final class Products extends AbstractMigration
 {
+   
     public function change(): void
     {
         $table = $this->table('stock', ['id' => false, 'primary_key' => ['id']]);
@@ -22,6 +23,5 @@ final class Stock extends AbstractMigration
             ->addColumn('data_atualizacao', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
             ->addForeignKey('id_supplier', 'supplier', 'id', ['delete' => 'CASCADE', 'update' => 'NO ACTION'])
             ->create();
-
     }
 }

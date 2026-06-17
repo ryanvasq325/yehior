@@ -7,13 +7,17 @@
 
 .btn-amarelo {
   background: var(--amarelo);
-  color: #0D0F1A;
+  color: #151a0d;
   font-weight: 700;
   border: none;
 }
 .btn-amarelo:hover {
   background: #ffd740;
   color: #0D0F1A;
+}
+
+.btn-close-red {
+  filter: invert(16%) sepia(99%) saturate(7404%) hue-rotate(4deg) brightness(95%) contrast(118%);
 }
 
 /* ===== ADMIN CARD ===== */
@@ -31,24 +35,6 @@
 
 .admin-card-body {
   padding: 1.25rem;
-}
-
-/* ===== CARDS RESUMO ===== */
-.summary-card {
-  background: var(--cinza-card);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: 12px;
-}
-
-.summary-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  flex-shrink: 0;
 }
 
 /* ===== FILTROS ===== */
@@ -91,4 +77,23 @@
 .table td {
   border-color: rgba(255,255,255,.05);
   vertical-align: middle;
+}
+
+/* ===== MODAL CADASTRO FORNECEDOR ===== */
+#modalRegisterSupplier .modal-dialog {
+  max-width: 720px;
+}
+
+#modalRegisterSupplier .modal-content {
+  background: var(--cinza-card);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 12px;
+}
+
+#modalRegisterSupplier .modal-header {
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+#modalRegisterSupplier .modal-footer {
+  border-top: 1px solid rgba(255,255,255,.07);
 }

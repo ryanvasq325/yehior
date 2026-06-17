@@ -1,17 +1,17 @@
 {% extends 'layouts/main.html' %}
 
 {% block css %}
-{{ vite('resources/css/pages/list-fornecedor.css') }}
+{{ vite('resources/css/pages/list-supplier.css') }}
 {% endblock %}
 
 {% block main %}
 
-<div class="modal fade" id="modalRegisterUser" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-  aria-labelledby="modalRegisterUserLabel" aria-hidden="true">
+<div class="modal fade" id="modalRegisterSupplier" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="modalRegisterSupplierLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="modalRegisterUserLabel">Cadastro de Fornecedor</h1>
+        <h1 class="modal-title fs-5" id="modalRegisterSupplierLabel">Cadastro de Fornecedor</h1>
         <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -30,20 +30,21 @@
           </div>
           <div class="col-6">
             <div class="form-floating mb-3">
-              <input type="text" id="logradouro" name="logradourocpf" class="form-control" placeholder="CPF" required>
-              <label for="cpf">Cep *</label>
+              <input type="text" id="cep" name="cep" class="form-control" placeholder="CEP" required>
+              <label for="cep">CEP *</label>
             </div>
           </div>
           <div class="col-6">
             <div class="form-floating mb-3">
-              <input type="text" id="logradouro" name="logradourocpf" class="form-control" placeholder="CPF" required>
-              <label for="cpf">Logradouro *</label>
+              <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder="Logradouro"
+                required>
+              <label for="logradouro">Logradouro *</label>
             </div>
           </div>
           <div class="col-6">
             <div class="form-floating mb-3">
-              <input type="text" id="bairro" name="rg" class="form-control" placeholder="RG">
-              <label for="rg">Bairro *</label>
+              <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
+              <label for="bairro">Bairro *</label>
             </div>
           </div>
           <div class="col-6">
@@ -73,10 +74,10 @@
 
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
     <h1 class="h2 mb-0 text-white">
-      <i class="fa-solid fa-list-check me-2 text-amarelo"></i>Lista de Usuário
+      <i class="fa-solid fa-list-check me-2 text-amarelo"></i>Lista de Fornecedores
     </h1>
     <span class="badge text-bg-secondary fs-6 px-3 py-2">
-      {{ reports|length }} Usuarios(s)
+      {{ reports|length }} Fornecedor(es)
     </span>
   </div>
 
@@ -85,7 +86,7 @@
     </h1>
     <div class="d-flex gap-2">
       <button type="button" class="btn btn-amarelo px-4" id="mdRegister">
-        Novo Usuario
+        Novo Fornecedor
       </button>
     </div>
   </div>
@@ -101,11 +102,11 @@
       </h6>
     </div>
     <div class="admin-card-body">
-      <form method="GET" action="/admin/list-users">
+      <form method="GET" action="/admin/list-supplier" class="mb-0">
         <div class="row g-3 align-items-end">
 
           <div class="col-md-4">
-            <label class="form-label small text-secondary">Nome do Usuario</label>
+            <label class="form-label small text-secondary">Nome do Fornecedor</label>
             <input type="text" name="nome" class="form-control form-control-sm" placeholder="Buscar por nome..."
               value="{{ app.request.get('nome') }}">
           </div>
@@ -123,7 +124,7 @@
             <button type="submit" class="btn btn-amarelo btn-sm px-3 w-100">
               <i class="fa-solid fa-magnifying-glass"></i>
             </button>
-            <a href="/admin/listusers" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
+            <a href="/admin/list-supplier" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
               <i class="fa-solid fa-xmark"></i>
             </a>
           </div>
@@ -159,60 +160,9 @@
       </div>
     </div>
   </div>
-
 </div>
-
-<!-- MODAL DETALHES -->
-<div class="modal fade" id="modalReport" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background:#1e2130; border:1px solid rgba(255,255,255,.1);">
-      <div class="modal-header border-bottom border-secondary">
-        <h5 class="modal-title fw-bold">
-          <i class="fa-solid fa-street-view me-2 text-amarelo"></i>Detalhes do Reporte
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">ID</span>
-            <strong id="m-id"></strong>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">Cidadao</span>
-            <strong id="m-cidadao"></strong>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">Tipo de problema</span>
-            <strong id="m-tipo"></strong>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">CEP</span>
-            <strong id="m-cep"></strong>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">Status</span>
-            <strong id="m-status"></strong>
-          </li>
-          <li class="d-flex justify-content-between">
-            <span class="text-secondary">Criado em</span>
-            <strong id="m-criado"></strong>
-          </li>
-          <li>
-            <span class="text-secondary d-block mb-1">Descricao</span>
-            <p id="m-descricao" class="mb-0 small p-3 rounded" style="background:rgba(255,255,255,.05)"></p>
-          </li>
-        </ul>
-      </div>
-      <div class="modal-footer border-top border-secondary">
-        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 {% endblock %}
 
 {% block script %}
-{{ vite('resources/js/pages/list-users.js') }}
+{{ vite('resources/js/pages/list-supplier.js') }}
 {% endblock %}

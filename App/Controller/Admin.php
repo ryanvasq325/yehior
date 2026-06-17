@@ -55,10 +55,10 @@ final class Admin extends Base
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
-    public function stock($request, $response)
+    public function products($request, $response)
     {
         return $this->getTwig()
-            ->render($response, $this->setView('stock'), [
+            ->render($response, $this->setView('products'), [
                 'titulo' => '',
             ])
             ->withHeader('Content-Type', 'text/html')

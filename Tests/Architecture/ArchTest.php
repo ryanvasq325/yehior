@@ -7,8 +7,7 @@ arch('Todos os arquivos usam strict types')
     ->toUseStrictTypes();
 
 it('Sem debug no código de produção', function () {
-    $functions   = ['var_dump', 'dd', 'dump', 'print_r', 'dump_r'];
-    $exitTokens  = ['die', 'exit',];
+    $functions   = ['var_dump', 'dd', 'dump', 'print_r', 'dump_r', 'die', 'exit'];
 
     $files = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator(__DIR__ . '/../../App')

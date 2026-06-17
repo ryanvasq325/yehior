@@ -1,0 +1,293 @@
+{% extends 'layouts/main.html' %}
+
+{% block css %}
+{{ vite('resources/css/pages/list-products.css') }}
+{% endblock %}
+
+{% block main %}
+
+<div class="col-12 p-4">
+
+  <!-- Cabeçalho -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+    <h1 class="h2 mb-0 text-white">
+      <i class="fa-solid fa-boxes-stacked me-2 text-amarelo"></i>Estoque
+    </h1>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-amarelo px-4" id="mdProduct">
+        Novo Produto
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== FILTROS ===================== -->
+  <div class="admin-card mb-4">
+    <div class="admin-card-header">
+      <h6 class="mb-0 fw-semibold">
+        <i class="fa-solid fa-filter me-2 text-amarelo"></i>Filtros
+      </h6>
+    </div>
+    <div class="admin-card-body">
+      <form method="GET" action="/admin/products">
+        <div class="row g-3 align-items-end">
+
+          <div class="col-md-4">
+            <label class="form-label small text-secondary">Nome do item</label>
+            <input type="text" name="nome" class="form-control form-control-sm" placeholder="Buscar por nome..."
+              value="{{ app.request.get('nome') }}">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label small text-secondary">Fornecedor</label>
+            <select name="id_supplier" class="form-select form-select-sm">
+              <option value="">Todos</option>
+              {% if suppliers is defined %}
+              {% for supplier in suppliers %}
+              <option value="{{ supplier.id }}" {{ app.request.get('id_supplier')==supplier.id ? 'selected' : '' }}>
+                {{ supplier.nome_fantasia }}
+              </option>
+              {% endfor %}
+              {% endif %}
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label small text-secondary">Status</label>
+            <select name="ativo" class="form-select form-select-sm">
+              <option value="">Todos</option>
+              <option value="1" {{ app.request.get('ativo')=='1' ? 'selected' : '' }}>Ativo</option>
+              <option value="0" {{ app.request.get('ativo')=='0' ? 'selected' : '' }}>Inativo</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-amarelo btn-sm px-3 w-100">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+            <a href="/admin/products" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
+              <i class="fa-solid fa-xmark"></i>
+            </a>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== CARDS RESUMO ===================== -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="summary-card d-flex align-items-center gap-3 p-3">
+        <div class="summary-icon bg-primary">
+          <i class="fa-solid fa-cubes-stacked"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold">{{ totalItens | default(0) }}</div>
+          <div class="small text-secondary">Total de itens</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-card d-flex align-items-center gap-3 p-3">
+        <div class="summary-icon bg-success">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold">{{ totalAtivos | default(0) }}</div>
+          <div class="small text-secondary">Itens ativos</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="summary-card d-flex align-items-center gap-3 p-3">
+        <div class="summary-icon bg-warning">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </div>
+        <div>
+          <div class="fs-4 fw-bold">{{ totalInativos | default(0) }}</div>
+          <div class="small text-secondary">Itens inativos</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== TABELA ===================== -->
+  <div class="admin-card">
+    <div class="admin-card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-dark table-hover mb-0">
+          <thead>
+            <tr>
+              <th class="ps-4">#</th>
+              <th>Nome</th>
+              <th>Cód. Barras</th>
+              <th>Fornecedor</th>
+              <th>Unidade</th>
+              <th>Preço Compra</th>
+              <th>Descrição</th>
+              <th>Status</th>
+              <th>Cadastrado em</th>
+              <th class="text-center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if products is defined and products|length > 0 %}
+            {% for item in products %}
+            <tr class="{{ item.excluido ? 'opacity-50' : '' }}">
+              <td class="ps-4 text-secondary">{{ item.id }}</td>
+              <td class="fw-semibold">{{ item.nome }}</td>
+              <td class="text-secondary small font-monospace">
+                {{ item.codigo_barra ?? '—' }}
+              </td>
+              <td>{{ item.supplier_nome ?? '—' }}</td>
+              <td>
+                <span class="badge text-bg-secondary">{{ item.unidade }}</span>
+              </td>
+              <td class="text-amarelo fw-semibold">
+                R$ {{ item.preco_compra | number_format(2, ',', '.') }}
+              </td>
+              <td class="text-secondary small">
+                {{ item.descricao | slice(0, 40) ~ (item.descricao|length > 40 ? '...' : '') }}
+              </td>
+              <td>
+                {% if item.excluido %}
+                <span class="badge text-bg-danger">
+                  <i class="fa-solid fa-trash me-1"></i>Excluído
+                </span>
+                {% elseif item.ativo %}
+                <span class="badge text-bg-success">
+                  <i class="fa-solid fa-circle-check me-1"></i>Ativo
+                </span>
+                {% else %}
+                <span class="badge text-bg-secondary">
+                  <i class="fa-solid fa-circle-xmark me-1"></i>Inativo
+                </span>
+                {% endif %}
+              </td>
+              <td class="text-secondary small">{{ item.criado_em | date('d/m/Y') }}</td>
+              <td class="text-center">
+                <div class="d-flex gap-2 justify-content-center">
+
+                  <!-- Ver detalhes -->
+                  <button class="btn btn-sm btn-outline-light" title="Ver detalhes" data-bs-toggle="modal"
+                    data-bs-target="#modalProducts" data-id="{{ item.id }}" data-nome="{{ item.nome }}"
+                    data-codigo="{{ item.codigo_barra ?? '—' }}" data-fornecedor="{{ item.supplier_nome ?? '—' }}"
+                    data-unidade="{{ item.unidade }}" data-preco="{{ item.preco_compra }}"
+                    data-descricao="{{ item.descricao }}" data-ativo="{{ item.ativo ? '1' : '0' }}"
+                    data-excluido="{{ item.excluido ? '1' : '0' }}"
+                    data-criado="{{ item.criado_em | date('d/m/Y H:i') }}"
+                    data-atualizado="{{ item.atualizado_em | date('d/m/Y H:i') }}">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+
+                  <!-- Editar -->
+                  {% if not item.excluido %}
+                  <a href="/admin/products/{{ item.id }}/editar" class="btn btn-sm btn-outline-primary" title="Editar">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </a>
+
+                  <!-- Ativar / Desativar -->
+                  <form method="POST" action="/admin/products/{{ item.id }}/status">
+                    <input type="hidden" name="_method" value="PATCH">
+                    <input type="hidden" name="ativo" value="{{ item.ativo ? '0' : '1' }}">
+                    <button type="submit"
+                      class="btn btn-sm {{ item.ativo ? 'btn-outline-warning' : 'btn-outline-success' }}"
+                      title="{{ item.ativo ? 'Desativar' : 'Ativar' }}">
+                      <i class="fa-solid {{ item.ativo ? 'fa-toggle-off' : 'fa-toggle-on' }}"></i>
+                    </button>
+                  </form>
+                  {% endif %}
+
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+              <td colspan="10" class="text-center text-secondary py-5">
+                <i class="fa-solid fa-box-open fa-2x mb-2 d-block"></i>
+                Nenhum item encontrado no estoque.
+              </td>
+            </tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===================== MODAL DETALHES ===================== -->
+<div class="modal fade" id="modalProducts" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="modalProductsLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalProductsLabel">Cadastro de Produto</h1>
+        <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
+              <label for="nome">Digite Nome do Produto *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="codigo_barra" name="codigo_barra" class="form-control"
+                placeholder="Código de Barras" required>
+              <label for="codigo_barra">Digite o Código de Barras *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="unidade" name="unidade" class="form-control" placeholder="unidade" required>
+              <label for="unidade">Unidade *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="preco_compra" name="preco_compra" class="form-control"
+                placeholder="Preço de Compra" required>
+              <label for="preco_compra">Preço de Compra *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
+              <label for="bairro">Bairro *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-floating mb-3">
+              <input type="text" id="descricao" name="descricao" class="form-control" placeholder="Descrição">
+              <label for="descricao">Descrição *</label>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="checkAtivo">
+              <label class="form-check-label" for="checkAtivo">
+                Ativo
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="buttonRegister" class="btn btn-outline-success">
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+{{ vite('resources/js/pages/list-products.js') }}
+{% endblock %}

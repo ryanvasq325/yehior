@@ -16,153 +16,146 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
-              <label for="nome">Digite nome/razao social *</label>
-            </div>
+          <div class="modal-body">
+            <form id="formSupplier">
+              <input type="hidden" id="action" name="action" value="">
+              <input type="hidden" id="id" name="id" value="">
+              <div class="col-6">
+                <div class="form-floating mb-3">
+                  <input type="text" id="nomeExibicao" name="nomeExibicao" class="form-control" placeholder="nomeExibicao" required>
+                  <label for="nomeExibicao">Digite nome/razao social *</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-floating mb-3">
+                  <input type="text" id="nomeLegal" name="nomeLegal" class="form-control" placeholder="nomeLegal"
+                    required>
+                  <label for="nomeLegal">Digite seu sobre/fantasia *</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-floating mb-3">
+                  <input type="text" id="cep" name="cep" class="form-control" placeholder="CEP" required>
+                  <label for="cep">CEP *</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-floating mb-3">
+                  <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
+                  <label for="telefone">Digite seu telefone *</label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="form-floating mb-3">
+                  <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
+                  <label for="email">Digite seu e-mail *</label>
+                </div>
+              </div>
           </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome" required>
-              <label for="sobrenome">Digite seu sobrenome/fantasia *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="cep" name="cep" class="form-control" placeholder="CEP" required>
-              <label for="cep">CEP *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder="Logradouro"
-                required>
-              <label for="logradouro">Logradouro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
-              <label for="bairro">Bairro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
-              <label for="telefone">Digite seu telefone *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
-              <label for="email">Digite seu e-mail *</label>
-            </div>
-          </div>
+        </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="buttonRegister" class="btn btn-outline-success">
+            Salvar
+          </button>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" id="buttonRegister" class="btn btn-outline-success">
-          Salvar
+    </div>
+  </div>
+
+  <div class="col-12 p-4">
+
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <h1 class="h2 mb-0 text-white">
+        <i class="fa-solid fa-list-check me-2 text-amarelo"></i>Lista de Fornecedores
+      </h1>
+      <span class="badge text-bg-secondary fs-6 px-3 py-2">
+        {{ reports|length }} Fornecedor(es)
+      </span>
+    </div>
+
+    <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <h1 class="h2 mb-0 text-white">
+      </h1>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-amarelo px-4" id="mdRegister">
+          Novo Fornecedor
         </button>
       </div>
     </div>
-  </div>
-</div>
 
-<div class="col-12 p-4">
+    <!-- FILTROS -->
 
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-    <h1 class="h2 mb-0 text-white">
-      <i class="fa-solid fa-list-check me-2 text-amarelo"></i>Lista de Fornecedores
-    </h1>
-    <span class="badge text-bg-secondary fs-6 px-3 py-2">
-      {{ reports|length }} Fornecedor(es)
-    </span>
-  </div>
 
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-    <h1 class="h2 mb-0 text-white">
-    </h1>
-    <div class="d-flex gap-2">
-      <button type="button" class="btn btn-amarelo px-4" id="mdRegister">
-        Novo Fornecedor
-      </button>
+    <!-- ===================== FILTROS ===================== -->
+    <div class="admin-card mb-4">
+      <div class="admin-card-header">
+        <h6 class="mb-0 fw-semibold">
+          <i class="fa-solid fa-filter me-2 text-amarelo"></i>Filtros
+        </h6>
+      </div>
+      <div class="admin-card-body">
+        <form method="GET" action="/admin/list-supplier" class="mb-0">
+          <div class="row g-3 align-items-end">
+
+            <div class="col-md-4">
+              <label class="form-label small text-secondary">Nome do Fornecedor</label>
+              <input type="text" name="nome" class="form-control form-control-sm" placeholder="Buscar por nome..."
+                value="{{ app.request.get('nome') }}">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-secondary">Status</label>
+              <select name="ativo" class="form-select form-select-sm">
+                <option value="">Todos</option>
+                <option value="1" {{ app.request.get('ativo')=='1' ? 'selected' : '' }}>Ativo</option>
+                <option value="0" {{ app.request.get('ativo')=='0' ? 'selected' : '' }}>Inativo</option>
+              </select>
+            </div>
+
+            <div class="col-md-2 d-flex gap-2">
+              <button type="submit" class="btn btn-amarelo btn-sm px-3 w-100">
+                <i class="fa-solid fa-magnifying-glass"></i>
+              </button>
+              <a href="/admin/list-supplier" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
+                <i class="fa-solid fa-xmark"></i>
+              </a>
+            </div>
+
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- FILTROS -->
+    <!-- TABELA -->
+    <div class="admin-card">
+      <div class="admin-card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th class="ps-4">#</th>
+                <th>Nome</th>
+                <th>Cep</th>
+                <th>Logradouro</th>
+                <th>Bairro</th>
+                <th>Contato</th>
+                <th>E-mail</th>
+                <th>Data</th>
+                <th>Administrador</th>
+                <th class="text-center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
 
-
-  <!-- ===================== FILTROS ===================== -->
-  <div class="admin-card mb-4">
-    <div class="admin-card-header">
-      <h6 class="mb-0 fw-semibold">
-        <i class="fa-solid fa-filter me-2 text-amarelo"></i>Filtros
-      </h6>
-    </div>
-    <div class="admin-card-body">
-      <form method="GET" action="/admin/list-supplier" class="mb-0">
-        <div class="row g-3 align-items-end">
-
-          <div class="col-md-4">
-            <label class="form-label small text-secondary">Nome do Fornecedor</label>
-            <input type="text" name="nome" class="form-control form-control-sm" placeholder="Buscar por nome..."
-              value="{{ app.request.get('nome') }}">
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label small text-secondary">Status</label>
-            <select name="ativo" class="form-select form-select-sm">
-              <option value="">Todos</option>
-              <option value="1" {{ app.request.get('ativo')=='1' ? 'selected' : '' }}>Ativo</option>
-              <option value="0" {{ app.request.get('ativo')=='0' ? 'selected' : '' }}>Inativo</option>
-            </select>
-          </div>
-
-          <div class="col-md-2 d-flex gap-2">
-            <button type="submit" class="btn btn-amarelo btn-sm px-3 w-100">
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-            <a href="/admin/list-supplier" class="btn btn-outline-secondary btn-sm px-3 w-100" title="Limpar filtros">
-              <i class="fa-solid fa-xmark"></i>
-            </a>
-          </div>
-
+            </tbody>
+          </table>
         </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- TABELA -->
-  <div class="admin-card">
-    <div class="admin-card-body p-0">
-      <div class="table-responsive">
-        <table class="table table-dark table-hover mb-0">
-          <thead>
-            <tr>
-              <th class="ps-4">#</th>
-              <th>Nome</th>
-              <th>Cep</th>
-              <th>Logradouro</th>
-              <th>Bairro</th>
-              <th>Contato</th>
-              <th>E-mail</th>
-              <th>Data</th>
-              <th>Administrador</th>
-              <th class="text-center">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
 
-{% block script %}
-{{ vite('resources/js/pages/list-supplier.js') }}
-{% endblock %}
+  {% block script %}
+  {{ vite('resources/js/pages/list-supplier.js') }}
+  {% endblock %}

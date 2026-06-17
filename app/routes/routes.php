@@ -32,4 +32,8 @@ $app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->post('/insert', App\Controller\Product::class . ':insert');
     $group->post('/update', App\Controller\Product::class . ':update');
 });
+$app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->post('/insert', App\Controller\Supplier::class . ':insert');
+    $group->post('/update', App\Controller\Supplier::class . ':update');
+});
 

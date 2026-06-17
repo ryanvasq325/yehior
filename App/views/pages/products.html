@@ -228,57 +228,61 @@
         <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
-              <label for="nome">Digite Nome do Produto *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="codigo_barra" name="codigo_barra" class="form-control"
-                placeholder="Código de Barras" required>
-              <label for="codigo_barra">Digite o Código de Barras *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="unidade" name="unidade" class="form-control" placeholder="unidade" required>
-              <label for="unidade">Unidade *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="preco_compra" name="preco_compra" class="form-control"
-                placeholder="Preço de Compra" required>
-              <label for="preco_compra">Preço de Compra *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
-              <label for="bairro">Bairro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="descricao" name="descricao" class="form-control" placeholder="Descrição">
-              <label for="descricao">Descrição *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="checkAtivo">
-              <label class="form-check-label" for="checkAtivo">
-                Ativo
-              </label>
-            </div>
-          </div>
-        </div>
+        <form id="formProduct">
+          <input type="hidden" id="action" name="action" value="">
+          <input type="hidden" id="id" name="id" value="">
+              <div class="row">
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
+                    <label for="nome">Digite Nome do Produto *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="codigo_barra" name="codigo_barra" class="form-control"
+                      placeholder="Código de Barras" required>
+                    <label for="codigo_barra">Digite o Código de Barras *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="unidade" name="unidade" class="form-control" placeholder="unidade" required>
+                    <label for="unidade">Unidade *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="preco_compra" name="preco_compra" class="form-control"
+                      placeholder="Preço de Compra" required>
+                    <label for="preco_compra">Preço de Compra *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
+                    <label for="bairro">Bairro *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" id="descricao" name="descricao" class="form-control" placeholder="Descrição">
+                    <label for="descricao">Descrição *</label>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="checkAtivo">
+                    <label class="form-check-label" for="checkAtivo">
+                      Ativo
+                    </label>
+                  </div>
+                </div>
+              </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" id="buttonRegister" class="btn btn-outline-success">
+        <button type="button" id="buttonRegister" class="btn btn-outline-success" form="formProduct">
           Salvar
         </button>
       </div>

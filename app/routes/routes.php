@@ -26,4 +26,10 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
         $group->get('/getsalesdata', App\Controller\Admin::class . ':getsalesdata');
         $group->get('/getabcranking', App\Controller\Admin::class . ':getabcranking');
     });
+
 });
+$app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->post('/insert', App\Controller\Product::class . ':insert');
+    $group->post('/update', App\Controller\Product::class . ':update');
+});
+

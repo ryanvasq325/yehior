@@ -1,6 +1,8 @@
 import Requests from "../components/requests.js";
 import Validate from "../components/validate.js";
+import DataTables from '../components/data-tables.js';
 
+const table = DataTables.SetId('table-supplier').setRequestVariables([]).post('/fornecedor/listingdata');
 const Action = document.getElementById('action');
 const Id     = document.getElementById('id');
 const Cnpj   = document.getElementById('numeroDocumento');
@@ -88,3 +90,58 @@ async function applyChanges() {
 Insert.addEventListener('click', async () => {
     await applyChanges();
 });
+
+
+async function deleteSupplier() {
+    const requests = new Requests();
+    try {
+        const response = await requests.setForm('formSupplier').post('/fornecedor/delete');
+        return response;
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: `Restrição: ${error}`,
+            timer: 3000,
+            timerProgressBar: true,
+        });
+    }
+}
+
+async function ShowModal(id) {
+    Id.value = id;
+    Swal.fire({
+        title: "Atenção!",
+        text: "Deseja realmente excluir este registro?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Excluir"
+    }).then(async (result) => {
+        if (result.isConfirmed) {
+            const response = await deleteSupplier();
+            if (!response.status) {
+                Swal.fire({
+                    title: "Erro!",
+                    text: response.msg,
+                    icon: "error",
+                    timer: 3000,
+                    timerProgressBar: true
+                });
+                return;
+            }
+            Swal.fire({
+                title: "Removido!",
+                text: "Registro excluído com sucesso.",
+                icon: "success",
+                timer: 2000,
+                timerProgressBar: true
+            }).then(async () => {
+                table.ajax.reload();
+            });
+        }
+    });
+}
+
+window.ShowModal = ShowModal;

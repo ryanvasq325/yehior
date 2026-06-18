@@ -15,11 +15,11 @@ class TestDataSeeder extends AbstractSeed
     {
         // Customers
         $customers = [
-            ['id' => 1, 'nome_fantasia' => 'João',    'sobrenome_razao' => 'Silva',    'cpf_cnpj' => '11111111111'],
-            ['id' => 2, 'nome_fantasia' => 'Maria',   'sobrenome_razao' => 'Souza',    'cpf_cnpj' => '22222222222'],
-            ['id' => 3, 'nome_fantasia' => 'Carlos',  'sobrenome_razao' => 'Pereira',  'cpf_cnpj' => '33333333333'],
-            ['id' => 4, 'nome_fantasia' => 'Ana',     'sobrenome_razao' => 'Lima',     'cpf_cnpj' => '44444444444'],
-            ['id' => 5, 'nome_fantasia' => 'Pedro',   'sobrenome_razao' => 'Costa',    'cpf_cnpj' => '55555555555'],
+            ['id' => 1, 'nome' => 'João',    'sobrenome' => 'Silva',    'cpf' => '11111111111', 'rg' => '111111111'],
+            ['id' => 2, 'nome' => 'Maria',   'sobrenome' => 'Souza',    'cpf' => '22222222222', 'rg' => '222222222'],
+            ['id' => 3, 'nome' => 'Carlos',  'sobrenome' => 'Pereira',  'cpf' => '33333333333', 'rg' => '333333333'],
+            ['id' => 4, 'nome' => 'Ana',     'sobrenome' => 'Lima',     'cpf' => '44444444444', 'rg' => '444444444'],
+            ['id' => 5, 'nome' => 'Pedro',   'sobrenome' => 'Costa',    'cpf' => '55555555555', 'rg' => '555555555'],
         ];
 
         foreach ($customers as $c) {
@@ -27,9 +27,10 @@ class TestDataSeeder extends AbstractSeed
             if (!$exists) {
                 $this->table('customer')->insert([
                     'id'               => $c['id'],
-                    'nome_fantasia'    => $c['nome_fantasia'],
-                    'sobrenome_razao'  => $c['sobrenome_razao'],
-                    'cpf_cnpj'         => $c['cpf_cnpj'],
+                    'nome'    => $c['nome'],
+                    'sobrenome'  => $c['sobrenome'],
+                    'cpf'         => $c['cpf'],
+                    'rg'         => $c['rg'],
                     'ativo'            => true,
                     'data_cadastro'    => date('Y-m-d H:i:s'),
                     'data_atualizacao' => date('Y-m-d H:i:s'),

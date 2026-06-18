@@ -122,4 +122,63 @@ final class Admin extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Erro ao buscar dados.'], 500);
         }
     }
+    public function bytipo($request, $response)
+    {
+        try {
+            $qb = \App\Database\DB::select('tp.descricao', 'COUNT(r.id) AS total')
+                ->from('reports', 'r')
+                ->join('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
+                ->groupBy('tp.descricao')
+                ->orderBy('total', 'DESC');
+
+            $rows = $qb->fetchAllAssociative();
+
+            $data = [
+                'labels' => array_column($rows, 'descricao'),
+                'values' => array_map(fn($r) => (int) $r['total'], $rows),
+            ];
+
+            return $this->json($response, $data, 200);
+        } catch (\Throwable $e) {
+            error_log('[Relatorio::bytipo] ' . $e->getMessage());
+            return $this->json($response, ['status' => false, 'msg' => 'Erro ao buscar dados.'], 500);
+        }
+    }
+
+    public function bymes($request, $response)
+    {
+        try {
+            $qb = \App\Database\DB::select(
+                    "to_char(r.data_cadastro, 'YYYY-MM') AS mes",
+                    'COUNT(r.id) FILTER (WHERE r.resolvido = true) AS resolvidos',
+                    'COUNT(r.id) FILTER (WHERE r.resolvido = false OR r.resolvido IS NULL) AS pendentes'
+                )
+                ->from('reports', 'r')
+                ->groupBy('mes')
+                ->orderBy('mes', 'ASC');
+
+            $rows = $qb->fetchAllAssociative();
+
+            $data = [
+                'labels' => array_column($rows, 'mes'),
+                'series' => [
+                    [
+                        'name'   => 'Resolvidos',
+                        'values' => array_map(fn($r) => (int) $r['resolvidos'], $rows),
+                        'stack'  => 'reportes',
+                    ],
+                    [
+                        'name'   => 'Pendentes',
+                        'values' => array_map(fn($r) => (int) $r['pendentes'], $rows),
+                        'stack'  => 'reportes',
+                    ],
+                ],
+            ];
+
+            return $this->json($response, $data, 200);
+        } catch (\Throwable $e) {
+            error_log('[Relatorio::bymes] ' . $e->getMessage());
+            return $this->json($response, ['status' => false, 'msg' => 'Erro ao buscar dados.'], 500);
+        }
+    }
 }

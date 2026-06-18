@@ -32,7 +32,7 @@ final class Product extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
         }
     }
-     public function delete($request, $response)
+    public function delete($request, $response)
     {
         $form = $request->getParsedBody();
         $id = $form['id'] ?? null;

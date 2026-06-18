@@ -75,7 +75,7 @@ async function applyChanges() {
         }
 
         const baseUrl = window.location.origin;
-        const redirectUrl = `${baseUrl}/produto/detalhes/${response.id}`;
+        const redirectUrl = `${baseUrl}/admin/listproducts/detalhes/${response.id}`;
 
         if (Action.value === 'e') {
             Swal.fire({
@@ -85,7 +85,7 @@ async function applyChanges() {
                 timer: 3000,
                 timerProgressBar: true,
             }).then(() => {
-                window.location.href = '/produto/lista';
+                window.location.href = '/admin/listproducts';
             });
             return;
         }

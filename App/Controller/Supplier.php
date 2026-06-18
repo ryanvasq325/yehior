@@ -10,12 +10,11 @@ final class Supplier extends Base
     {
         $form = $request->getParsedBody();
         $FieldsAndValues = [
-            'nome_fantasia'       => $form['nomeExibicao'],
+            'nome_fantasia'       => $form['nomeExibicao']       ?? null,
             'sobrenome_razao'     => $form['nomeLegal']          ?? null,
             'cpf_cnpj'            => $form['numeroDocumento']    ?? null,
-            'cep'                 => $form['cep']    ?? null,
-            'telefone'          => $form['telefone'] ?? null,
-            'nascimento_fundacao' => $this->parseDate($form['dataRegistro'] ?? null),
+            'inscricao_estadual'  => $form['inscricaoEstadual']  ?? null,
+            'nascimento_fundacao' => $form['dataRegistro']       ?? null,
             'ativo'               => (int)(($form['ativo'] ?? '') === 'true'),
         ];
 

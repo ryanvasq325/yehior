@@ -1,12 +1,10 @@
-
-import FindCompany from "../components/find-company.js";
 import Requests from "../components/requests.js";
 import Validate from "../components/validate.js";
 
 const Action = document.getElementById('action');
 const Id     = document.getElementById('id');
 const Cnpj   = document.getElementById('numeroDocumento');
-const Insert = document.getElementById('insert');
+const Insert = document.getElementById('buttonRegister');
 
 mdRegister.addEventListener('click', () => {
     $('#modalRegisterSupplier').modal('show');
@@ -20,14 +18,8 @@ $('#dataRegistro').flatpickr({
     locale: "pt"
 });
 
-const findCompany = new FindCompany({ cnpjField: 'numeroDocumento', cnaeValue: 'cnae', cnaeSearch: 'codigoAtividadeEconomica' });
-if (document.getElementById('codigoAtividadeEconomica')) {
-    findCompany.FindCompanyCnae();
-}
-
 async function applyChanges() {
-    $('button').prop('disabled', true);
-    const IsValid = Validate.SetForm('form').Validate();
+    const IsValid = Validate.SetForm('formSupplier').Validate();
     if (!IsValid) {
         Swal.fire({
             icon: 'error',
@@ -38,11 +30,14 @@ async function applyChanges() {
         });
         return;
     }
+
+    $('button').prop('disabled', true);
+
     const requests = new Requests();
     try {
         const response = (Action.value !== 'e')
-            ? await requests.setForm('form').post('/fornecedor/insert')
-            : await requests.setForm('form').post('/fornecedor/update');
+            ? await requests.setForm('formSupplier').post('/fornecedor/insert')
+            : await requests.setForm('formSupplier').post('/fornecedor/update');
         if (!response.status) {
             Swal.fire({
                 icon: 'error',
@@ -54,7 +49,7 @@ async function applyChanges() {
             return;
         }
         const baseUrl = window.location.origin;
-        const redirectUrl = `${baseUrl}/fornecedor/detalhes/${response.id}`;
+        const redirectUrl = `${baseUrl}/admin/listsuppliers/detalhes/${response.id}`;
         if (Action.value === 'e') {
             Swal.fire({
                 icon: 'success',
@@ -63,7 +58,7 @@ async function applyChanges() {
                 timer: 3000,
                 timerProgressBar: true,
             }).then(() => {
-                window.location.href = '/fornecedor/lista';
+                window.location.href = '/admin/listsuppliers';
             });
             return;
         }
@@ -89,14 +84,6 @@ async function applyChanges() {
         $('button, input, checkbox').prop('disabled', false);
     }
 }
-
-Cnpj.addEventListener('blur', async () => {
-    const cleaned = Cnpj.value.replace(/\D/g, '');
-    if (Cnpj.value.trim() === '' || cleaned.length < 14) {
-        return;
-    }
-    await findCompany.FindCompanyData();
-});
 
 Insert.addEventListener('click', async () => {
     await applyChanges();

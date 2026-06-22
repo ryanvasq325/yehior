@@ -1,12 +1,12 @@
-// report.js — Yehi Or
-
-// ── Máscara de CEP via Inputmask ───────────────────────────────
+const descricao = document.getElementById('descricao');
+const charCount = document.getElementById('char-count');
 const cepInput = document.getElementById('cep');
+const form = document.querySelector('form');
+
 
 if (cepInput) {
   Inputmask('99999-999').mask(cepInput);
 
-  // Busca endereço via ViaCEP ao sair do campo
   cepInput.addEventListener('blur', async () => {
     const cep  = cepInput.value.replace(/\D/g, '');
     const info = document.getElementById('cep-info');
@@ -31,10 +31,6 @@ if (cepInput) {
   });
 }
 
-// ── Contador de caracteres da descrição ────────────────────────
-const descricao = document.getElementById('descricao');
-const charCount = document.getElementById('char-count');
-
 if (descricao && charCount) {
   const update = () => {
     const len = descricao.value.length;
@@ -46,12 +42,8 @@ if (descricao && charCount) {
   update();
 }
 
-// ── Validação do tipo de problema antes do submit ──────────────
-const form = document.querySelector('form');
-
 if (form) {
   form.addEventListener('submit', (e) => {
-    // O name agora é id_tipo_problema (id vindo do banco)
     const selecionado = form.querySelector('input[name="id_tipo_problema"]:checked');
     const errorEl     = document.getElementById('problema-error');
 

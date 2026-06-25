@@ -97,3 +97,54 @@ textarea.form-control {
   resize: vertical;
   min-height: 100px;
 }
+
+/* ===== BOTÃO OUTLINE AMARELO ===== */
+.btn-outline-amarelo {
+  border: 1.5px solid var(--amarelo);
+  color: var(--amarelo);
+  background: transparent;
+  font-weight: 600;
+  transition: background .2s, color .2s;
+}
+
+.btn-outline-amarelo:hover {
+  background: rgba(245, 197, 24, .12);
+  color: var(--amarelo);
+}
+
+/* ===== PREVIEW DA LOCALIZAÇÃO MARCADA ===== */
+.map-preview-box {
+  background: rgba(25, 135, 84, .12);
+  border: 1px solid rgba(25, 135, 84, .35);
+  border-radius: 8px;
+  padding: .5rem .75rem;
+  color: #e8e8f0;
+}
+
+/* ===== INSTRUÇÃO FLUTUANTE SOBRE O MAPA ===== */
+.map-instruction {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: rgba(13, 15, 26, .88);
+  color: #F5C518;
+  font-size: .82rem;
+  font-weight: 600;
+  padding: .4rem 1rem;
+  border-radius: 20px;
+  border: 1px solid rgba(245, 197, 24, .3);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ===== MODAL ESCURO ===== */
+#modalMapa .modal-content {
+  background: #13151f;
+}
+
+#modalMapa .modal-header,
+#modalMapa .modal-footer {
+  border-color: rgba(255,255,255,.1) !important;
+}

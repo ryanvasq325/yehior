@@ -6,6 +6,15 @@ namespace App\Controller;
 
 final class Supplier extends Base
 {
+    public function listsupplier($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('list-supplier'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
     public function insert($request, $response)
     {
         $form = $request->getParsedBody();

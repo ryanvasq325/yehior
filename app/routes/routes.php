@@ -18,7 +18,6 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/listusers', App\Controller\Admin::class . ':listusers');
     $group->get('/products', App\Controller\Admin::class . ':products');
     $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
-    $group->get('/listsupplier', App\Controller\Admin::class . ':listsupplier');
     $group->post('/listingdata',  App\Controller\Admin::class . ':listingdata');
     $group->post('/delete',       App\Controller\Admin::class . ':delete');
 
@@ -36,6 +35,7 @@ $app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->post('/listingdata',  App\Controller\Product::class . ':listingdata');
 });
 $app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->get('/home', App\Controller\Supplier::class . ':listsupplier');
     $group->post('/insert', App\Controller\Supplier::class . ':insert');
     $group->post('/update', App\Controller\Supplier::class . ':update');
     $group->post('/listingdata',  App\Controller\Supplier::class . ':listingdata');
@@ -45,3 +45,4 @@ $app->group('/report', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Report::class . ':home');
     $group->post('/listingdata',  App\Controller\Report::class . ':listingdata');
 });
+

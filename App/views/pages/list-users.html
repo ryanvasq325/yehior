@@ -15,51 +15,54 @@
         <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
-              <label for="nome">Digite seu primeiro nome *</label>
+        <form id="formUser">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
+                <label for="nome">Digite seu primeiro nome *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome"
+                  required>
+                <label for="sobrenome">Digite seu sobrenome *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="logradouro" name="logradourocpf" class="form-control" placeholder="CPF" required>
+                <label for="cpf">Logradouro *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="bairro" name="rg" class="form-control" placeholder="RG">
+                <label for="rg">Bairro *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
+                <label for="telefone">Digite seu telefone *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
+                <label for="email">Digite seu e-mail *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control" placeholder="Senha"
+                  required>
+                <label for="senhaCadastro">Informe sua senha *</label>
+              </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome" required>
-              <label for="sobrenome">Digite seu sobrenome *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="logradouro" name="logradourocpf" class="form-control" placeholder="CPF" required>
-              <label for="cpf">Logradouro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="bairro" name="rg" class="form-control" placeholder="RG">
-              <label for="rg">Bairro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
-              <label for="telefone">Digite seu telefone *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
-              <label for="email">Digite seu e-mail *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control" placeholder="Senha"
-                required>
-              <label for="senhaCadastro">Informe sua senha *</label>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
       <div class="modal-footer">
         <button type="button" id="buttonRegister" class="btn btn-outline-success">
@@ -138,17 +141,15 @@
   <div class="admin-card">
     <div class="admin-card-body p-0">
       <div class="table-responsive">
-        <table class="table table-dark table-hover mb-0">
+        <table class="table table-dark table-hover mb-0" id="table-users">
           <thead>
             <tr>
               <th class="ps-4">#</th>
               <th>Nome</th>
-              <th>Cep</th>
-              <th>Logradouro</th>
-              <th>Bairro</th>
-              <th>Contato</th>
-              <th>E-mail</th>
-              <th>Data</th>
+              <th>Sobrenome</th>
+              <th>CPF</th>
+              <th>RG</th>
+              <th>Ativo</th>
               <th>Administrador</th>
               <th class="text-center">Ações</th>
             </tr>

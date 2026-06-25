@@ -152,18 +152,6 @@
   </div>
 
 </div>
-
-<script>
-  window.chartData = {
-    pizza:  {{ pizzaData      | json_encode | raw }},
-    barras: {
-      meses:      {{ barrasMeses      | json_encode | raw }},
-      pendentes:  {{ barrasPendentes  | json_encode | raw }},
-      resolvidos: {{ barrasResolvidos | json_encode | raw }}
-    }
-  };
-</script>
-
 {% endblock %}
 
 {% block script %}

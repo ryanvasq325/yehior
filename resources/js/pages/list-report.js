@@ -1,5 +1,9 @@
-// reports-list.js — Yehi Or
+import Requests from "../components/requests.js";
+import Validate from "../components/validate.js";
+import DataTables from '../components/data-tables.js';
 
+
+const table = DataTables.SetId('table-reports').setRequestVariables([]).post('/report/listingdata');
 // Mascara de CEP no filtro
 const cepFiltro = document.querySelector('input[name="cep"]');
 if (cepFiltro) {

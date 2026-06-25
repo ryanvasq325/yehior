@@ -15,54 +15,43 @@
         <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="nome" name="nome" class="form-control" placeholder="Nome" required>
-              <label for="nome">Digite nome/razao social *</label>
+        <form id="formSupplier">
+          <input type="hidden" id="action" name="action" value="">
+          <input type="hidden" id="id" name="id" value="">
+          <div class="row">
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="nomeExibicao" name="nomeExibicao" class="form-control" placeholder="nomeExibicao"
+                  required value="{{ supplier.nome_fantasia }}">
+                <label for="nomeExibicao">Digite nome/razao social *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="nomeLegal" name="nomeLegal" class="form-control" placeholder="nomeLegal"
+                  value="{{ supplier.sobrenome_razao }}" required>
+                <label for="nomeLegal">Digite seu sobre/fantasia *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control"
+                  placeholder="CPF/CNPJ" required value="{{ supplier.cpf_cnpj }}">
+                <label for="numeroDocumento">CPF/CNPJ *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
+                <input type="text" id="dataRegistro" name="dataRegistro" class="form-control"
+                  placeholder="Data de Registro" value="{{ supplier.nascimento_fundacao }}">
+                <label for="dataRegistro">Digite a data de registro *</label>
+              </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="sobrenome" name="sobrenome" class="form-control" placeholder="Sobrenome" required>
-              <label for="sobrenome">Digite seu sobrenome/fantasia *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="cep" name="cep" class="form-control" placeholder="CEP" required>
-              <label for="cep">CEP *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="logradouro" name="logradouro" class="form-control" placeholder="Logradouro"
-                required>
-              <label for="logradouro">Logradouro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="bairro" name="bairro" class="form-control" placeholder="Bairro" required>
-              <label for="bairro">Bairro *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="telefone" name="telefone" class="form-control" placeholder="Telefone">
-              <label for="telefone">Digite seu telefone *</label>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="form-floating mb-3">
-              <input type="text" id="email" name="email" class="form-control" placeholder="E-mail">
-              <label for="email">Digite seu e-mail *</label>
-            </div>
-          </div>
-        </div>
+        </form>
       </div>
       <div class="modal-footer">
-        <button type="button" id="buttonRegister" class="btn btn-outline-success">
+        <button type="button" id="buttonRegister" class="btn btn-outline-success" form="formSupplier">
           Salvar
         </button>
       </div>
@@ -138,18 +127,16 @@
   <div class="admin-card">
     <div class="admin-card-body p-0">
       <div class="table-responsive">
-        <table class="table table-dark table-hover mb-0">
+        <table class="table table-dark table-hover mb-0" id="table-supplier">
           <thead>
             <tr>
               <th class="ps-4">#</th>
               <th>Nome</th>
-              <th>Cep</th>
-              <th>Logradouro</th>
-              <th>Bairro</th>
-              <th>Contato</th>
-              <th>E-mail</th>
-              <th>Data</th>
-              <th>Administrador</th>
+              <th>Sobrenome/Razão Social</th>
+              <th>CPF/CNPJ</th>
+              <th>Inscrição Estadual</th>
+              <th>Descrição</th>
+              <th>Ativo</th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>

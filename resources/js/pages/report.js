@@ -4,6 +4,8 @@ import 'leaflet/dist/leaflet.css';
 
 // ── Máscara de CEP via Inputmask ───────────────────────────────
 const cepInput = document.getElementById('cep');
+const form = document.querySelector('form');
+
 
 if (cepInput) {
   Inputmask('99999-999').mask(cepInput);
@@ -32,10 +34,6 @@ if (cepInput) {
   });
 }
 
-// ── Contador de caracteres da descrição ────────────────────────
-const descricao = document.getElementById('descricao');
-const charCount = document.getElementById('char-count');
-
 if (descricao && charCount) {
   const update = () => {
     const len = descricao.value.length;
@@ -46,9 +44,6 @@ if (descricao && charCount) {
   descricao.addEventListener('input', update);
   update();
 }
-
-// ── Validação do tipo de problema antes do submit ──────────────
-const form = document.querySelector('form');
 
 if (form) {
   form.addEventListener('submit', (e) => {

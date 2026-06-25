@@ -10,7 +10,6 @@
   <div class="row justify-content-center">
     <div class="col-lg-9 col-md-11">
 
-      <!-- Cabeçalho -->
       <div class="report-header mb-">
         <span class="badge text-bg-warning text-dark fw-semibold px-3 py-2 rounded-pill mb-3">
           <i class="fa-solid fa-lightbulb me-1"></i> Novo Reporte
@@ -19,7 +18,6 @@
         <p class="text-secondary mb-0">Preencha as informações abaixo para registrar uma ocorrência.</p>
       </div>
 
-      <!-- Alerta de erro -->
       {% if error %}
       <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
         <i class="fa-solid fa-circle-exclamation"></i>
@@ -27,11 +25,10 @@
       </div>
       {% endif %}
 
-      <!-- Formulário -->
-      <div class="report-card p-5">
-        <form action="/report" method="POST" novalidate>
 
-          <!-- Tipo do problema -->
+      <div class="report-card p-5">
+        <form>
+
           <div class="mb-4">
             <label class="form-label fw-semibold">
               <i class="fa-solid fa-triangle-exclamation me-1 text-amarelo"></i>
@@ -56,7 +53,6 @@
             <div class="invalid-feedback d-block" id="problema-error" style="display:none!important"></div>
           </div>
 
-          <!-- CEP -->
           <div class="mb-4">
             <label for="cep" class="form-label fw-semibold">
               <i class="fa-solid fa-map-pin me-1 text-amarelo"></i>

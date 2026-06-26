@@ -97,7 +97,6 @@ textarea.form-control {
   resize: vertical;
   min-height: 100px;
 }
-
 /* ===== BOTÃO OUTLINE AMARELO ===== */
 .btn-outline-amarelo {
   border: 1.5px solid var(--amarelo);
@@ -106,7 +105,6 @@ textarea.form-control {
   font-weight: 600;
   transition: background .2s, color .2s;
 }
-
 .btn-outline-amarelo:hover {
   background: rgba(245, 197, 24, .12);
   color: var(--amarelo);
@@ -139,11 +137,42 @@ textarea.form-control {
   white-space: nowrap;
 }
 
+/* ===== BOTÃO GPS FLUTUANTE ===== */
+/* Fica no canto superior direito do mapa, sobre os tiles */
+.btn-gps {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 1000;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: #0D0F1A;
+  color: #4A90D9;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,.5);
+  transition: background .2s, color .2s, transform .15s;
+}
+.btn-gps:hover {
+  background: #4A90D9;
+  color: #fff;
+  transform: scale(1.08);
+}
+.btn-gps:disabled {
+  opacity: .7;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* ===== MODAL ESCURO ===== */
 #modalMapa .modal-content {
   background: #13151f;
 }
-
 #modalMapa .modal-header,
 #modalMapa .modal-footer {
   border-color: rgba(255,255,255,.1) !important;

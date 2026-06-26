@@ -18,6 +18,7 @@
         <p class="text-secondary mb-0">Preencha as informações abaixo para registrar uma ocorrência.</p>
       </div>
 
+      <!-- Alerta de erro (exibido pelo PHP quando houver) -->
       {% if error %}
       <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
         <i class="fa-solid fa-circle-exclamation"></i>
@@ -70,10 +71,11 @@
             </div>
           </div>
 
-          <!-- LOGRADOURO + NUMERO -->
+          <!-- LOGRADOURO + NUMERO na mesma linha -->
           <div class="mb-4">
             <div class="row g-3">
 
+              <!-- LOGRADOURO -->
               <div class="col-8">
                 <label for="address" class="form-label fw-semibold">
                   <i class="fa-solid fa-map-location-dot text-amarelo"></i>
@@ -88,6 +90,7 @@
                 </div>
               </div>
 
+              <!-- NUMERO -->
               <div class="col-4">
                 <label for="numero" class="form-label fw-semibold">
                   <i class="fa-solid fa-hashtag text-amarelo"></i>
@@ -148,7 +151,7 @@
               Localização no mapa <span class="text-secondary fw-normal">(opcional, mas recomendado)</span>
             </label>
 
-            <!-- Preview da localização marcada -->
+            <!-- Preview da localização já confirmada -->
             <div id="map-preview" class="map-preview-box mb-2" style="display:none;">
               <i class="fa-solid fa-circle-check text-success me-1"></i>
               <span id="map-preview-text" class="small"></span>
@@ -214,11 +217,18 @@
       </div>
 
       <div class="modal-body p-0 position-relative">
-        <!-- Instrução flutuante -->
+
+        <!-- Instrução flutuante sobre o mapa -->
         <div class="map-instruction">
           <i class="fa-solid fa-hand-pointer me-1"></i>
           Clique no mapa para marcar o local do poste
         </div>
+
+        <!-- Botão GPS flutuante no canto superior direito -->
+        <button type="button" id="btn-gps" class="btn-gps" title="Usar minha localização atual">
+          <i class="fa-solid fa-location-crosshairs"></i>
+        </button>
+
         <div id="report-map" style="height: 520px; width: 100%;"></div>
       </div>
 

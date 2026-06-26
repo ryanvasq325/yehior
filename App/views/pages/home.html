@@ -263,9 +263,10 @@
 
   var map = L.map('mapa-reportes-map').setView([-11.4370, -61.4470], 14);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-    maxZoom: 19
+  // Camada satélite Esri World Imagery — gratuita, sem chave de API
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.esri.com">Esri</a> — Source: Esri, Maxar, Earthstar Geographics',
   }).addTo(map);
 
   reports.forEach(function (r) {

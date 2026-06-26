@@ -6,7 +6,7 @@ namespace App\Controller;
 
 final class Product extends Base
 {
-       public function insert($request, $response)
+    public function insert($request, $response)
     {
         $form = $request->getParsedBody();
         $FieldsAndValues = [

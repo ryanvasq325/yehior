@@ -4,20 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-final class Report extends Base
+final class Users extends Base
 {
     public function home($request, $response)
     {
-        $tipos = \App\Database\DB::select('id', 'descricao')
-            ->from('type_problem')
-            ->where('ativo = true')
-            ->orderBy('id', 'ASC')
-            ->fetchAllAssociative();
-
         return $this->getTwig()
-            ->render($response, $this->setView('report'), [
+            ->render($response, $this->setView('list-users'), [
                 'titulo' => '',
-                'tipos'  => $tipos,
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -27,10 +20,10 @@ final class Report extends Base
         $form = $request->getParsedBody();
         $id = $form['id'] ?? null;
         if (is_null($id) || $id === '') {
-            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do relatório', 'id' => 0], 403);
+            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do usuário', 'id' => 0], 403);
         }
         try {
-            $IsDeleted = \App\Database\DB::connection()->delete('reports', ['id' => $id]);
+            $IsDeleted = \App\Database\DB::connection()->delete('users', ['id' => $id]);
             if (!$IsDeleted) {
                 return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsDeleted, 'id' => $id], 403);
             }
@@ -39,7 +32,7 @@ final class Report extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
         }
     }
-    public function listingdata($request, $response)
+     public function listingdata($request, $response)
     {
         $form = $request->getParsedBody();
 
@@ -50,12 +43,12 @@ final class Report extends Base
 
         $columns = [
             0 => 'id',
-            1 => 'id_customer',
-            2 => 'id_tipo_problema',
-            3 => 'id_produto',
-            4 => 'cep',
-            5 => 'descricao',
-            6 => 'resolvido',
+            1 => 'nome',
+            2 => 'sobrenome',
+            3 => 'cpf',
+            4 => 'rg',
+            6 => 'ativo',
+            5 => 'administrador',
         ];
 
         $posField = (isset($form['order'][0]['column']) && isset($columns[(int) $form['order'][0]['column']]))
@@ -70,20 +63,20 @@ final class Report extends Base
         try {
             # Total geral DataTables: recordsTotal
             $totalRecords = (int) \App\Database\DB::select('COUNT(*)')
-                ->from('reports')
+                ->from('users')
                 ->fetchOne();
 
             # Query principal com WHERE opcional
-            $query = \App\Database\DB::select('*')->from('reports');
+            $query = \App\Database\DB::select('*')->from('users');
 
             if (!is_null($term) && $term !== '') {
                 $query->setParameter('term', '%' . $term . '%');
 
                 $query->where('CAST(id AS TEXT) ILIKE :term')
-                    ->orWhere('id_customer ILIKE :term')
-                    ->orWhere('id_tipo_problema ILIKE :term')
-                    ->orWhere('id_produto ILIKE :term')
-                    ->orWhere('cep ILIKE :term')
+                    ->orWhere('nome ILIKE :term')
+                    ->orWhere('sobrenome ILIKE :term')
+                    ->orWhere('cpf ILIKE :term')
+                    ->orWhere('rg ILIKE :term')
                     ->orWhere("TO_CHAR(criado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term")
                     ->orWhere("TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
             }
@@ -94,7 +87,7 @@ final class Report extends Base
                 ->fetchOne();
 
             # Resultados paginados e ordenados
-            $reports = $query
+            $users = $query
                 ->orderBy($orderField, $orderType)
                 ->setFirstResult($start)
                 ->setMaxResults($length)
@@ -103,17 +96,17 @@ final class Report extends Base
             # Formatação para o DataTables
             # Formatação para o DataTables
             $rows = [];
-            foreach ($reports as $key => $value) {
+            foreach ($users as $key => $value) {
                 $rows[$key] = [
                     $value['id'],
-                    $value['id_customer']     ?? '',
-                    $value['id_tipo_problema'] ?? '',
-                    $value['id_produto']         ?? '',
-                    $value['cep']           ?? '',
-                    $value['descricao']         ?? '',
-                    ($value['resolvido'] == true) ? 'Resolvido' : 'Pendente',
+                    $value['nome']     ?? '',
+                    $value['sobrenome']     ?? '',
+                    $value['cpf']     ?? '',
+                    $value['rg']     ?? '',
+                    ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
+                    ($value['administrador'] == true) ? 'Sim' : 'Não',
                     "<td>
-            <a class='btn btn-sm btn-warning' href='/produto/detalhes/" . $value['id'] . "'>
+            <a class='btn btn-sm btn-warning' href='/usuario/detalhes/" . $value['id'] . "'>
                 <i class='fa-solid fa-pen-to-square'></i> Editar
             </a>
             <button type='button' class='btn btn-sm btn-danger' onclick='ShowModal(" . $value['id'] . ");'>
@@ -135,5 +128,4 @@ final class Report extends Base
             ], 500);
         }
     }
-
 }

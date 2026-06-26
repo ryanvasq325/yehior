@@ -44,5 +44,10 @@ $app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
 $app->group('/report', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Report::class . ':home');
     $group->post('/listingdata',  App\Controller\Report::class . ':listingdata');
+    $group->post('/delete', App\Controller\Report::class . ':delete');
 });
-
+$app->group('/users', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->get('/home', App\Controller\Users::class . ':home');
+    $group->post('/listingdata',  App\Controller\Users::class . ':listingdata');
+    $group->post('/delete', App\Controller\Users::class . ':delete');
+});

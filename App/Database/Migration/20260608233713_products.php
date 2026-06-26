@@ -9,7 +9,7 @@ final class Products extends AbstractMigration
    
     public function change(): void
     {
-        $table = $this->table('stock', ['id' => false, 'primary_key' => ['id']]);
+        $table = $this->table('products', ['id' => false, 'primary_key' => ['id']]);
         $table->addColumn('id', 'biginteger', ['identity' => true, 'null' => false])
             ->addColumn('id_supplier', 'biginteger', ['null' => true])
             ->addColumn('nome', 'text', ['null' => true])

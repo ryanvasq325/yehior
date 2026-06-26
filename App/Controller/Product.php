@@ -4,23 +4,50 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-final class Report extends Base
+final class Product extends Base
 {
-    public function home($request, $response)
+       public function insert($request, $response)
     {
-        $tipos = \App\Database\DB::select('id', 'descricao')
-            ->from('type_problem')
-            ->where('ativo = true')
-            ->orderBy('id', 'ASC')
-            ->fetchAllAssociative();
+        $form = $request->getParsedBody();
+        $FieldsAndValues = [
+            'nome'     => $form['nome'],
+            'codigo_barra' => $form['codigo_barra']          ?? null,
+            'unidade'         => $form['unidade']    ?? null,
+            'preco_compra'           => $form['preco_compra'] ?? null,
+            'descricao'         => $form['descricao'] ?? null,
+            'excluido'         => (int)(($form['excluido']         ?? '') === 'false'),
+            'ativo'         => (int)(($form['ativo']         ?? '') === 'true'),
+        ];
 
-        return $this->getTwig()
-            ->render($response, $this->setView('report'), [
-                'titulo' => '',
-                'tipos'  => $tipos,
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
+
+        try {
+            $IsInserted = \App\Database\DB::connection()->insert('products', $FieldsAndValues);
+            if (!$IsInserted) {
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsInserted, 'id' => 0], 500);
+            }
+            $id = \App\Database\DB::connection()->lastInsertId();
+
+            return $this->json($response, ['status' => true, 'msg' => 'Salvo com sucesso!', 'id' => $id], 201);
+        } catch (\Exception $e) {
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+        }
+    }
+    public function delete($request, $response)
+    {
+        $form = $request->getParsedBody();
+        $id = $form['id'] ?? null;
+        if (is_null($id) || $id === '') {
+            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do cliente', 'id' => 0], 403);
+        }
+        try {
+            $IsDeleted = \App\Database\DB::connection()->delete('products', ['id' => $id]);
+            if (!$IsDeleted) {
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsDeleted, 'id' => $id], 403);
+            }
+            return $this->json($response, ['status' => true, 'msg' => 'Removido com sucesso!', 'id' => $id]);
+        } catch (\Exception $e) {
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+        }
     }
     public function listingdata($request, $response)
     {
@@ -33,12 +60,12 @@ final class Report extends Base
 
         $columns = [
             0 => 'id',
-            1 => 'id_customer',
-            2 => 'id_tipo_problema',
-            3 => 'id_produto',
-            4 => 'cep',
+            1 => 'nome',
+            2 => 'codigo_barra',
+            3 => 'unidade',
+            4 => 'preco_compra',
             5 => 'descricao',
-            6 => 'resolvido',
+            6 => 'ativo',
         ];
 
         $posField = (isset($form['order'][0]['column']) && isset($columns[(int) $form['order'][0]['column']]))
@@ -53,20 +80,20 @@ final class Report extends Base
         try {
             # Total geral DataTables: recordsTotal
             $totalRecords = (int) \App\Database\DB::select('COUNT(*)')
-                ->from('reports')
+                ->from('products')
                 ->fetchOne();
 
             # Query principal com WHERE opcional
-            $query = \App\Database\DB::select('*')->from('reports');
+            $query = \App\Database\DB::select('*')->from('products');
 
             if (!is_null($term) && $term !== '') {
                 $query->setParameter('term', '%' . $term . '%');
 
                 $query->where('CAST(id AS TEXT) ILIKE :term')
-                    ->orWhere('id_customer ILIKE :term')
-                    ->orWhere('id_tipo_problema ILIKE :term')
-                    ->orWhere('id_produto ILIKE :term')
-                    ->orWhere('cep ILIKE :term')
+                    ->orWhere('fantasia ILIKE :term')
+                    ->orWhere('razao_social ILIKE :term')
+                    ->orWhere('cnpj ILIKE :term')
+                    ->orWhere('ie ILIKE :term')
                     ->orWhere("TO_CHAR(criado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term")
                     ->orWhere("TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
             }
@@ -77,7 +104,7 @@ final class Report extends Base
                 ->fetchOne();
 
             # Resultados paginados e ordenados
-            $reports = $query
+            $products = $query
                 ->orderBy($orderField, $orderType)
                 ->setFirstResult($start)
                 ->setMaxResults($length)
@@ -86,15 +113,15 @@ final class Report extends Base
             # Formatação para o DataTables
             # Formatação para o DataTables
             $rows = [];
-            foreach ($reports as $key => $value) {
+            foreach ($products as $key => $value) {
                 $rows[$key] = [
                     $value['id'],
-                    $value['id_customer']     ?? '',
-                    $value['id_tipo_problema'] ?? '',
-                    $value['id_produto']         ?? '',
-                    $value['cep']           ?? '',
+                    $value['nome']     ?? '',
+                    $value['codigo_barra'] ?? '',
+                    $value['unidade']         ?? '',
+                    $value['preco_compra']           ?? '',
                     $value['descricao']         ?? '',
-                    ($value['resolvido'] == true) ? 'Resolvido' : 'Pendente',
+                    ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
                     "<td>
             <a class='btn btn-sm btn-warning' href='/produto/detalhes/" . $value['id'] . "'>
                 <i class='fa-solid fa-pen-to-square'></i> Editar

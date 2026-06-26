@@ -19,6 +19,8 @@ import 'leaflet/dist/leaflet.css';
 // preenche automaticamente os campos de logradouro e bairro.
 // =============================================================================
 const cepInput = document.getElementById('cep');
+const form = document.querySelector('form');
+
 
 if (cepInput) {
   // Aplica máscara de CEP (biblioteca Inputmask já carregada globalmente)

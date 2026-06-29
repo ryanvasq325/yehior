@@ -46,15 +46,6 @@ final class Admin extends Base
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
-    public function listsupplier($request, $response)
-    {
-        return $this->getTwig()
-            ->render($response, $this->setView('list-supplier'), [
-                'titulo' => '',
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
-    }
     public function products($request, $response)
     {
         return $this->getTwig()

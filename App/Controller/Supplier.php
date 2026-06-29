@@ -6,6 +6,15 @@ namespace App\Controller;
 
 final class Supplier extends Base
 {
+    public function listsupplier($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('list-supplier'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
     public function insert($request, $response)
     {
         $form = $request->getParsedBody();
@@ -61,8 +70,7 @@ final class Supplier extends Base
             2 => 'sobrenome_razao',
             3 => 'cpf_cnpj',
             4 => 'inscricao_estadual',
-            5 => 'descricao',
-            6 => 'ativo',
+            5 => 'ativo',
         ];
 
         $posField = (isset($form['order'][0]['column']) && isset($columns[(int) $form['order'][0]['column']]))
@@ -117,7 +125,6 @@ final class Supplier extends Base
                     $value['sobrenome_razao'] ?? '',
                     $value['cpf_cnpj']         ?? '',
                     $value['inscricao_estadual']           ?? '',
-                    $value['descricao']         ?? '',
                     ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
                     "<td>
             <a class='btn btn-sm btn-warning' href='/fornecedor/detalhes/" . $value['id'] . "'>

@@ -4,7 +4,7 @@ import DataTables from '../components/data-tables.js';
 const Action = document.getElementById('action');
 const Id = document.getElementById('id');
 const Insert = document.getElementById('buttonRegister');
-const table = DataTables.SetId('table-users').setRequestVariables([]).post('/admin/listingdata');
+const table = DataTables.SetId('table-users').setRequestVariables([]).post('/users/listingdata');
 
 mdRegister.addEventListener('click', () => {
     $('#modalRegisterUser').modal('show');
@@ -13,7 +13,7 @@ mdRegister.addEventListener('click', () => {
 async function deleteUser() {
     const requests = new Requests();
     try {
-        const response = await requests.setForm('formUser').post('/admin/delete');
+        const response = await requests.setForm('formUser').post('/users/delete');
         return response;
     } catch (error) {
         Swal.fire({

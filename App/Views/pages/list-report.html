@@ -2,6 +2,9 @@
 
 {% block css %}
 {{ vite('resources/css/pages/list-report.css') }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
 {% endblock %}
 
 {% block main %}
@@ -17,9 +20,8 @@
     </span>
   </div>
 
-
   <div class="d-flex justify-content-end mb-4">
-    <a href="/report/home" class="btn btn-amarelo px-4">
+    <a href="/report" class="btn btn-amarelo px-4">
       <i class="fa-solid fa-file-lines me-2"></i> Novo Serviço
     </a>
   </div>
@@ -78,20 +80,22 @@
     </div>
   </div>
 
+  <!-- TABELA -->
   <div class="admin-card">
     <div class="admin-card-body p-0">
       <div class="table-responsive">
-        <table class="table table-dark table-hover mb-0" id="table-reports">
+        <table class="table table-dark table-hover mb-0">
           <thead>
             <tr>
               <th class="ps-4">#</th>
-              <th>Cidadao</th>
+              <th>Cidadão</th>
               <th>Tipo de problema</th>
               <th>CEP</th>
-              <th>Descricao</th>
+              <th>Localização</th>
+              <th>Descrição</th>
               <th>Status</th>
               <th>Data</th>
-              <th class="text-center">Acoes</th>
+              <th class="text-center">Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -102,9 +106,19 @@
               <td>{{ report.customer_nome }}</td>
               <td>{{ report.tipo_descricao }}</td>
               <td>{{ report.cep }}</td>
+              <td>
+                {% if report.latitude and report.longitude %}
+                <span class="badge text-bg-success">
+                  <i class="fa-solid fa-location-dot me-1"></i>GPS
+                </span>
+                {% else %}
+                <span class="badge text-bg-secondary">
+                  <i class="fa-solid fa-minus me-1"></i>Sem GPS
+                </span>
+                {% endif %}
+              </td>
               <td class="text-secondary small">
-                {{ report.descricao ? report.descricao|slice(0,40) ~ (report.descricao|length > 40 ? '...' : '') : '—'
-                }}
+                {{ report.descricao ? report.descricao|slice(0,40) ~ (report.descricao|length > 40 ? '...' : '') : '—' }}
               </td>
               <td>
                 {% if report.resolvido %}
@@ -120,13 +134,39 @@
               <td class="text-secondary small">{{ report.criado_em|date('d/m/Y') }}</td>
               <td class="text-center">
                 <div class="d-flex gap-2 justify-content-center">
-                  <button class="btn btn-sm btn-outline-light" title="Ver detalhes" data-bs-toggle="modal"
-                    data-bs-target="#modalReport" data-id="{{ report.id }}" data-cidadao="{{ report.customer_nome }}"
-                    data-tipo="{{ report.tipo_descricao }}" data-cep="{{ report.cep }}"
-                    data-descricao="{{ report.descricao ?? '—' }}" data-resolvido="{{ report.resolvido ? '1' : '0' }}"
+
+                  <!-- Botão detalhes -->
+                  <button class="btn btn-sm btn-outline-light" title="Ver detalhes"
+                    data-bs-toggle="modal" data-bs-target="#modalReport"
+                    data-id="{{ report.id }}"
+                    data-cidadao="{{ report.customer_nome }}"
+                    data-tipo="{{ report.tipo_descricao }}"
+                    data-cep="{{ report.cep }}"
+                    data-descricao="{{ report.descricao ?? '—' }}"
+                    data-resolvido="{{ report.resolvido ? '1' : '0' }}"
                     data-criado="{{ report.criado_em|date('d/m/Y H:i') }}">
                     <i class="fa-solid fa-eye"></i>
                   </button>
+
+                  <!-- Botão Ordem de Serviço (só aparece se tiver GPS) -->
+                  {% if report.latitude and report.longitude %}
+                  <button class="btn btn-sm btn-outline-amarelo btn-os" title="Ordem de Serviço"
+                    data-bs-toggle="modal" data-bs-target="#modalOS"
+                    data-id="{{ report.id }}"
+                    data-cidadao="{{ report.customer_nome }}"
+                    data-tipo="{{ report.tipo_descricao }}"
+                    data-cep="{{ report.cep }}"
+                    data-endereco="{{ report.address ?? '' }}"
+                    data-lat="{{ report.latitude }}"
+                    data-lng="{{ report.longitude }}"
+                    data-resolvido="{{ report.resolvido ? '1' : '0' }}"
+                    data-criado="{{ report.criado_em|date('d/m/Y H:i') }}"
+                    data-descricao="{{ report.descricao ?? '—' }}">
+                    <i class="fa-solid fa-route"></i>
+                  </button>
+                  {% endif %}
+
+                  <!-- Botão alternar status -->
                   <form method="POST" action="/admin/reports/{{ report.id }}/status">
                     <input type="hidden" name="_method" value="PATCH">
                     <input type="hidden" name="resolvido" value="{{ report.resolvido ? '0' : '1' }}">
@@ -136,13 +176,14 @@
                       <i class="fa-solid {{ report.resolvido ? 'fa-rotate-left' : 'fa-check' }}"></i>
                     </button>
                   </form>
+
                 </div>
               </td>
             </tr>
             {% endfor %}
             {% else %}
             <tr>
-              <td colspan="8" class="text-center text-secondary py-5">
+              <td colspan="9" class="text-center text-secondary py-5">
                 <i class="fa-solid fa-inbox fa-2x mb-2 d-block"></i>
                 Nenhum reporte encontrado.
               </td>
@@ -156,10 +197,10 @@
 
 </div>
 
-<!-- MODAL DETALHES -->
+<!-- ===================== MODAL DETALHES ===================== -->
 <div class="modal fade" id="modalReport" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="background:#1e2130; border:1px solid rgba(255,255,255,.1);">
+    <div class="modal-content modal-dark">
       <div class="modal-header border-bottom border-secondary">
         <h5 class="modal-title fw-bold">
           <i class="fa-solid fa-street-view me-2 text-amarelo"></i>Detalhes do Reporte
@@ -173,7 +214,7 @@
             <strong id="m-id"></strong>
           </li>
           <li class="d-flex justify-content-between">
-            <span class="text-secondary">Cidadao</span>
+            <span class="text-secondary">Cidadão</span>
             <strong id="m-cidadao"></strong>
           </li>
           <li class="d-flex justify-content-between">
@@ -193,7 +234,7 @@
             <strong id="m-criado"></strong>
           </li>
           <li>
-            <span class="text-secondary d-block mb-1">Descricao</span>
+            <span class="text-secondary d-block mb-1">Descrição</span>
             <p id="m-descricao" class="mb-0 small p-3 rounded" style="background:rgba(255,255,255,.05)"></p>
           </li>
         </ul>
@@ -205,8 +246,330 @@
   </div>
 </div>
 
+<!-- ===================== MODAL ORDEM DE SERVIÇO ===================== -->
+<div class="modal fade" id="modalOS" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content modal-dark">
+
+      <div class="modal-header border-bottom border-secondary">
+        <h5 class="modal-title fw-bold">
+          <i class="fa-solid fa-route me-2 text-amarelo"></i>
+          Ordem de Serviço <span class="text-secondary fw-normal small ms-2" id="os-id-titulo"></span>
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <div class="row g-0" style="min-height: 520px;">
+
+          <!-- Painel lateral esquerdo com info da OS -->
+          <div class="col-lg-4 os-panel p-4 d-flex flex-column gap-3">
+
+            <div>
+              <div class="os-label">Cidadão</div>
+              <div class="os-value" id="os-cidadao"></div>
+            </div>
+            <div>
+              <div class="os-label">Tipo de problema</div>
+              <div class="os-value" id="os-tipo"></div>
+            </div>
+            <div>
+              <div class="os-label">Endereço</div>
+              <div class="os-value" id="os-endereco"></div>
+            </div>
+            <div>
+              <div class="os-label">CEP</div>
+              <div class="os-value" id="os-cep"></div>
+            </div>
+            <div>
+              <div class="os-label">Status</div>
+              <div id="os-status"></div>
+            </div>
+            <div>
+              <div class="os-label">Registrado em</div>
+              <div class="os-value" id="os-criado"></div>
+            </div>
+            <div>
+              <div class="os-label">Descrição</div>
+              <div class="os-value small" id="os-descricao"></div>
+            </div>
+
+            <hr class="border-secondary my-1">
+
+            <!-- Card de rota OSRM -->
+            <div class="os-rota-card" id="os-rota-card">
+              <div class="text-secondary small text-center" id="os-rota-loading">
+                <i class="fa-solid fa-spinner fa-spin me-1"></i> Calculando rota...
+              </div>
+              <div id="os-rota-info" style="display:none;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="os-label mb-0">Rota até o poste</span>
+                  <span class="badge text-bg-secondary" id="os-rota-modo">Carro</span>
+                </div>
+                <div class="row g-2 text-center">
+                  <div class="col-6">
+                    <div class="os-rota-stat">
+                      <i class="fa-solid fa-road text-amarelo mb-1 d-block"></i>
+                      <div class="fw-bold" id="os-distancia">—</div>
+                      <div class="text-secondary" style="font-size:.72rem">distância</div>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="os-rota-stat">
+                      <i class="fa-solid fa-clock text-amarelo mb-1 d-block"></i>
+                      <div class="fw-bold" id="os-tempo">—</div>
+                      <div class="text-secondary" style="font-size:.72rem">tempo estimado</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div id="os-rota-erro" class="text-warning small" style="display:none;">
+                <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                <span id="os-rota-erro-msg"></span>
+              </div>
+            </div>
+
+            <!-- Botão GPS para calcular rota -->
+            <button type="button" class="btn btn-outline-amarelo btn-sm w-100" id="btn-os-gps">
+              <i class="fa-solid fa-location-crosshairs me-1"></i> Calcular rota da minha posição
+            </button>
+
+          </div>
+
+          <!-- Mapa -->
+          <div class="col-lg-8 position-relative">
+            <div id="os-map" style="height:100%; min-height:520px; width:100%;"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer border-top border-secondary">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block script %}
 {{ vite('resources/js/pages/list-report.js') }}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script>
+// =============================================================================
+// Ordem de Serviço — Mapa Leaflet + Rota OSRM
+// =============================================================================
+(function () {
+
+  // ── Referências DOM ──────────────────────────────────────────
+  const modalOS  = document.getElementById('modalOS');
+  const btnOsGps = document.getElementById('btn-os-gps');
+  if (!modalOS) return;
+
+  let osMap       = null;   // Instância do mapa Leaflet
+  let pinPoste    = null;   // Marcador do poste
+  let pinEquipe   = null;   // Marcador da equipe/técnico
+  let rotaLayer   = null;   // Polyline da rota OSRM
+  let posteLat    = null;   // Lat do poste (vem do data-* do botão)
+  let posteLng    = null;   // Lng do poste
+
+  // ── Ícones ──────────────────────────────────────────────────
+  // Pin amarelo: localização do poste com defeito
+  const iconePoste = L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
+      <path d="M16 0C7.16 0 0 7.16 0 16c0 11 16 26 16 26S32 27 32 16C32 7.16 24.84 0 16 0z" fill="#F5C518"/>
+      <circle cx="16" cy="16" r="7" fill="#0D0F1A"/>
+    </svg>`,
+    className: '', iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -44],
+  });
+
+  // Pin azul: localização da equipe de manutenção
+  const iconeEquipe = L.divIcon({
+    html: `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="42" viewBox="0 0 32 42">
+      <path d="M16 0C7.16 0 0 7.16 0 16c0 11 16 26 16 26S32 27 32 16C32 7.16 24.84 0 16 0z" fill="#4A90D9"/>
+      <circle cx="16" cy="16" r="7" fill="#fff"/>
+    </svg>`,
+    className: '', iconSize: [32, 42], iconAnchor: [16, 42], popupAnchor: [0, -44],
+  });
+
+  // ── Popula modal da OS ao abrir ──────────────────────────────
+  modalOS.addEventListener('show.bs.modal', (e) => {
+    const btn = e.relatedTarget;
+    if (!btn) return;
+
+    posteLat = parseFloat(btn.dataset.lat);
+    posteLng = parseFloat(btn.dataset.lng);
+
+    // Preenche o painel lateral
+    document.getElementById('os-id-titulo').textContent  = '— OS #' + btn.dataset.id;
+    document.getElementById('os-cidadao').textContent    = btn.dataset.cidadao;
+    document.getElementById('os-tipo').textContent       = btn.dataset.tipo;
+    document.getElementById('os-cep').textContent        = btn.dataset.cep;
+    document.getElementById('os-criado').textContent     = btn.dataset.criado;
+    document.getElementById('os-descricao').textContent  = btn.dataset.descricao;
+
+    const end = btn.dataset.endereco;
+    document.getElementById('os-endereco').textContent   = end || '—';
+
+    const resolvido = btn.dataset.resolvido === '1';
+    document.getElementById('os-status').innerHTML = resolvido
+      ? '<span class="badge text-bg-success"><i class="fa-solid fa-circle-check me-1"></i>Resolvido</span>'
+      : '<span class="badge text-bg-warning text-dark"><i class="fa-solid fa-clock me-1"></i>Pendente</span>';
+
+    // Reseta a área de rota
+    document.getElementById('os-rota-loading').style.display = 'none';
+    document.getElementById('os-rota-info').style.display    = 'none';
+    document.getElementById('os-rota-erro').style.display    = 'none';
+  });
+
+  // ── Inicializa o mapa ao abrir ───────────────────────────────
+  modalOS.addEventListener('shown.bs.modal', () => {
+    if (!osMap) {
+      // Cria o mapa centrado no poste
+      osMap = L.map('os-map').setView([posteLat, posteLng], 16);
+
+      // Camadas: satélite + ruas alternáveis
+      const satelite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, attribution: '© Esri' }
+      );
+      const ruas = L.tileLayer(
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 19, attribution: '© OpenStreetMap' }
+      );
+      ruas.addTo(osMap);
+      L.control.layers({ '🛰️ Satélite': satelite, '🗺️ Ruas': ruas }, {}, { position: 'topleft', collapsed: false }).addTo(osMap);
+    } else {
+      // Reposiciona no novo poste se o modal for reaberto
+      osMap.setView([posteLat, posteLng], 16);
+      osMap.invalidateSize();
+    }
+
+    // Remove layers anteriores
+    if (pinPoste)  { osMap.removeLayer(pinPoste);  pinPoste  = null; }
+    if (pinEquipe) { osMap.removeLayer(pinEquipe); pinEquipe = null; }
+    if (rotaLayer) { osMap.removeLayer(rotaLayer); rotaLayer = null; }
+
+    // Coloca o pin do poste no mapa
+    pinPoste = L.marker([posteLat, posteLng], { icon: iconePoste })
+      .addTo(osMap)
+      .bindPopup('<strong>📍 Poste com defeito</strong>')
+      .openPopup();
+  });
+
+  // ── Botão GPS: calcular rota da posição atual até o poste ────
+  if (btnOsGps) {
+    btnOsGps.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        alert('Seu navegador não suporta geolocalização.');
+        return;
+      }
+
+      // Feedback visual enquanto busca GPS
+      btnOsGps.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Buscando localização...';
+      btnOsGps.disabled  = true;
+
+      document.getElementById('os-rota-loading').style.display = 'block';
+      document.getElementById('os-rota-info').style.display    = 'none';
+      document.getElementById('os-rota-erro').style.display    = 'none';
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const equLat = position.coords.latitude;
+          const equLng = position.coords.longitude;
+
+          // Restaura botão
+          btnOsGps.innerHTML = '<i class="fa-solid fa-location-crosshairs me-1"></i> Calcular rota da minha posição';
+          btnOsGps.disabled  = false;
+
+          // Remove pin anterior da equipe
+          if (pinEquipe) osMap.removeLayer(pinEquipe);
+
+          // Adiciona pin azul na posição da equipe
+          pinEquipe = L.marker([equLat, equLng], { icon: iconeEquipe })
+            .addTo(osMap)
+            .bindPopup('<strong>🔵 Sua posição</strong>');
+
+          // Ajusta zoom para ver os dois pins
+          const bounds = L.latLngBounds([[equLat, equLng], [posteLat, posteLng]]);
+          osMap.fitBounds(bounds, { padding: [50, 50] });
+
+          // ── Chama a API OSRM para calcular a rota ──────────────
+          // OSRM é open source e gratuito — usa dados do OpenStreetMap
+          // Formato: /route/v1/{profile}/{lng,lat};{lng,lat}
+          // profile: driving (carro), walking (a pé), cycling (bicicleta)
+          try {
+            const url = `https://router.project-osrm.org/route/v1/driving/${equLng},${equLat};${posteLng},${posteLat}?overview=full&geometries=geojson`;
+            const res  = await fetch(url);
+            const data = await res.json();
+
+            if (data.code !== 'Ok' || !data.routes.length) {
+              throw new Error('Rota não encontrada.');
+            }
+
+            const rota     = data.routes[0];
+            const distM    = rota.distance;           // Distância em metros
+            const duracaoS = rota.duration;           // Duração em segundos
+            const coords   = rota.geometry.coordinates; // Array [lng, lat]
+
+            // Remove rota anterior
+            if (rotaLayer) osMap.removeLayer(rotaLayer);
+
+            // Desenha a rota no mapa como linha azul
+            // OSRM retorna [lng, lat] mas Leaflet usa [lat, lng] — invertemos
+            rotaLayer = L.polyline(
+              coords.map(([lng, lat]) => [lat, lng]),
+              { color: '#4A90D9', weight: 5, opacity: .85, lineJoin: 'round' }
+            ).addTo(osMap);
+
+            // Formata distância: metros ou km
+            const distancia = distM >= 1000
+              ? (distM / 1000).toFixed(1) + ' km'
+              : Math.round(distM) + ' m';
+
+            // Formata duração: minutos ou horas
+            const minutos = Math.round(duracaoS / 60);
+            const tempo   = minutos >= 60
+              ? Math.floor(minutos / 60) + 'h ' + (minutos % 60) + 'min'
+              : minutos + ' min';
+
+            // Exibe os resultados no painel
+            document.getElementById('os-distancia').textContent   = distancia;
+            document.getElementById('os-tempo').textContent       = tempo;
+            document.getElementById('os-rota-loading').style.display = 'none';
+            document.getElementById('os-rota-info').style.display    = 'block';
+
+          } catch (err) {
+            document.getElementById('os-rota-loading').style.display  = 'none';
+            document.getElementById('os-rota-erro').style.display      = 'block';
+            document.getElementById('os-rota-erro-msg').textContent    = err.message || 'Não foi possível calcular a rota.';
+          }
+        },
+
+        // Erro de geolocalização
+        (error) => {
+          btnOsGps.innerHTML = '<i class="fa-solid fa-location-crosshairs me-1"></i> Calcular rota da minha posição';
+          btnOsGps.disabled  = false;
+          document.getElementById('os-rota-loading').style.display = 'none';
+
+          const msgs = {
+            1: 'Permissão de localização negada.',
+            2: 'Não foi possível obter sua localização.',
+            3: 'Tempo esgotado ao buscar localização.',
+          };
+          document.getElementById('os-rota-erro').style.display     = 'block';
+          document.getElementById('os-rota-erro-msg').textContent   = msgs[error.code] ?? 'Erro de GPS.';
+        },
+
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    });
+  }
+
+})();
+</script>
 {% endblock %}

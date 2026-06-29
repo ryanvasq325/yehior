@@ -19,8 +19,6 @@ import 'leaflet/dist/leaflet.css';
 // preenche automaticamente os campos de logradouro e bairro.
 // =============================================================================
 const cepInput = document.getElementById('cep');
-const form = document.querySelector('form');
-
 
 if (cepInput) {
   // Aplica máscara de CEP (biblioteca Inputmask já carregada globalmente)
@@ -28,7 +26,7 @@ if (cepInput) {
 
   cepInput.addEventListener('blur', async () => {
     // Remove tudo que não for número para validar e enviar à API
-    const cep = cepInput.value.replace(/\D/g, '');
+    const cep  = cepInput.value.replace(/\D/g, '');
     const info = document.getElementById('cep-info');
 
     // Ignora se o CEP estiver incompleto
@@ -38,7 +36,7 @@ if (cepInput) {
 
     try {
       // Consulta a API pública ViaCEP (gratuita, sem chave)
-      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const res  = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
       const data = await res.json();
 
       if (data.erro) {
@@ -46,8 +44,8 @@ if (cepInput) {
         info.innerHTML = '<span class="text-danger"><i class="fa-solid fa-circle-exclamation me-1"></i>CEP não encontrado.</span>';
       } else {
         // Preenche os campos de endereço com os dados retornados
-        document.getElementById('address').value = data.logradouro ?? '';
-        document.getElementById('district').value = data.bairro ?? '';
+        document.getElementById('address').value  = data.logradouro ?? '';
+        document.getElementById('district').value = data.bairro     ?? '';
 
         info.innerHTML = `<i class="fa-solid fa-circle-check me-1" style="color:var(--amarelo)"></i>
           ${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro}, ${data.localidade} — ${data.uf}`;
@@ -72,7 +70,7 @@ if (descricao && charCount) {
     const len = descricao.value.length;
     charCount.textContent = `${len} / 255`;
     // Fica vermelho a partir de 240 caracteres para alertar o usuário
-    charCount.classList.toggle('text-danger', len >= 240);
+    charCount.classList.toggle('text-danger',    len >= 240);
     charCount.classList.toggle('text-secondary', len < 240);
   };
   descricao.addEventListener('input', update);
@@ -84,12 +82,12 @@ if (descricao && charCount) {
 // Impede o envio se nenhum tipo de problema estiver selecionado.
 // Exibe mensagem de erro e rola a página até o campo com problema.
 // =============================================================================
-const form = document.querySelector('form');
+const formEl = document.querySelector('form'); // "formEl" para evitar conflito de nome
 
-if (form) {
-  form.addEventListener('submit', (e) => {
-    const selecionado = form.querySelector('input[name="id_tipo_problema"]:checked');
-    const errorEl = document.getElementById('problema-error');
+if (formEl) {
+  formEl.addEventListener('submit', (e) => {
+    const selecionado = formEl.querySelector('input[name="id_tipo_problema"]:checked');
+    const errorEl     = document.getElementById('problema-error');
 
     if (!selecionado) {
       // Bloqueia o envio e exibe o erro
@@ -118,7 +116,7 @@ async function preencherEnderecoDoMapa(lat, lng) {
   try {
     // Nominatim reverse geocoding — retorna JSON com dados de endereço
     // Accept-Language: pt-BR para nomes em português
-    const res = await fetch(
+    const res  = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
       { headers: { 'Accept-Language': 'pt-BR' } }
     );
@@ -128,12 +126,12 @@ async function preencherEnderecoDoMapa(lat, lng) {
     // O Nominatim retorna diferentes campos dependendo do tipo de via.
     // Tentamos do mais específico para o mais genérico.
     const logradouro = addr.road ?? addr.pedestrian ?? addr.path ?? '';
-    const bairro = addr.suburb ?? addr.neighbourhood ?? addr.quarter ?? addr.village ?? '';
-    const cep = (addr.postcode ?? '').replace(/\D/g, '');
+    const bairro     = addr.suburb ?? addr.neighbourhood ?? addr.quarter ?? addr.village ?? '';
+    const cep        = (addr.postcode ?? '').replace(/\D/g, '');
 
     // Preenche os campos do formulário somente se o valor existir
-    if (logradouro) document.getElementById('address').value = logradouro.toUpperCase();
-    if (bairro) document.getElementById('district').value = bairro.toUpperCase();
+    if (logradouro) document.getElementById('address').value  = logradouro.toUpperCase();
+    if (bairro)     document.getElementById('district').value = bairro.toUpperCase();
     if (cep.length === 8) {
       // Formata o CEP no padrão 00000-000
       document.getElementById('cep').value = cep.replace(/(\d{5})(\d{3})/, '$1-$2');
@@ -156,23 +154,23 @@ async function preencherEnderecoDoMapa(lat, lng) {
 // O pin amarelo pode ser arrastado para ajuste fino.
 // Ao confirmar, lat/lng são salvos em inputs hidden e o endereço é preenchido.
 // =============================================================================
-const btnAbrirMapa = document.getElementById('btn-abrir-mapa');     // Botão que abre o modal
-const btnConfirmar = document.getElementById('btn-confirmar-local'); // Botão de confirmar dentro do modal
-const btnClear = document.getElementById('btn-clear-map');       // Botão para remover a localização
-const btnGps = document.getElementById('btn-gps');             // Botão GPS flutuante no mapa
-const inputLat = document.getElementById('latitude');            // Input hidden — enviado com o form
-const inputLng = document.getElementById('longitude');           // Input hidden — enviado com o form
-const mapPreview = document.getElementById('map-preview');         // Caixa de preview exibida após confirmar
-const mapPreviewText = document.getElementById('map-preview-text');    // Texto com as coords dentro do preview
+const btnAbrirMapa    = document.getElementById('btn-abrir-mapa');     // Botão que abre o modal
+const btnConfirmar    = document.getElementById('btn-confirmar-local'); // Botão de confirmar dentro do modal
+const btnClear        = document.getElementById('btn-clear-map');       // Botão para remover a localização
+const btnGps          = document.getElementById('btn-gps');             // Botão GPS flutuante no mapa
+const inputLat        = document.getElementById('latitude');            // Input hidden — enviado com o form
+const inputLng        = document.getElementById('longitude');           // Input hidden — enviado com o form
+const mapPreview      = document.getElementById('map-preview');         // Caixa de preview exibida após confirmar
+const mapPreviewText  = document.getElementById('map-preview-text');    // Texto com as coords dentro do preview
 const modalCoordsInfo = document.getElementById('modal-coords-info');  // Info de coords no rodapé do modal
-const modalEl = document.getElementById('modalMapa');           // Elemento do modal Bootstrap
+const modalEl         = document.getElementById('modalMapa');           // Elemento do modal Bootstrap
 
 if (modalEl && btnAbrirMapa) {
-  let map = null;  // Instância do mapa Leaflet (criada uma única vez)
-  let marker = null;  // Marcador do poste no mapa
-  let circleGps = null;  // Círculo de precisão do GPS
-  let pendingLat = null;  // Latitude pendente (ainda não confirmada)
-  let pendingLng = null;  // Longitude pendente (ainda não confirmada)
+  let mapaLeaflet = null;  // Instância do mapa Leaflet (criada uma única vez)
+  let marker      = null;  // Marcador do poste no mapa
+  let circleGps   = null;  // Círculo de precisão do GPS
+  let pendingLat  = null;  // Latitude pendente (ainda não confirmada)
+  let pendingLng  = null;  // Longitude pendente (ainda não confirmada)
 
   // Pin amarelo com círculo escuro no centro — identidade visual do Yehi Or
   const pinIcon = L.divIcon({
@@ -181,8 +179,8 @@ if (modalEl && btnAbrirMapa) {
       <circle cx="16" cy="16" r="7" fill="#0D0F1A"/>
     </svg>`,
     className: '',
-    iconSize: [32, 42],  // Tamanho visual do ícone
-    iconAnchor: [16, 42],  // Ponto de ancoragem: base do pin
+    iconSize:    [32, 42],  // Tamanho visual do ícone
+    iconAnchor:  [16, 42],  // Ponto de ancoragem: base do pin
     popupAnchor: [0, -44],  // Posição do popup acima do pin
   });
 
@@ -208,11 +206,11 @@ if (modalEl && btnAbrirMapa) {
       marker.setLatLng(latlng);
     } else {
       // Cria o marcador pela primeira vez, com suporte a arrastar
-      marker = L.marker(latlng, { icon: pinIcon, draggable: true }).addTo(map);
+      marker = L.marker(latlng, { icon: pinIcon, draggable: true }).addTo(mapaLeaflet);
 
       // Atualiza as coords ao final do arrasto
       marker.on('dragend', () => {
-        const pos = marker.getLatLng();
+        const pos  = marker.getLatLng();
         pendingLat = pos.lat.toFixed(7);
         pendingLng = pos.lng.toFixed(7);
         atualizarInfoModal();
@@ -226,31 +224,46 @@ if (modalEl && btnAbrirMapa) {
   // O mapa só é criado quando o modal é aberto pela primeira vez.
   // Isso evita renderizar o mapa enquanto ele está oculto (causa bugs de tamanho).
   modalEl.addEventListener('shown.bs.modal', () => {
-    if (!map) {
+    if (!mapaLeaflet) {
       // Centro padrão: Cacoal - RO. Altere para a cidade do seu município.
-      let defaultLat = -11.4370;
-      let defaultLng = -61.4470;
+      let defaultLat  = -11.4370;
+      let defaultLng  = -61.4470;
       let defaultZoom = 14;
 
       // Se o usuário já tinha marcado uma localização antes, centraliza nela
       if (inputLat.value && inputLng.value) {
-        defaultLat = parseFloat(inputLat.value);
-        defaultLng = parseFloat(inputLng.value);
+        defaultLat  = parseFloat(inputLat.value);
+        defaultLng  = parseFloat(inputLng.value);
         defaultZoom = 17; // Zoom mais próximo para facilitar o ajuste
       }
 
       // Inicializa o mapa Leaflet no div #report-map
-      map = L.map('report-map').setView([defaultLat, defaultLng], defaultZoom);
+      mapaLeaflet = L.map('report-map').setView([defaultLat, defaultLng], defaultZoom);
 
-      // Camada satélite Esri World Imagery — gratuita, sem chave de API.
-      // Qualidade equivalente ao Google Maps satélite.
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }).addTo(map);
+      // Camada satélite Esri World Imagery — gratuita, sem chave de API
+      const satelite = L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { maxZoom: 19, attribution: '© <a href="https://www.esri.com">Esri</a> — Esri, Maxar, Earthstar Geographics' }
+      );
+
+      // Camada de ruas OpenStreetMap — fallback quando o satélite não tiver cobertura
+      const ruas = L.tileLayer(
+        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' }
+      );
+
+      // Começa com satélite ativo
+      satelite.addTo(mapaLeaflet);
+
+      // Controle de camadas: permite alternar entre satélite e ruas
+      L.control.layers(
+        { '🛰️ Satélite': satelite, '🗺️ Ruas': ruas },
+        {},
+        { position: 'topleft', collapsed: false }
+      ).addTo(mapaLeaflet);
 
       // Clique no mapa → coloca/move o pin
-      map.on('click', (e) => colocarMarcador(e.latlng));
+      mapaLeaflet.on('click', (e) => colocarMarcador(e.latlng));
 
       // Restaura o pin caso o usuário já tivesse confirmado antes e reabriu o modal
       if (inputLat.value && inputLng.value) {
@@ -259,18 +272,15 @@ if (modalEl && btnAbrirMapa) {
     } else {
       // Mapa já existe: recalcula o tamanho pois o modal tem animação CSS.
       // Sem isso o mapa fica "quebrado" visualmente ao reabrir.
-      setTimeout(() => map.invalidateSize(), 50);
+      setTimeout(() => mapaLeaflet.invalidateSize(), 50);
     }
   });
 
   // ── Botão GPS ──────────────────────────────────────────────────
   // Usa navigator.geolocation (API nativa do browser) para obter
-  // a posição atual do dispositivo (celular, tablet ou PC com GPS/Wi-Fi).
-  // Centraliza o mapa na posição e coloca o pin automaticamente.
-  // Também desenha um círculo azul mostrando a precisão do sinal.
+  // a posição atual do dispositivo e centralizar o mapa nela.
   if (btnGps) {
     btnGps.addEventListener('click', () => {
-      // Verifica se o browser suporta geolocalização
       if (!navigator.geolocation) {
         alert('Seu navegador não suporta geolocalização.');
         return;
@@ -278,42 +288,42 @@ if (modalEl && btnAbrirMapa) {
 
       // Feedback visual: ícone girando enquanto busca o GPS
       btnGps.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-      btnGps.disabled = true;
+      btnGps.disabled  = true;
 
       navigator.geolocation.getCurrentPosition(
-        // ── Sucesso: posição obtida ──
+        // Sucesso: posição obtida
         (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+          const lat      = position.coords.latitude;
+          const lng      = position.coords.longitude;
           const accuracy = position.coords.accuracy; // Precisão em metros
 
-          // Centraliza o mapa na posição atual com zoom aproximado
-          map.setView([lat, lng], 18);
+          // Centraliza o mapa na posição atual com zoom próximo
+          mapaLeaflet.setView([lat, lng], 18);
 
           // Remove o círculo de precisão anterior se existir
-          if (circleGps) map.removeLayer(circleGps);
+          if (circleGps) mapaLeaflet.removeLayer(circleGps);
 
           // Desenha círculo azul mostrando a margem de precisão do GPS
           circleGps = L.circle([lat, lng], {
-            radius: accuracy,       // Raio em metros
-            color: '#4A90D9',      // Borda azul
-            fillColor: '#4A90D9',
+            radius:      accuracy,
+            color:       '#4A90D9',
+            fillColor:   '#4A90D9',
             fillOpacity: 0.15,
-            weight: 1,
-          }).addTo(map);
+            weight:      1,
+          }).addTo(mapaLeaflet);
 
           // Coloca o pin na posição GPS automaticamente
           colocarMarcador(L.latLng(lat, lng));
 
           // Restaura o ícone do botão
           btnGps.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
-          btnGps.disabled = false;
+          btnGps.disabled  = false;
         },
 
-        // ── Erro: permissão negada ou GPS indisponível ──
+        // Erro: permissão negada ou GPS indisponível
         (error) => {
           btnGps.innerHTML = '<i class="fa-solid fa-location-crosshairs"></i>';
-          btnGps.disabled = false;
+          btnGps.disabled  = false;
 
           // Mensagens amigáveis para cada tipo de erro
           const mensagens = {
@@ -324,12 +334,8 @@ if (modalEl && btnAbrirMapa) {
           alert(mensagens[error.code] ?? 'Erro ao obter localização.');
         },
 
-        // ── Opções de precisão ──
-        {
-          enableHighAccuracy: true,  // Usa GPS do dispositivo (mais preciso, mais lento)
-          timeout: 10000, // Aguarda até 10 segundos
-          maximumAge: 0,     // Não usa cache — sempre busca posição fresca
-        }
+        // Opções: alta precisão, timeout de 10s, sem cache
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     });
   }
@@ -345,8 +351,8 @@ if (modalEl && btnAbrirMapa) {
     inputLng.value = pendingLng;
 
     // Exibe o preview da localização confirmada abaixo do botão
-    mapPreviewText.textContent = `Localização marcada: ${pendingLat}, ${pendingLng}`;
-    mapPreview.style.display = 'flex';
+    mapPreviewText.textContent  = `Localização marcada: ${pendingLat}, ${pendingLng}`;
+    mapPreview.style.display    = 'flex';
     mapPreview.style.alignItems = 'center';
 
     // Fecha o modal
@@ -362,18 +368,18 @@ if (modalEl && btnAbrirMapa) {
   });
 
   // ── Remover localização ────────────────────────────────────────
-  // Limpa tudo: inputs hidden, marcador no mapa, círculo GPS e preview na tela.
+  // Limpa tudo: inputs hidden, marcador no mapa, círculo GPS e preview.
   btnClear.addEventListener('click', () => {
     inputLat.value = '';
     inputLng.value = '';
-    pendingLat = null;
-    pendingLng = null;
+    pendingLat     = null;
+    pendingLng     = null;
 
     mapPreview.style.display = 'none';
 
     // Remove o marcador e o círculo GPS do mapa
-    if (marker && map) { map.removeLayer(marker); marker = null; }
-    if (circleGps && map) { map.removeLayer(circleGps); circleGps = null; }
+    if (marker    && mapaLeaflet) { mapaLeaflet.removeLayer(marker);    marker    = null; }
+    if (circleGps && mapaLeaflet) { mapaLeaflet.removeLayer(circleGps); circleGps = null; }
 
     // Desabilita o botão de confirmar
     btnConfirmar.disabled = true;

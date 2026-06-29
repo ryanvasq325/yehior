@@ -16,6 +16,19 @@
   color: #0D0F1A;
 }
 
+/* ===== BOTÃO OUTLINE AMARELO ===== */
+.btn-outline-amarelo {
+  border: 1.5px solid var(--amarelo);
+  color: var(--amarelo);
+  background: transparent;
+  font-weight: 600;
+  transition: background .2s, color .2s;
+}
+.btn-outline-amarelo:hover {
+  background: rgba(245, 197, 24, .12);
+  color: var(--amarelo);
+}
+
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);
@@ -73,4 +86,50 @@
 .table td {
   border-color: rgba(255,255,255,.05);
   vertical-align: middle;
+}
+
+/* ===== MODAIS ESCUROS ===== */
+.modal-dark {
+  background: #1e2130;
+  border: 1px solid rgba(255,255,255,.1);
+}
+
+/* ===== PAINEL LATERAL DA ORDEM DE SERVIÇO ===== */
+/* Faixa escura à esquerda do modal de OS com os dados do reporte */
+.os-panel {
+  background: #13151f;
+  border-right: 1px solid rgba(255,255,255,.07);
+  overflow-y: auto;
+  max-height: 520px;
+}
+
+.os-label {
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #6b7280;
+  font-weight: 600;
+  margin-bottom: .2rem;
+}
+
+.os-value {
+  color: #e8e8f0;
+  font-weight: 500;
+}
+
+/* ===== CARD DE ROTA OSRM ===== */
+/* Exibe distância e tempo estimado calculados pelo OSRM */
+.os-rota-card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+/* Célula de estatística da rota (distância / tempo) */
+.os-rota-stat {
+  background: rgba(255,255,255,.04);
+  border-radius: 8px;
+  padding: .6rem .4rem;
+  font-size: .85rem;
 }

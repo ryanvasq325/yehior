@@ -9,7 +9,10 @@ final class Admin extends Base
 {
     public function gestao($request, $response)
     {
-        
+        // Busca todos os reportes que possuem latitude e longitude salvas
+        // para exibir como pins no mapa do painel admin.
+        // endereco/bairro/poste agora vêm direto das colunas de reports
+        // (não dependem mais de um cadastro de endereço do cidadão).
         $reportsMap = \App\Database\DB::select(
                 'r.id',
                 'r.latitude AS lat',
@@ -137,6 +140,8 @@ final class Admin extends Base
     public function getabcranking($request, $response)
     {
         try {
+            // bairro agora vem direto de reports.bairro (preenchido pelo cidadão
+            // no formulário de report), não precisa mais de join com address
             $qb = \App\Database\DB::select('r.bairro', 'COUNT(r.id) AS total')
                 ->from('reports', 'r')
                 ->where('r.bairro IS NOT NULL')

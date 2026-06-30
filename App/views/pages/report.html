@@ -18,6 +18,14 @@
         <p class="text-secondary mb-0">Preencha as informações abaixo para registrar uma ocorrência.</p>
       </div>
 
+      <!-- Alerta de sucesso (exibido após salvar com sucesso) -->
+      {% if success %}
+      <div class="alert alert-success d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Reporte enviado com sucesso! Obrigado por ajudar a melhorar a iluminação da cidade.</span>
+      </div>
+      {% endif %}
+
       <!-- Alerta de erro (exibido pelo PHP quando houver) -->
       {% if error %}
       <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
@@ -28,7 +36,7 @@
 
 
       <div class="report-card p-5">
-        <form>
+        <form method="POST" action="/report/store">
 
           <div class="mb-4">
             <label class="form-label fw-semibold">

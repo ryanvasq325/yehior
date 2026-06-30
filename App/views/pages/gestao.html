@@ -11,6 +11,10 @@
 
 <div class="col-12 p-4">
 
+  <!-- Dados injetados pelo Twig, lidos pelo gestao.js (sem script inline) -->
+  <div id="pendentes-data" data-total="{{ totalPending | default(0) }}" style="display:none;"></div>
+  <div id="reports-map-data" data-reports="{{ reportsMap is defined ? reportsMap|json_encode|e('html_attr') : '[]' }}" style="display:none;"></div>
+
   <h1 class="h2 mb-4 text-white">
     <i class="fa-solid fa-gauge-high me-2 text-amarelo"></i>Painel Principal
   </h1>
@@ -228,111 +232,8 @@
 {% endblock %}
 
 {% block script %}
-{{ vite('resources/js/pages/gestao.js') }}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
         crossorigin=""></script>
-<script>
-// =============================================================================
-// Mapa de reportes do painel admin — Yehi Or
-// Exibe todos os reportes que possuem latitude/longitude salvos pelo cidadão.
-// Os dados vêm do PHP via Twig (json_encode) e são plotados como pins no mapa.
-// Pin vermelho = pendente | Pin verde = resolvido
-// Clique no pin abre popup com detalhes e link para a Ordem de Serviço.
-// =============================================================================
-(function () {
-
-  // Dados dos reportes injetados pelo PHP/Twig.
-  // O controller deve passar a variável `reportsMap` com os reportes que têm lat/lng.
-  // Exemplo de cada item: { id, cidadao, tipo, cep, endereco, resolvido, lat, lng }
-  var reports = {{ reportsMap is defined ? reportsMap|json_encode|raw : '[]' }};
-
-  // Filtra apenas reportes que têm coordenadas válidas
-  var reportesComGps = reports.filter(function (r) {
-    return r.lat && r.lng;
-  });
-
-  var mapDiv = document.getElementById('admin-map');
-  if (!mapDiv || reportesComGps.length === 0) {
-    // Se não há reportes com GPS, exibe mensagem no lugar do mapa
-    if (mapDiv) {
-      mapDiv.style.height = 'auto';
-      mapDiv.innerHTML = '<div class="text-center text-secondary py-5">'
-        + '<i class="fa-solid fa-map-location-dot fa-2x mb-2 d-block opacity-50"></i>'
-        + 'Nenhum reporte com localização GPS cadastrado ainda.'
-        + '</div>';
-    }
-    return;
-  }
-
-  // Inicializa o mapa centrado na média das coordenadas dos reportes
-  var lats = reportesComGps.map(function (r) { return parseFloat(r.lat); });
-  var lngs = reportesComGps.map(function (r) { return parseFloat(r.lng); });
-  var centerLat = lats.reduce(function (a, b) { return a + b; }, 0) / lats.length;
-  var centerLng = lngs.reduce(function (a, b) { return a + b; }, 0) / lngs.length;
-
-  var adminMap = L.map('admin-map').setView([centerLat, centerLng], 14);
-
-  // Camadas: satélite + ruas alternáveis
-  var satelite = L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-    { maxZoom: 19, attribution: '© Esri' }
-  );
-  var ruas = L.tileLayer(
-    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-    { maxZoom: 19, attribution: '© OpenStreetMap' }
-  );
-
-  // Começa com ruas (mais legível no painel admin)
-  ruas.addTo(adminMap);
-  L.control.layers(
-    { '🛰️ Satélite': satelite, '🗺️ Ruas': ruas },
-    {},
-    { position: 'topleft', collapsed: false }
-  ).addTo(adminMap);
-
-  // Função que gera o ícone SVG colorido conforme o status do reporte
-  function makeIcon(resolvido) {
-    var cor = resolvido ? '#198754' : '#dc3545'; // verde = resolvido, vermelho = pendente
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">'
-      + '<path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="' + cor + '"/>'
-      + '<circle cx="14" cy="14" r="6" fill="#fff"/>'
-      + '</svg>';
-    return L.divIcon({
-      html: svg,
-      className: '',
-      iconSize: [28, 36],
-      iconAnchor: [14, 36],
-      popupAnchor: [0, -38],
-    });
-  }
-
-  // Plota cada reporte no mapa com popup de detalhes
-  reportesComGps.forEach(function (r) {
-    var statusBadge = r.resolvido
-      ? '<span style="color:#198754;font-weight:600;">✔ Resolvido</span>'
-      : '<span style="color:#dc3545;font-weight:600;">⏳ Pendente</span>';
-
-    var popupHtml = '<div style="min-width:200px;line-height:1.6">'
-      + '<strong>OS #' + r.id + '</strong><br>'
-      + '<span style="color:#aaa;font-size:.8rem;">' + (r.tipo || '—') + '</span><br>'
-      + '<span style="font-size:.82rem;">' + (r.endereco || r.cep || '—') + '</span><br>'
-      + '<span style="font-size:.82rem;">Cidadão: ' + (r.cidadao || '—') + '</span><br>'
-      + statusBadge + '<br>'
-      + '<a href="/admin/listreport" style="font-size:.8rem;color:#F5C518;">Ver Ordem de Serviço →</a>'
-      + '</div>';
-
-    L.marker([parseFloat(r.lat), parseFloat(r.lng)], { icon: makeIcon(r.resolvido) })
-      .addTo(adminMap)
-      .bindPopup(popupHtml);
-  });
-
-  // Ajusta o zoom para mostrar todos os pins automaticamente
-  var bounds = L.latLngBounds(reportesComGps.map(function (r) {
-    return [parseFloat(r.lat), parseFloat(r.lng)];
-  }));
-  adminMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 16 });
-
-})();
-</script>
+{{ vite('resources/js/pages/gestao.js') }}
 {% endblock %}

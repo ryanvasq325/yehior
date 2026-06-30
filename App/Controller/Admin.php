@@ -9,29 +9,43 @@ final class Admin extends Base
 {
     public function gestao($request, $response)
     {
-        // Busca todos os reportes que possuem latitude e longitude salvas
-        // para exibir como pins no mapa do painel admin
+        
         $reportsMap = \App\Database\DB::select(
                 'r.id',
                 'r.latitude AS lat',
                 'r.longitude AS lng',
                 'r.cep',
+                'r.endereco',
+                'r.numero',
+                'r.bairro',
+                'r.poste',
                 'r.resolvido',
                 'tp.descricao AS tipo',
-                'c.nome AS cidadao',
-                'a.logradouro AS endereco'
+                'c.nome AS cidadao'
             )
             ->from('reports', 'r')
             ->leftJoin('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
             ->leftJoin('r', 'customer',     'c',  'r.id_customer = c.id')
-            ->leftJoin('r', 'address',      'a',  'r.id_customer = a.id_customer')
             ->where('r.latitude IS NOT NULL AND r.longitude IS NOT NULL')
             ->fetchAllAssociative();
 
+        // Total de reportes pendentes (não resolvidos) — usado pelo badge/toast
+        // de aviso no painel admin
+        $totalPendentes = (int) \App\Database\DB::select('COUNT(*)')
+            ->from('reports')
+            ->where('resolvido = false')
+            ->fetchOne();
+
+        $totalReports = (int) \App\Database\DB::select('COUNT(*)')
+            ->from('reports')
+            ->fetchOne();
+
         return $this->getTwig()
             ->render($response, $this->setView('gestao'), [
-                'titulo'     => '',
-                'reportsMap' => $reportsMap,
+                'titulo'         => '',
+                'reportsMap'     => $reportsMap,
+                'totalReports'   => $totalReports,
+                'totalPending'   => $totalPendentes,
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -123,10 +137,10 @@ final class Admin extends Base
     public function getabcranking($request, $response)
     {
         try {
-            $qb = \App\Database\DB::select('a.bairro', 'COUNT(r.id) AS total')
+            $qb = \App\Database\DB::select('r.bairro', 'COUNT(r.id) AS total')
                 ->from('reports', 'r')
-                ->join('r', 'address', 'a', 'r.id_customer = a.id_customer')
-                ->groupBy('a.bairro')
+                ->where('r.bairro IS NOT NULL')
+                ->groupBy('r.bairro')
                 ->orderBy('total', 'DESC');
 
             $rows = $qb->fetchAllAssociative();

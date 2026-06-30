@@ -269,6 +269,10 @@ if (modalEl && btnAbrirMapa) {
       if (inputLat.value && inputLng.value) {
         colocarMarcador(L.latLng(parseFloat(inputLat.value), parseFloat(inputLng.value)));
       }
+
+      // A animação CSS do modal pode renderizar os tiles com tamanho errado
+      // mesmo na primeira abertura (o container ainda está em transição), não só nas seguintes
+      setTimeout(() => mapaLeaflet.invalidateSize(), 100);
     } else {
       // Mapa já existe: recalcula o tamanho pois o modal tem animação CSS.
       // Sem isso o mapa fica "quebrado" visualmente ao reabrir.

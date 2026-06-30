@@ -14,6 +14,12 @@ final class Reports extends AbstractMigration
             ->addColumn('id_tipo_problema', 'biginteger', ['null' => true])
             ->addColumn('id_produto', 'biginteger', ['null' => true])
             ->addColumn('cep', 'text', ['null' => true])
+            ->addColumn('endereco', 'text', ['null' => true])
+            ->addColumn('numero', 'text', ['null' => true])
+            ->addColumn('bairro', 'text', ['null' => true])
+            ->addColumn('poste', 'text', ['null' => true])
+            ->addColumn('latitude', 'decimal', ['precision' => 10, 'scale' => 7, 'null' => true])
+            ->addColumn('longitude', 'decimal', ['precision' => 10, 'scale' => 7, 'null' => true])
             ->addColumn('descricao', 'text', ['null' => true])
             ->addColumn('resolvido', 'boolean', ['null' => true])
             ->addColumn('data_cadastro', 'datetime', ['null' => true, 'default' => 'CURRENT_TIMESTAMP'])
@@ -22,6 +28,5 @@ final class Reports extends AbstractMigration
             ->addForeignKey('id_tipo_problema', 'type_problem', 'id', ['delete' => 'CASCADE', 'update' => 'NO ACTION'])
             ->addForeignKey('id_produto', 'products', 'id', ['delete' => 'CASCADE', 'update' => 'NO ACTION'])
             ->create();
-
     }
 }

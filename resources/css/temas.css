@@ -1,0 +1,140 @@
+/* ============================================================
+   TEMA CLARO / ESCURO — GLOBAL (todas as páginas)
+   ============================================================ */
+:root,
+[data-bs-theme="dark"] {
+  --amarelo: #F5C518;
+  --amarelo-hover: #ffd740;
+  --amarelo-texto-sobre: #0D0F1A;
+
+  --bg-body: #0D0F1A;
+  --bg-section-alt: rgba(255, 255, 255, .03);
+
+  --cinza-card: #1e2130;
+  --card-border: rgba(255, 255, 255, .07);
+
+  --texto-principal: #f1f2f6;
+  --texto-secundario: #9ca3c8;
+
+  --navbar-bg: rgba(13, 15, 26, .92);
+  --navbar-border: rgba(255, 255, 255, .08);
+
+  --outline-border: rgba(255, 255, 255, .35);
+  --outline-hover-bg: rgba(255, 255, 255, .08);
+
+  --table-hover-bg: rgba(255, 255, 255, .04);
+  --table-header-cor: #9ca3af;
+  --footer-bg: rgba(0, 0, 0, .15);
+
+  --input-bg: rgba(255, 255, 255, .05);
+  --input-border: rgba(255, 255, 255, .12);
+  --input-focus-bg: rgba(255, 255, 255, .08);
+  --input-texto: #e8e8f0;
+  --input-placeholder: #6b7280;
+
+  --overlay-soft: rgba(255, 255, 255, .04);
+  --surface-2: #13151f; /* superfície um tom mais escura que --cinza-card (painéis internos) */
+}
+
+[data-bs-theme="light"] {
+  --amarelo: #B8860A;
+  --amarelo-hover: #9c7108;
+  --amarelo-texto-sobre: #0D0F1A;
+
+  --bg-body: #f6f7fa;
+  --bg-section-alt: #eef0f5;
+
+  --cinza-card: #ffffff;
+  --card-border: rgba(0, 0, 0, .08);
+
+  --texto-principal: #1a1d2e;
+  --texto-secundario: #5a6088;
+
+  --navbar-bg: rgba(255, 255, 255, .92);
+  --navbar-border: rgba(0, 0, 0, .08);
+
+  --outline-border: rgba(0, 0, 0, .35);
+  --outline-hover-bg: rgba(0, 0, 0, .06);
+
+  --table-hover-bg: rgba(0, 0, 0, .035);
+  --table-header-cor: #6b7280;
+  --footer-bg: rgba(0, 0, 0, .04);
+
+  --input-bg: rgba(0, 0, 0, .03);
+  --input-border: rgba(0, 0, 0, .15);
+  --input-focus-bg: rgba(0, 0, 0, .02);
+  --input-texto: #1a1d2e;
+  --input-placeholder: #8b90a8;
+
+  --overlay-soft: rgba(0, 0, 0, .035);
+  --surface-2: #eef0f5; /* superfície um tom mais clara que --cinza-card no light */
+}
+
+body {
+  background: var(--bg-body);
+  color: var(--texto-principal);
+  transition: background .25s ease, color .25s ease;
+}
+
+/* ===== NAVBAR ===== */
+#navbar-main {
+  background: var(--navbar-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--navbar-border);
+  transition: background .25s ease, border-color .25s ease;
+}
+
+#navbar-main .navbar-brand,
+#navbar-main .nav-link {
+  color: var(--texto-principal) !important;
+}
+
+#navbar-main .nav-link.active {
+  color: var(--amarelo) !important;
+}
+
+#navbar-main .nav-link:hover {
+  color: var(--amarelo) !important;
+}
+
+#btn-toggle-theme {
+  border-color: var(--outline-border);
+  color: var(--texto-principal);
+}
+#btn-toggle-theme:hover {
+  background: var(--outline-hover-bg);
+  color: var(--texto-principal);
+}
+
+/* ===== BOTÕES OUTLINE ===== */
+.btn-outline-light {
+  border-color: var(--outline-border);
+  color: var(--texto-principal);
+}
+.btn-outline-light:hover {
+  background: var(--outline-hover-bg);
+  border-color: var(--outline-border);
+  color: var(--texto-principal);
+}
+
+/* ===== UTILITÁRIOS ===== */
+.text-amarelo {
+  color: var(--amarelo) !important;
+}
+
+.btn-amarelo {
+  background: var(--amarelo);
+  color: var(--amarelo-texto-sobre);
+  font-weight: 700;
+  border: none;
+  transition: background .2s ease, transform .15s ease;
+}
+
+.btn-amarelo:hover {
+  background: var(--amarelo-hover);
+  color: var(--amarelo-texto-sobre);
+  transform: translateY(-1px);
+}
+
+h1, h2, h3, h4, h5, h6 { color: var(--texto-principal); }
+.text-secondary { color: var(--texto-secundario) !important; }

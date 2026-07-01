@@ -1,25 +1,4 @@
-:root {
-  --amarelo: #F5C518;
-  --cinza-card: #1e2130;
-}
-
-.text-amarelo {
-  color: var(--amarelo) !important;
-}
-
-.btn-amarelo {
-  background: var(--amarelo);
-  color: #0D0F1A;
-  font-weight: 700;
-  border: none;
-}
-
-.btn-amarelo:hover {
-  background: #ffd740;
-  color: #0D0F1A;
-}
-
-/* ===== METRIC CARDS ===== */
+/* ===== METRIC CARDS (cards coloridos: Ordem de Serviço, Usuários, Fornecedor, Produto, Relatório) ===== */
 .metric-card {
   transition: transform .15s, box-shadow .15s;
   cursor: pointer;
@@ -27,17 +6,29 @@
 
 .metric-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .3) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25) !important;
+}
+
+/* Fundo do card é sempre uma cor vibrante fixa — texto não deve seguir o tema */
+.metric-card .card-body {
+  color: rgba(0, 0, 0, .82);
 }
 
 .metric-card .card-footer {
-  background: rgba(0, 0, 0, .15);
-  border-top: 1px solid rgba(255, 255, 255, .1);
-  color: rgba(255, 255, 255, .8);
+  background: rgba(0, 0, 0, .18);
+  border-top: 1px solid rgba(255, 255, 255, .18);
+  color: rgba(255, 255, 255, .95);
+  font-weight: 500;
 }
 
+.metric-card .card-footer:hover {
+  background: rgba(0, 0, 0, .28);
+}
+
+/* ===== SUPPLIER CARD ===== */
 .supplier-card {
-  background: rgba(175, 5, 161, 0.87);
+  background: rgba(175, 5, 161, .87);
+  color: #fff;
   transition: transform .15s, box-shadow .15s;
   cursor: pointer;
 }
@@ -47,42 +38,58 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, .3) !important;
 }
 
-/* ===== ADMIN CARD (tabela / lista) ===== */
+/* ===== ADMIN CARD (mapa, "Reportes recentes", "Por tipo de problema") ===== */
 .admin-card {
   background: var(--cinza-card);
-  border: 1px solid rgba(255, 255, 255, .07);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
   overflow: hidden;
+  color: var(--texto-principal);
 }
 
 .admin-card-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--texto-principal);
+}
+
+.admin-card-header i {
+  color: var(--amarelo);
 }
 
 .admin-card-body {
   padding: 1.25rem;
+  color: var(--texto-principal);
 }
 
 /* ===== TABELA ===== */
+.table {
+  color: var(--texto-principal);
+}
+
 .table-dark {
   --bs-table-bg: transparent;
-  --bs-table-hover-bg: rgba(255, 255, 255, .04);
-  --bs-table-hover-color: #fff;
-  /* evita texto sumindo no hover */
+  --bs-table-color: var(--texto-principal);
+  --bs-table-hover-bg: var(--table-hover-bg);
+  --bs-table-hover-color: var(--texto-principal);
 }
 
 .table thead th {
   font-size: .8rem;
-  /* era .75rem — muito apertado com uppercase */
   text-transform: uppercase;
   letter-spacing: .05em;
-  color: #6b7280;
-  border-bottom-color: rgba(255, 255, 255, .07);
+  color: var(--table-header-cor);
+  border-bottom-color: var(--card-border);
   font-weight: 600;
 }
 
 .table td {
-  border-color: rgba(255, 255, 255, .05);
+  border-color: var(--card-border);
   vertical-align: middle;
+  color: var(--texto-principal);
+}
+
+.table td .text-muted,
+.table td a {
+  color: var(--texto-secundario) !important;
 }

@@ -1,22 +1,14 @@
-:root {
-  --amarelo: #F5C518;
-  --cinza-card: #1e2130;
-}
-
-.text-amarelo {
-  color: var(--amarelo) !important;
-}
+.text-amarelo { color: var(--amarelo) !important; }
 
 .btn-amarelo {
   background: var(--amarelo);
-  color: #151a0d;
+  color: var(--amarelo-texto-sobre);
   font-weight: 700;
   border: none;
 }
-
 .btn-amarelo:hover {
-  background: #ffd740;
-  color: #0D0F1A;
+  background: var(--amarelo-hover);
+  color: var(--amarelo-texto-sobre);
 }
 
 .btn-close-red {
@@ -29,67 +21,60 @@
   font-weight: 700;
   border: 1px solid var(--amarelo);
 }
-
 .btn-outline-amarelo:hover {
   background: var(--amarelo);
-  color: #151a0d;
+  color: var(--amarelo-texto-sobre);
 }
 
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);
-  border: 1px solid rgba(255, 255, 255, .07);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
   overflow: hidden;
 }
-
 .admin-card-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, .07);
+  border-bottom: 1px solid var(--card-border);
 }
-
-.admin-card-body {
-  padding: 1.25rem;
-}
+.admin-card-body { padding: 1.25rem; }
 
 /* ===== FILTROS ===== */
 .form-select,
 .form-control {
-  background: rgba(255, 255, 255, .05);
-  border-color: rgba(255, 255, 255, .12);
-  color: #e8e8f0;
+  background: var(--input-bg);
+  border-color: var(--input-border);
+  color: var(--input-texto);
 }
-
 .form-select:focus,
 .form-control:focus {
-  background: rgba(255, 255, 255, .08);
+  background: var(--input-focus-bg);
   border-color: var(--amarelo);
   box-shadow: 0 0 0 .2rem rgba(245, 197, 24, .15);
-  color: #fff;
+  color: var(--texto-principal);
 }
-
 .form-select option {
-  background: #1e2130;
-  color: #e8e8f0;
+  background: var(--cinza-card);
+  color: var(--input-texto);
 }
 
 /* ===== TABELA ===== */
 .table-dark {
   --bs-table-bg: transparent;
-  --bs-table-hover-bg: rgba(255, 255, 255, .04);
+  --bs-table-color: var(--texto-principal);
+  --bs-table-hover-bg: var(--table-hover-bg);
 }
-
 .table thead th {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .06em;
-  color: #6b7280;
-  border-bottom-color: rgba(255, 255, 255, .07);
+  color: var(--table-header-cor);
+  border-bottom-color: var(--card-border);
   font-weight: 600;
   white-space: nowrap;
 }
-
 .table td {
-  border-color: rgba(255, 255, 255, .05);
+  border-color: var(--card-border);
   vertical-align: middle;
+  color: var(--texto-principal);
 }

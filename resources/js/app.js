@@ -1,6 +1,7 @@
 // 1. jQuery global — DEVE ser o primeiro import.
 import './jquery-global.js'
 
+import './theme-toggle.js';
 // 2. Bootstrap 5 — JS bundle inclui Popper internamente
 import * as bootstrap from 'bootstrap'
 window.bootstrap = bootstrap
@@ -13,6 +14,7 @@ import 'datatables.net-staterestore-bs5'
 
 // Select2 — registra $.fn.select2
 import 'select2'
+
 
 // jQuery Validate — registra $.fn.validate
 import 'jquery-validation'

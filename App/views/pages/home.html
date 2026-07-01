@@ -2,9 +2,6 @@
 
 {% block css %}
 {{ vite('resources/css/pages/home.css') }}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin=""/>
 {% endblock %}
 
 {% block main %}
@@ -93,115 +90,6 @@
   </div>
 </section>
 
-<!-- ===================== FUNCIONALIDADES ===================== -->
-<section id="funcionalidades" class="col-12 py-5">
-  <div class="container-fluid px-4">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold fs-2">O que você pode fazer</h2>
-      <p class="text-secondary">Tudo que o cidadão precisa em um só lugar</p>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="feature-card p-4">
-          <div class="d-flex align-items-center gap-3 mb-4">
-            <i class="fa-solid fa-house feature-icon"></i>
-            <h4 class="mb-0 fw-bold">Cidadão</h4>
-            <span class="badge text-bg-secondary ms-auto">Acesso público</span>
-          </div>
-          <ul class="list-unstyled d-flex flex-column gap-3 mb-0">
-            <li class="d-flex gap-3">
-              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
-              <span>Criar conta e fazer login com segurança</span>
-            </li>
-            <li class="d-flex gap-3">
-              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
-              <span>Reportar problema informando tipo, endereço e foto opcional</span>
-            </li>
-            <li class="d-flex gap-3">
-              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
-              <span>Acompanhar o status do reporte em tempo real</span>
-            </li>
-            <li class="d-flex gap-3">
-              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
-              <span>Receber notificação quando o problema for resolvido</span>
-            </li>
-            <li class="d-flex gap-3">
-              <i class="fa-solid fa-circle-check mt-1 text-amarelo"></i>
-              <span>Histórico completo de reportes realizados</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== TIPOS DE PROBLEMA ===================== -->
-<section id="problemas" class="col-12 py-5 section-alt">
-  <div class="container-fluid px-4">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold fs-2">Tipos de problema suportados</h2>
-      <p class="text-secondary">Selecione a categoria ao fazer seu reporte</p>
-    </div>
-    <div class="row g-3 justify-content-center">
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-        <div class="problem-badge p-3 text-center h-100">
-          <div class="fs-2 mb-2">💡</div>
-          <div class="small fw-semibold">Lâmpada apagada</div>
-        </div>
-      </div>
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-        <div class="problem-badge p-3 text-center h-100">
-          <div class="fs-2 mb-2">🔴</div>
-          <div class="small fw-semibold">Luz piscando / com defeito</div>
-        </div>
-      </div>
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-        <div class="problem-badge p-3 text-center h-100">
-          <div class="fs-2 mb-2">🏚️</div>
-          <div class="small fw-semibold">Estrutura danificada</div>
-        </div>
-      </div>
-      <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-        <div class="problem-badge p-3 text-center h-100">
-          <div class="fs-2 mb-2">❓</div>
-          <div class="small fw-semibold">Outro problema</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== MAPA DE REPORTES ===================== -->
-<section id="mapa-reportes" class="col-12 py-5">
-  <div class="container-fluid px-4">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold fs-2">Reportes em tempo real</h2>
-      <p class="text-secondary">Veja onde estão os problemas registrados na cidade</p>
-    </div>
-
-    <div class="row justify-content-center mb-3">
-      <div class="col-lg-10 d-flex flex-wrap gap-3 justify-content-center">
-        <span class="d-flex align-items-center gap-2 small">
-          <span style="width:14px;height:14px;border-radius:50%;background:#dc3545;display:inline-block;"></span> Pendente
-        </span>
-        <span class="d-flex align-items-center gap-2 small">
-          <span style="width:14px;height:14px;border-radius:50%;background:#fd7e14;display:inline-block;"></span> Em andamento
-        </span>
-        <span class="d-flex align-items-center gap-2 small">
-          <span style="width:14px;height:14px;border-radius:50%;background:#198754;display:inline-block;"></span> Resolvido
-        </span>
-      </div>
-    </div>
-
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <div id="mapa-reportes-map" style="height: 420px; border-radius: 12px; overflow: hidden; z-index: 0;"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===================== CTA ===================== -->
 <section class="col-12 cta-section py-5">
   <div class="container-fluid px-4 text-center">
@@ -225,61 +113,4 @@
 
 {% block script %}
 {{ vite('resources/js/home.js') }}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV/XN/WLs="
-        crossorigin=""></script>
-<script>
-(function () {
-  // Dados fictícios — substitua por {{ reports|json_encode|raw }} vindo do controller
-  var reports = [
-    { lat: -11.4358, lng: -61.4442, tipo: "Lâmpada apagada",      status: "pendente",    endereco: "Rua das Flores, 120"    },
-    { lat: -11.4390, lng: -61.4510, tipo: "Luz piscando",          status: "andamento",   endereco: "Av. Brasil, 450"        },
-    { lat: -11.4320, lng: -61.4380, tipo: "Estrutura danificada",  status: "resolvido",   endereco: "Rua Castanheira, 88"    },
-    { lat: -11.4410, lng: -61.4460, tipo: "Lâmpada apagada",      status: "pendente",    endereco: "Rua Pioneiros, 300"     },
-    { lat: -11.4370, lng: -61.4530, tipo: "Outro problema",        status: "resolvido",   endereco: "Tv. São João, 15"       },
-    { lat: -11.4345, lng: -61.4495, tipo: "Lâmpada apagada",      status: "andamento",   endereco: "Rua Marechal, 210"      }
-  ];
-
-  var cores = {
-    pendente:  '#dc3545',
-    andamento: '#fd7e14',
-    resolvido: '#198754'
-  };
-
-  function makeIcon(status) {
-    var cor = cores[status] || '#6c757d';
-    var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">'
-      + '<path d="M14 0C6.27 0 0 6.27 0 14c0 9.625 14 22 14 22S28 23.625 28 14C28 6.27 21.73 0 14 0z" fill="' + cor + '"/>'
-      + '<circle cx="14" cy="14" r="6" fill="#fff"/>'
-      + '</svg>';
-    return L.divIcon({
-      html: svg,
-      className: '',
-      iconSize: [28, 36],
-      iconAnchor: [14, 36],
-      popupAnchor: [0, -36]
-    });
-  }
-
-  var map = L.map('mapa-reportes-map').setView([-11.4370, -61.4470], 14);
-
-  // Camada satélite Esri World Imagery — gratuita, sem chave de API
-  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19,
-    attribution: '© <a href="https://www.esri.com">Esri</a> — Source: Esri, Maxar, Earthstar Geographics',
-  }).addTo(map);
-
-  reports.forEach(function (r) {
-    L.marker([r.lat, r.lng], { icon: makeIcon(r.status) })
-      .addTo(map)
-      .bindPopup(
-        '<strong>' + r.tipo + '</strong><br>'
-        + r.endereco + '<br>'
-        + '<span style="color:' + cores[r.status] + ';font-weight:600;">'
-        + (r.status === 'pendente' ? 'Pendente' : r.status === 'andamento' ? 'Em andamento' : 'Resolvido')
-        + '</span>'
-      );
-  });
-})();
-</script>
 {% endblock %}

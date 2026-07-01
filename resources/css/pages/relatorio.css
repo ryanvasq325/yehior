@@ -1,36 +1,24 @@
-:root {
-  --amarelo: #F5C518;
-  --cinza-card: #1e2130;
-}
-
 .text-amarelo { color: var(--amarelo) !important; }
-
-
 
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);
-  border: 1px solid rgba(255,255,255,.07);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
   overflow: hidden;
 }
-
 .admin-card-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  border-bottom: 1px solid var(--card-border);
 }
-
-.admin-card-body {
-  padding: 1.25rem;
-}
+.admin-card-body { padding: 1.25rem; }
 
 /* ===== CARDS RESUMO ===== */
 .summary-card {
   background: var(--cinza-card);
-  border: 1px solid rgba(255,255,255,.07);
+  border: 1px solid var(--card-border);
   border-radius: 12px;
 }
-
 .summary-icon {
   width: 48px;
   height: 48px;
@@ -39,27 +27,27 @@
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
-  color: #fff;
+  color: #fff; /* ícone sempre sobre fundo colorido próprio — mantém fixo */
   flex-shrink: 0;
 }
 
 /* ===== TABELA ===== */
 .table-dark {
   --bs-table-bg: transparent;
-  --bs-table-hover-bg: rgba(255,255,255,.04);
+  --bs-table-color: var(--texto-principal);
+  --bs-table-hover-bg: var(--table-hover-bg);
 }
-
 .table thead th {
   font-size: .72rem;
   text-transform: uppercase;
   letter-spacing: .06em;
-  color: #6b7280;
-  border-bottom-color: rgba(255,255,255,.07);
+  color: var(--table-header-cor);
+  border-bottom-color: var(--card-border);
   font-weight: 600;
   white-space: nowrap;
 }
-
 .table td {
-  border-color: rgba(255,255,255,.05);
+  border-color: var(--card-border);
   vertical-align: middle;
+  color: var(--texto-principal);
 }

@@ -6,150 +6,153 @@
 
 {% block main %}
 
-<div class="col-12 p-4">
-
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-    <h1 class="h2 mb-0 text-white">
-      <i class="fa-solid fa-chart-pie me-2 text-amarelo"></i>Relatorio Geral
-    </h1>
+<div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+  <h1 class="h2 mb-0 text-white">
+    <i class="fa-solid fa-chart-pie me-2 text-amarelo"></i>Relatorio Geral
+  </h1>
+  <div class="d-flex align-items-center gap-3">
     <span class="text-secondary small">
       <i class="fa-solid fa-clock me-1"></i>Atualizado em {{ "now"|date('d/m/Y H:i') }}
     </span>
+    <button type="button" class="btn btn-outline-amarelo px-4" id="mdBack">
+      Voltar
+    </button>
   </div>
+</div>
 
-  <!-- CARDS RESUMO -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-3 col-sm-6">
-      <div class="summary-card p-3 d-flex align-items-center gap-3">
-        <div class="summary-icon bg-primary">
-          <i class="fa-solid fa-street-view"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalReports|default(0) }}</div>
-          <div class="small text-secondary">Total de reportes</div>
-        </div>
+<!-- CARDS RESUMO -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-sm-6">
+    <div class="summary-card p-3 d-flex align-items-center gap-3">
+      <div class="summary-icon bg-primary">
+        <i class="fa-solid fa-street-view"></i>
       </div>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="summary-card p-3 d-flex align-items-center gap-3">
-        <div class="summary-icon bg-success">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalResolvidos|default(0) }}</div>
-          <div class="small text-secondary">Resolvidos</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="summary-card p-3 d-flex align-items-center gap-3">
-        <div class="summary-icon bg-warning">
-          <i class="fa-solid fa-clock"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalPendentes|default(0) }}</div>
-          <div class="small text-secondary">Pendentes</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="summary-card p-3 d-flex align-items-center gap-3">
-        <div class="summary-icon" style="background:#6f42c1;">
-          <i class="fa-solid fa-percent"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">
-            {% if totalReports > 0 %}
-              {{ ((totalResolvidos / totalReports) * 100)|round(1) }}%
-            {% else %}
-              0%
-            {% endif %}
-          </div>
-          <div class="small text-secondary">Taxa de resolucao</div>
-        </div>
+      <div>
+        <div class="fs-4 fw-bold">{{ totalReports|default(0) }}</div>
+        <div class="small text-secondary">Total de reportes</div>
       </div>
     </div>
   </div>
-
-  <!-- GRAFICOS -->
-  <div class="row g-4">
-    <div class="col-lg-5">
-      <div class="admin-card h-100">
-        <div class="admin-card-header">
-          <h5 class="mb-0 fw-semibold">
-            <i class="fa-solid fa-chart-pie me-2 text-amarelo"></i>Por tipo de problema
-          </h5>
-        </div>
-        <div class="admin-card-body">
-          <div id="chart-pizza" style="width:100%; height:340px;"></div>
-        </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="summary-card p-3 d-flex align-items-center gap-3">
+      <div class="summary-icon bg-success">
+        <i class="fa-solid fa-circle-check"></i>
       </div>
-    </div>
-    <div class="col-lg-7">
-      <div class="admin-card h-100">
-        <div class="admin-card-header">
-          <h5 class="mb-0 fw-semibold">
-            <i class="fa-solid fa-chart-bar me-2 text-amarelo"></i>Reportes por mes
-          </h5>
-        </div>
-        <div class="admin-card-body">
-          <div id="chart-barras" style="width:100%; height:340px;"></div>
-        </div>
+      <div>
+        <div class="fs-4 fw-bold">{{ totalResolvidos|default(0) }}</div>
+        <div class="small text-secondary">Resolvidos</div>
       </div>
     </div>
   </div>
-
-  <!-- TABELA RESUMO — tipos vem do PHP já calculados -->
-  <div class="row g-4 mt-1">
-    <div class="col-12">
-      <div class="admin-card">
-        <div class="admin-card-header">
-          <h5 class="mb-0 fw-semibold">
-            <i class="fa-solid fa-table me-2 text-amarelo"></i>Resumo por tipo de problema
-          </h5>
+  <div class="col-md-3 col-sm-6">
+    <div class="summary-card p-3 d-flex align-items-center gap-3">
+      <div class="summary-icon bg-warning">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+      <div>
+        <div class="fs-4 fw-bold">{{ totalPendentes|default(0) }}</div>
+        <div class="small text-secondary">Pendentes</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3 col-sm-6">
+    <div class="summary-card p-3 d-flex align-items-center gap-3">
+      <div class="summary-icon" style="background:#6f42c1;">
+        <i class="fa-solid fa-percent"></i>
+      </div>
+      <div>
+        <div class="fs-4 fw-bold">
+          {% if totalReports > 0 %}
+          {{ ((totalResolvidos / totalReports) * 100)|round(1) }}%
+          {% else %}
+          0%
+          {% endif %}
         </div>
-        <div class="admin-card-body p-0">
-          <div class="table-responsive">
-            <table class="table table-dark table-hover mb-0">
-              <thead>
-                <tr>
-                  <th class="ps-4">Tipo</th>
-                  <th>Total</th>
-                  <th>Resolvidos</th>
-                  <th>Pendentes</th>
-                  <th>Taxa de resolucao</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for tipo in tipos %}
-                <tr>
-                  <td class="ps-4 fw-semibold">{{ tipo.descricao }}</td>
-                  <td>{{ tipo.total }}</td>
-                  <td><span class="badge text-bg-success">{{ tipo.resolvidos }}</span></td>
-                  <td><span class="badge text-bg-warning text-dark">{{ tipo.pendentes }}</span></td>
-                  <td>
-                    <div class="d-flex align-items-center gap-2">
-                      <div class="progress flex-grow-1" style="height:6px; background:rgba(255,255,255,.1);">
-                        <div class="progress-bar bg-success" style="width:{{ tipo.taxa }}%"></div>
-                      </div>
-                      <small class="text-secondary" style="min-width:36px;">{{ tipo.taxa }}%</small>
+        <div class="small text-secondary">Taxa de resolucao</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRAFICOS -->
+<div class="row g-4">
+  <div class="col-lg-5">
+    <div class="admin-card h-100">
+      <div class="admin-card-header">
+        <h5 class="mb-0 fw-semibold">
+          <i class="fa-solid fa-chart-pie me-2 text-amarelo"></i>Por tipo de problema
+        </h5>
+      </div>
+      <div class="admin-card-body">
+        <div id="chart-pizza" style="width:100%; height:340px;"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="admin-card h-100">
+      <div class="admin-card-header">
+        <h5 class="mb-0 fw-semibold">
+          <i class="fa-solid fa-chart-bar me-2 text-amarelo"></i>Reportes por mes
+        </h5>
+      </div>
+      <div class="admin-card-body">
+        <div id="chart-barras" style="width:100%; height:340px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABELA RESUMO — tipos vem do PHP já calculados -->
+<div class="row g-4 mt-1">
+  <div class="col-12">
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <h5 class="mb-0 fw-semibold">
+          <i class="fa-solid fa-table me-2 text-amarelo"></i>Resumo por tipo de problema
+        </h5>
+      </div>
+      <div class="admin-card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-dark table-hover mb-0">
+            <thead>
+              <tr>
+                <th class="ps-4">Tipo</th>
+                <th>Total</th>
+                <th>Resolvidos</th>
+                <th>Pendentes</th>
+                <th>Taxa de resolucao</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for tipo in tipos %}
+              <tr>
+                <td class="ps-4 fw-semibold">{{ tipo.descricao }}</td>
+                <td>{{ tipo.total }}</td>
+                <td><span class="badge text-bg-success">{{ tipo.resolvidos }}</span></td>
+                <td><span class="badge text-bg-warning text-dark">{{ tipo.pendentes }}</span></td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="progress flex-grow-1" style="height:6px; background:rgba(255,255,255,.1);">
+                      <div class="progress-bar bg-success" style="width:{{ tipo.taxa }}%"></div>
                     </div>
-                  </td>
-                </tr>
-                {% else %}
-                <tr>
-                  <td colspan="5" class="text-center text-secondary py-4">
-                    <i class="fa-solid fa-inbox me-2"></i>Nenhum dado disponivel.
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+                    <small class="text-secondary" style="min-width:36px;">{{ tipo.taxa }}%</small>
+                  </div>
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="5" class="text-center text-secondary py-4">
+                  <i class="fa-solid fa-inbox me-2"></i>Nenhum dado disponivel.
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
+</div>
 
 </div>
 {% endblock %}

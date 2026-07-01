@@ -19,6 +19,18 @@
   color: #0D0F1A;
 }
 
+.btn-outline-amarelo {
+  background: transparent;
+  color: var(--amarelo);
+  font-weight: 700;
+  border: 1px solid var(--amarelo);
+}
+
+.btn-outline-amarelo:hover {
+  background: var(--amarelo);
+  color: #151a0d;
+}
+
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);

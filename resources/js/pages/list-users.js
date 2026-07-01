@@ -10,6 +10,10 @@ mdRegister.addEventListener('click', () => {
     $('#modalRegisterUser').modal('show');
 });
 
+mdBack.addEventListener('click', () => {
+    window.location.href = '/admin/gestao';
+});
+
 async function deleteUser() {
     const requests = new Requests();
     try {

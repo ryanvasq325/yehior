@@ -36,7 +36,11 @@ if (cepInput) {
 
     try {
       // Consulta a API pública ViaCEP (gratuita, sem chave)
-      const res  = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+      const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+
+      // Verifica se a API respondeu com sucesso antes de tentar interpretar o JSON
+      if (!res.ok) throw new Error('Falha na resposta da API ViaCEP');
+
       const data = await res.json();
 
       if (data.erro) {
@@ -51,7 +55,7 @@ if (cepInput) {
           ${data.logradouro ? data.logradouro + ', ' : ''}${data.bairro}, ${data.localidade} — ${data.uf}`;
       }
     } catch {
-      // Falha de rede ou API indisponível
+      // Falha de rede, API indisponível ou resposta com erro HTTP
       info.innerHTML = '<span class="text-warning"><i class="fa-solid fa-wifi me-1"></i>Não foi possível verificar o CEP.</span>';
     }
   });
@@ -80,7 +84,8 @@ if (descricao && charCount) {
 // =============================================================================
 // 3. VALIDAÇÃO DO FORMULÁRIO
 // Impede o envio se nenhum tipo de problema estiver selecionado.
-// Exibe mensagem de erro e rola a página até o campo com problema.
+// Também evita duplo envio (clique duplo, conexão lenta) desabilitando
+// o botão assim que o formulário é validado com sucesso.
 // =============================================================================
 const formEl = document.querySelector('form'); // "formEl" para evitar conflito de nome
 
@@ -96,8 +101,17 @@ if (formEl) {
       errorEl.style.removeProperty('display');
       // Rola suavemente até o campo para o usuário ver o erro
       errorEl.closest('.mb-4').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    } else {
-      errorEl.style.display = 'none';
+      return;
+    }
+
+    errorEl.style.display = 'none';
+
+    // Desabilita o botão de envio para evitar reportes duplicados
+    // caso o usuário clique mais de uma vez ou a conexão esteja lenta
+    const btnSubmit = formEl.querySelector('button[type="submit"]');
+    if (btnSubmit) {
+      btnSubmit.disabled = true;
+      btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Enviando...';
     }
   });
 }
@@ -116,10 +130,15 @@ async function preencherEnderecoDoMapa(lat, lng) {
   try {
     // Nominatim reverse geocoding — retorna JSON com dados de endereço
     // Accept-Language: pt-BR para nomes em português
-    const res  = await fetch(
+    const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
       { headers: { 'Accept-Language': 'pt-BR' } }
     );
+
+    // Nominatim retorna 429 quando o limite de 1 req/seg é excedido —
+    // sem essa checagem o código tentaria interpretar a resposta de erro como sucesso
+    if (!res.ok) throw new Error('Falha na resposta da API Nominatim');
+
     const data = await res.json();
     const addr = data.address ?? {};
 
@@ -241,9 +260,18 @@ if (modalEl && btnAbrirMapa) {
       mapaLeaflet = L.map('report-map').setView([defaultLat, defaultLng], defaultZoom);
 
       // Camada satélite Esri World Imagery — gratuita, sem chave de API
+      // maxNativeZoom: 17 — o Esri não tem tiles de altíssima resolução em
+      // todas as regiões; a partir do zoom 18+ o Leaflet passa a fazer
+      // upscale do último tile real em vez de mostrar o placeholder cinza
+      // "Map data not yet available". Ajuste esse valor (16-18) conforme
+      // a cobertura disponível na sua cidade.
       const satelite = L.tileLayer(
         'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-        { maxZoom: 19, attribution: '© <a href="https://www.esri.com">Esri</a> — Esri, Maxar, Earthstar Geographics' }
+        {
+          maxZoom: 19,
+          maxNativeZoom: 17,
+          attribution: '© <a href="https://www.esri.com">Esri</a> — Esri, Maxar, Earthstar Geographics'
+        }
       );
 
       // Camada de ruas OpenStreetMap — fallback quando o satélite não tiver cobertura
@@ -286,7 +314,12 @@ if (modalEl && btnAbrirMapa) {
   if (btnGps) {
     btnGps.addEventListener('click', () => {
       if (!navigator.geolocation) {
-        alert('Seu navegador não suporta geolocalização.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Não disponível',
+          text: 'Seu navegador não suporta geolocalização.',
+          confirmButtonColor: '#F5C518',
+        });
         return;
       }
 
@@ -335,7 +368,13 @@ if (modalEl && btnAbrirMapa) {
             2: 'Não foi possível determinar sua localização. Verifique o GPS.',
             3: 'Tempo esgotado ao buscar localização. Tente novamente.',
           };
-          alert(mensagens[error.code] ?? 'Erro ao obter localização.');
+
+          Swal.fire({
+            icon: 'warning',
+            title: 'Ops!',
+            text: mensagens[error.code] ?? 'Erro ao obter localização.',
+            confirmButtonColor: '#F5C518',
+          });
         },
 
         // Opções: alta precisão, timeout de 10s, sem cache

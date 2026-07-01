@@ -16,6 +16,17 @@
   color: #0D0F1A;
 }
 
+.btn-outline-amarelo {
+  background: transparent;
+  color: var(--amarelo);
+  font-weight: 700;
+  border: 1px solid var(--amarelo);
+}
+.btn-outline-amarelo:hover {
+  background: var(--amarelo);
+  color: #151a0d;
+}
+
 .btn-close-red {
   filter: invert(16%) sepia(99%) saturate(7404%) hue-rotate(4deg) brightness(95%) contrast(118%);
 }

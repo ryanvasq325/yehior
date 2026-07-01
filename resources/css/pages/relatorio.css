@@ -5,6 +5,8 @@
 
 .text-amarelo { color: var(--amarelo) !important; }
 
+
+
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);

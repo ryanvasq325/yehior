@@ -10,6 +10,10 @@ mdProduct.addEventListener('click', () => {
     $('#modalProducts').modal('show');
 });
 
+mdBack.addEventListener('click', () => {
+    window.location.href = '/admin/gestao';
+});
+
 const inputmaskConfig = {
     radixPoint: ",",
     inputtype: "text",

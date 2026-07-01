@@ -3,7 +3,9 @@
   --cinza-card: #1e2130;
 }
 
-.text-amarelo { color: var(--amarelo) !important; }
+.text-amarelo {
+  color: var(--amarelo) !important;
+}
 
 .btn-amarelo {
   background: var(--amarelo);
@@ -11,6 +13,7 @@
   font-weight: 700;
   border: none;
 }
+
 .btn-amarelo:hover {
   background: #ffd740;
   color: #0D0F1A;
@@ -20,17 +23,29 @@
   filter: invert(16%) sepia(99%) saturate(7404%) hue-rotate(4deg) brightness(95%) contrast(118%);
 }
 
+.btn-outline-amarelo {
+  background: transparent;
+  color: var(--amarelo);
+  font-weight: 700;
+  border: 1px solid var(--amarelo);
+}
+
+.btn-outline-amarelo:hover {
+  background: var(--amarelo);
+  color: #151a0d;
+}
+
 /* ===== ADMIN CARD ===== */
 .admin-card {
   background: var(--cinza-card);
-  border: 1px solid rgba(255,255,255,.07);
+  border: 1px solid rgba(255, 255, 255, .07);
   border-radius: 12px;
   overflow: hidden;
 }
 
 .admin-card-header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  border-bottom: 1px solid rgba(255, 255, 255, .07);
 }
 
 .admin-card-body {
@@ -40,16 +55,16 @@
 /* ===== FILTROS ===== */
 .form-select,
 .form-control {
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, .05);
+  border-color: rgba(255, 255, 255, .12);
   color: #e8e8f0;
 }
 
 .form-select:focus,
 .form-control:focus {
-  background: rgba(255,255,255,.08);
+  background: rgba(255, 255, 255, .08);
   border-color: var(--amarelo);
-  box-shadow: 0 0 0 .2rem rgba(245,197,24,.15);
+  box-shadow: 0 0 0 .2rem rgba(245, 197, 24, .15);
   color: #fff;
 }
 
@@ -61,7 +76,7 @@
 /* ===== TABELA ===== */
 .table-dark {
   --bs-table-bg: transparent;
-  --bs-table-hover-bg: rgba(255,255,255,.04);
+  --bs-table-hover-bg: rgba(255, 255, 255, .04);
 }
 
 .table thead th {
@@ -69,12 +84,12 @@
   text-transform: uppercase;
   letter-spacing: .06em;
   color: #6b7280;
-  border-bottom-color: rgba(255,255,255,.07);
+  border-bottom-color: rgba(255, 255, 255, .07);
   font-weight: 600;
   white-space: nowrap;
 }
 
 .table td {
-  border-color: rgba(255,255,255,.05);
+  border-color: rgba(255, 255, 255, .05);
   vertical-align: middle;
 }

@@ -82,14 +82,14 @@ final class Report extends Base
                 'latitude'         => $latitude !== '' ? $latitude : null,
                 'longitude'        => $longitude !== '' ? $longitude : null,
                 'descricao'        => $descricao !== '' ? $descricao : null,
-                'resolvido'        => 0, // boolean no Postgres via Doctrine DBAL — cast (int) evita o bug que vocês já pegaram antes
+                'resolvido'        => 0,
             ]);
         } catch (\Exception $e) {
             return $this->renderComErro($response, 'Não foi possível salvar o reporte: ' . $e->getMessage(), [], 500);
         }
 
         return $response
-            ->withHeader('Location', '/report/home?success=1')   // ✅ bate com o grupo /report + rota /home
+            ->withHeader('Location', '/report/home?success=1')
             ->withStatus(302);
     }
 
@@ -101,6 +101,34 @@ final class Report extends Base
             ->fetchOne();
 
         return $this->json($response, ['total' => $total]);
+    }
+
+    public function toggleStatus($request, $response, $args)
+    {
+        $id   = $args['id'] ?? null;
+        $form = $request->getParsedBody();
+
+        if (is_null($id) || !is_numeric($id)) {
+            return $response
+                ->withHeader('Location', '/admin/listreport')
+                ->withStatus(302);
+        }
+
+        $novoStatus = ($form['resolvido'] ?? '0') === '1';
+
+        try {
+            \App\Database\DB::connection()->update(
+                'reports',
+                ['resolvido' => $novoStatus ? 1 : 0],
+                ['id' => (int) $id]
+            );
+        } catch (\Exception $e) {
+            error_log('[Report::toggleStatus] ' . $e->getMessage());
+        }
+
+        return $response
+            ->withHeader('Location', '/admin/listreport')
+            ->withStatus(302);
     }
 
     public function delete($request, $response)

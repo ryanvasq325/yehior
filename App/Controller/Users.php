@@ -8,13 +8,95 @@ final class Users extends Base
 {
     public function home($request, $response)
     {
+        $totalUsers = (int) \App\Database\DB::select('COUNT(*)')
+            ->from('users')
+            ->fetchOne();
+
         return $this->getTwig()
             ->render($response, $this->setView('list-users'), [
-                'titulo' => '',
+                'titulo'     => '',
+                'totalUsers' => $totalUsers,
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
+
+    public function insert($request, $response)
+    {
+        $form = $request->getParsedBody();
+
+        $nome      = trim((string) ($form['nome'] ?? ''));
+        $sobrenome = trim((string) ($form['sobrenome'] ?? ''));
+        $cpf       = trim((string) ($form['cpf'] ?? ''));
+        $rg        = trim((string) ($form['rg'] ?? ''));
+        $telefone  = trim((string) ($form['telefone'] ?? ''));
+        $email     = trim((string) ($form['email'] ?? ''));
+        $senha     = (string) ($form['senhaCadastro'] ?? '');
+
+        $erros = [];
+        if ($nome === '')      $erros[] = 'Informe o nome.';
+        if ($sobrenome === '') $erros[] = 'Informe o sobrenome.';
+        if ($cpf === '')       $erros[] = 'Informe o CPF.';
+        if ($senha === '')     $erros[] = 'Informe a senha.';
+
+        if (!empty($erros)) {
+            return $this->json($response, ['status' => false, 'msg' => implode(' ', $erros)], 422);
+        }
+
+        $conn = \App\Database\DB::connection();
+
+        try {
+            $conn->beginTransaction();
+
+            $conn->insert('users', [
+                'nome'          => $nome,
+                'sobrenome'     => $sobrenome,
+                'cpf'           => $cpf,
+                'rg'            => $rg !== '' ? $rg : null,
+                // Nunca salva senha em texto puro — password_hash já cuida do salt.
+                'senha'         => password_hash($senha, PASSWORD_DEFAULT),
+                'ativo'         => 1,
+                'administrador' => 0,
+                'excluido'      => 0,
+            ]);
+
+            // ⚠️ Doctrine DBAL no Postgres às vezes precisa do nome da sequence aqui,
+            // ex: $conn->lastInsertId('users_id_seq'). Se der erro, testa essa variação.
+            $idUser = (int) $conn->lastInsertId();
+
+            // email/telefone não são colunas de "users" — ficam em "contact",
+            // que é de onde a view vw_user busca esses dados (tipo EMAIL/TELEFONE).
+            if ($email !== '') {
+                $conn->insert('contact', [
+                    'id_users' => $idUser,
+                    'tipo'     => 'EMAIL',
+                    'contato'  => $email,
+                ]);
+            }
+
+            if ($telefone !== '') {
+                $conn->insert('contact', [
+                    'id_users' => $idUser,
+                    'tipo'     => 'TELEFONE',
+                    'contato'  => $telefone,
+                ]);
+            }
+
+            $conn->commit();
+
+            return $this->json($response, [
+                'status' => true,
+                'msg'    => 'Usuário cadastrado com sucesso!',
+                'id'     => $idUser,
+            ], 200);
+        } catch (\Exception $e) {
+            if ($conn->isTransactionActive()) {
+                $conn->rollBack();
+            }
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function delete($request, $response)
     {
         $form = $request->getParsedBody();

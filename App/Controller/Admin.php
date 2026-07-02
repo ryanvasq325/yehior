@@ -9,10 +9,6 @@ final class Admin extends Base
 {
     public function gestao($request, $response)
     {
-        // Busca todos os reportes que possuem latitude e longitude salvas
-        // para exibir como pins no mapa do painel admin.
-        // endereco/bairro/poste agora vêm direto das colunas de reports
-        // (não dependem mais de um cadastro de endereço do cidadão).
         $reportsMap = \App\Database\DB::select(
                 'r.id',
                 'r.latitude AS lat',
@@ -83,8 +79,6 @@ final class Admin extends Base
             ->orderBy('tp.id', 'ASC')
             ->fetchAllAssociative();
 
-        // Ícone de exibição por slug — só estética. Tipo novo/desconhecido
-        // cai no ícone padrão (🔹) em vez de sumir da lista.
         $iconesPorSlug = [
             'lampada_apagada'      => '💡',
             'luz_piscando'         => '🔴',
@@ -155,13 +149,67 @@ final class Admin extends Base
 
     public function listreport($request, $response)
     {
+        $params = $request->getQueryParams();
+
+        $resolvidoFiltro = $params['resolvido'] ?? '';
+        $tipoFiltro       = $params['id_tipo_problema'] ?? '';
+        $cepFiltro        = trim((string) ($params['cep'] ?? ''));
+
+        $query = \App\Database\DB::select(
+                'r.id',
+                'r.cep',
+                'r.endereco AS address',
+                'r.latitude',
+                'r.longitude',
+                'r.descricao',
+                'r.resolvido',
+                'r.data_cadastro AS criado_em',
+                'tp.descricao AS tipo_descricao',
+                'c.nome AS customer_nome'
+            )
+            ->from('reports', 'r')
+            ->leftJoin('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
+            ->leftJoin('r', 'customer',     'c',  'r.id_customer = c.id');
+
+        // Filtro de status: só aceita '0' ou '1' explicitamente, então o literal
+        // é seguro de embutir direto (sem passar por bind de parâmetro), evitando
+        // o mesmo problema de tipagem booleana do Postgres visto em outras telas.
+        if ($resolvidoFiltro === '0' || $resolvidoFiltro === '1') {
+            $boolLiteral = $resolvidoFiltro === '1' ? 'true' : 'false';
+            $query->andWhere("r.resolvido = {$boolLiteral}");
+        }
+
+        if ($tipoFiltro !== '' && is_numeric($tipoFiltro)) {
+            $tipoInt = (int) $tipoFiltro;
+            $query->andWhere("r.id_tipo_problema = {$tipoInt}");
+        }
+
+        if ($cepFiltro !== '') {
+            $query->setParameter('cep', '%' . $cepFiltro . '%');
+            $query->andWhere('r.cep ILIKE :cep');
+        }
+
+        $reports = $query
+            ->orderBy('r.data_cadastro', 'DESC')
+            ->fetchAllAssociative();
+
+        // Todos os tipos (não só os ativos) para o filtro conseguir mostrar
+        // corretamente reportes antigos de tipos que já foram desativados
+        $tiposProblema = \App\Database\DB::select('id', 'descricao')
+            ->from('type_problem')
+            ->orderBy('descricao', 'ASC')
+            ->fetchAllAssociative();
+
         return $this->getTwig()
             ->render($response, $this->setView('list-report'), [
-                'titulo' => '',
+                'titulo'        => '',
+                'reports'       => $reports,
+                'tiposProblema' => $tiposProblema,
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
+
     public function listsupplier($request, $response)
     {
         return $this->getTwig()
@@ -183,7 +231,6 @@ final class Admin extends Base
 
     public function relatorio($request, $response)
     {
-        // Totais gerais para os cards de resumo do topo
         $totalReports = (int) \App\Database\DB::select('COUNT(*)')
             ->from('reports')
             ->fetchOne();
@@ -195,9 +242,6 @@ final class Admin extends Base
 
         $totalPendentes = $totalReports - $totalResolvidos;
 
-        // Resumo por tipo de problema: total, resolvidos, pendentes e taxa de resolução.
-        // LEFT JOIN a partir de type_problem garante que tipos sem nenhum report
-        // apareçam com total = 0, em vez de simplesmente sumir da tabela.
         $tiposRaw = \App\Database\DB::select(
                 'tp.descricao',
                 'COUNT(r.id) AS total',
@@ -259,15 +303,12 @@ final class Admin extends Base
             return $this->json($response, $data, 200);
         } catch (\Throwable $e) {
             error_log('[getsalesdata] ' . $e->getMessage());
-            // temporário — remove depois de resolver
             return $this->json($response, ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
         }
     }
     public function getabcranking($request, $response)
     {
         try {
-            // bairro agora vem direto de reports.bairro (preenchido pelo cidadão
-            // no formulário de report), não precisa mais de join com address
             $qb = \App\Database\DB::select('r.bairro', 'COUNT(r.id) AS total')
                 ->from('reports', 'r')
                 ->where('r.bairro IS NOT NULL')
@@ -291,7 +332,6 @@ final class Admin extends Base
     public function bytipo($request, $response)
     {
         try {
-            // Gráfico de pizza: quantidade de reportes por tipo de problema
             $rows = \App\Database\DB::select('tp.descricao', 'COUNT(r.id) AS total')
                 ->from('type_problem', 'tp')
                 ->leftJoin('tp', 'reports', 'r', 'r.id_tipo_problema = tp.id')
@@ -314,8 +354,6 @@ final class Admin extends Base
     public function bymes($request, $response)
     {
         try {
-            // Gráfico de barras empilhadas: reportes resolvidos x pendentes por mês,
-            // agrupado a partir de data_cadastro
             $rows = \App\Database\DB::select(
                     "TO_CHAR(data_cadastro, 'YYYY-MM') AS mes",
                     'resolvido',

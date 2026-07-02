@@ -6,6 +6,9 @@ const Id = document.getElementById('id');
 const Insert = document.getElementById('buttonRegister');
 const table = DataTables.SetId('table-users').setRequestVariables([]).post('/users/listingdata');
 
+inputmask({ mask: ['999.999.999-99', '99.999.999/9999-99'], keepStatic: true }).mask("#numeroDocumento");
+inputmask({ mask: ['99/99/9999'] }).mask("#dataRegistro");
+
 mdRegister.addEventListener('click', () => {
     $('#modalRegisterUser').modal('show');
 });

@@ -1,12 +1,14 @@
 import Requests from "../components/requests.js";
 import Validate from "../components/validate.js";
 import DataTables from '../components/data-tables.js';
-
 const table = DataTables.SetId('table-supplier').setRequestVariables([]).post('/fornecedor/listingdata');
 const Action = document.getElementById('action');
 const Id = document.getElementById('id');
 const Cnpj = document.getElementById('numeroDocumento');
 const Insert = document.getElementById('buttonRegister');
+
+Inputmask({ mask: ['999.999.999-99', '99.999.999/9999-99'], keepStatic: true }).mask("#numeroDocumento");
+Inputmask({ mask: ['99/99/9999'] }).mask("#dataRegistro");
 
 mdRegister.addEventListener('click', () => {
     $('#modalRegisterSupplier').modal('show');

@@ -15,7 +15,6 @@ import 'datatables.net-staterestore-bs5'
 // Select2 — registra $.fn.select2
 import 'select2'
 
-
 // jQuery Validate — registra $.fn.validate
 import 'jquery-validation'
 import 'jquery-validation/dist/localization/messages_pt_BR.js'

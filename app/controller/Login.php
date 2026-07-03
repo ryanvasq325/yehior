@@ -29,6 +29,7 @@ final class Login extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Por favor informe seu usuário e senha!', 'id' => 0]);
         }
 
+
         if (isset($_SESSION['login_locked_until']) && $_SESSION['login_locked_until'] > time()) {
             return $this->json($response, ['status' => false, 'msg' => 'Muitas tentativas. Tente novamente em alguns minutos.', 'id' => 0], 429);
         }

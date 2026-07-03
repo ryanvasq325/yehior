@@ -38,6 +38,8 @@ $app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
 $app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Supplier::class . ':listsupplier');
     $group->post('/insert', App\Controller\Supplier::class . ':insert');
+    $group->get('/detalhes',      App\Controller\Supplier::class . ':details');
+    $group->get('/detalhes/{id}', App\Controller\Supplier::class . ':details');
     $group->post('/update', App\Controller\Supplier::class . ':update');
     $group->post('/listingdata',  App\Controller\Supplier::class . ':listingdata');
     $group->post('/delete', App\Controller\Supplier::class . ':delete');

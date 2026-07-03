@@ -38,12 +38,40 @@ final class Supplier extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
         }
     }
+    public function update($request, $response)
+    {
+        $form = $request->getParsedBody();
+        $id = $form['id'] ?? null;
+        if (is_null($id)) {
+            return $this->json($response, ['status' => false, 'msg' => 'Por favor informe o ID do registro', 'id' => 0], 403);
+        }
+
+        var_dump($form);
+
+        $FieldsAndValues = [
+            'nome_fantasia'     => $form['nomeExibicao'],
+            'sobrenome_razao' => $form['nomeLegal']        ?? null,
+            'cpf_cnpj'         => $form['numeroDocumento']  ?? null,
+            'inscricao_estadual'  => $form['inscricaoEstadual']  ?? null,
+            'nascimento_fundacao' => $form['dataRegistro']       ?? null,
+            'ativo'               => (int)(($form['ativo'] ?? '') === 'true'),
+        ];
+        try {
+            $IsUpdated = \App\Database\DB::connection()->update('supplier', $FieldsAndValues, ['id' => $id]);
+            if (!$IsUpdated) {
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsUpdated, 'id' => 0], 403);
+            }
+            return $this->json($response, ['status' => true, 'msg' => 'Alterado com sucesso!', 'id' => $id], 201);
+        } catch (\Exception $e) {
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+        }
+    }
     public function delete($request, $response)
     {
         $form = $request->getParsedBody();
         $id = $form['id'] ?? null;
         if (is_null($id) || $id === '') {
-            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do cliente', 'id' => 0], 403);
+            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do Fornecedor', 'id' => 0], 403);
         }
         try {
             $IsDeleted = \App\Database\DB::connection()->delete('supplier', ['id' => $id]);
@@ -148,5 +176,27 @@ final class Supplier extends Base
                 'id'     => 0,
             ], 500);
         }
+    }
+     public function details($request, $response, $args)
+    {
+        $id = $args['id'] ?? null;
+        $action = ($id === null) ? 'c' : 'e';
+        $supplier = [];
+        if (!is_null($id)) {
+            $qb = \App\Database\DB::select('*')->from('supplier');
+
+            $supplier = $qb
+                ->where('id = ' . $qb->createPositionalParameter($id, \Doctrine\DBAL\ParameterType::INTEGER))
+                ->fetchAssociative();
+        }
+        return $this->getTwig()
+            ->render($response, $this->setView('list-supplier'), [
+                'titulo' => 'Detalhes do Fornecedor',
+                'id' => $id,
+                'action' => $action,
+                'supplier' => $supplier
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
     }
 }

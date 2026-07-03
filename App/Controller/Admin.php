@@ -114,10 +114,7 @@ final class Admin extends Base
             ->withStatus(200);
     }
 
-    /**
-     * Converte uma descricao (ex: "Lâmpada apagada") em slug snake_case
-     * (ex: "lampada_apagada"), removendo acentos e caracteres especiais.
-     */
+
     private function slugify(string $texto): string
     {
         $texto = mb_strtolower($texto, 'UTF-8');
@@ -131,7 +128,7 @@ final class Admin extends Base
     {
         return $this->getTwig()
             ->render($response, $this->setView('users'), [
-                'titulo' => '',
+                'titulo' => 'Usuários',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -141,7 +138,7 @@ final class Admin extends Base
     {
         return $this->getTwig()
             ->render($response, $this->setView('list-users'), [
-                'titulo' => '',
+                'titulo' => 'Listar Usuários',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -202,7 +199,7 @@ final class Admin extends Base
 
         return $this->getTwig()
             ->render($response, $this->setView('list-report'), [
-                'titulo'        => '',
+                'titulo'        => 'Listar Reportes',
                 'reports'       => $reports,
                 'tiposProblema' => $tiposProblema,
             ])
@@ -214,7 +211,7 @@ final class Admin extends Base
     {
         return $this->getTwig()
             ->render($response, $this->setView('list-supplier'), [
-                'titulo' => '',
+                'titulo' => 'Listar Fornecedores',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -223,7 +220,7 @@ final class Admin extends Base
     {
         return $this->getTwig()
             ->render($response, $this->setView('products'), [
-                'titulo' => '',
+                'titulo' => 'Listar Produtos',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -270,7 +267,7 @@ final class Admin extends Base
 
         return $this->getTwig()
             ->render($response, $this->setView('relatorio'), [
-                'titulo'          => '',
+                'titulo'          => 'Relatório de Reportes',
                 'totalReports'    => $totalReports,
                 'totalResolvidos' => $totalResolvidos,
                 'totalPendentes'  => $totalPendentes,

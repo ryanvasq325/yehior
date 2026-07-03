@@ -46,6 +46,7 @@ $app->group('/report', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Report::class . ':home');
     $group->post('/store', App\Controller\Report::class . ':store');
     $group->get('/pendentes', App\Controller\Report::class . ':pendentes');
+    $group->get('/acompanhar', App\Controller\Report::class . ':accompany');
     $group->post('/{id}/status', App\Controller\Report::class . ':toggleStatus');
     $group->post('/listingdata',  App\Controller\Report::class . ':listingdata');
     $group->post('/delete', App\Controller\Report::class . ':delete');

@@ -18,9 +18,18 @@ final class Report extends Base
 
         return $this->getTwig()
             ->render($response, $this->setView('report'), [
-                'titulo'  => '',
+                'titulo'  => 'Registrar Reporte',
                 'tipos'   => $tipos,
                 'success' => isset($params['success']),
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
+     public function accompany($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('accompany'), [
+                'titulo' => 'Acompanhar Reportes',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -64,9 +73,6 @@ final class Report extends Base
             ], 422);
         }
 
-        // ⚠️ Ajuste para o seu fluxo real de autenticação (JWT em cookie httpOnly).
-        // Se o middleware já injeta o usuário autenticado na request, troque a linha abaixo
-        // pelo nome correto do atributo (ex: $request->getAttribute('user_id')).
         $user       = $request->getAttribute('user');
         $idCustomer = $user->id ?? null;
 

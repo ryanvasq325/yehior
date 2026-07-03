@@ -1,0 +1,82 @@
+/* accompany.css — estilos da tela de acompanhamento de reporte */
+
+.status-badge-aberto        { background: #6c757d; color: #fff; }
+.status-badge-em_analise    { background: #0d6efd; color: #fff; }
+.status-badge-em_andamento  { background: #ffc107; color: #212529; }
+.status-badge-resolvido     { background: #198754; color: #fff; }
+
+.timeline-step {
+  color: var(--bs-secondary-color, #adb5bd);
+}
+
+.timeline-step::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--bs-border-color, #495057);
+  z-index: 0;
+}
+
+.timeline-step:last-child::after {
+  display: none;
+}
+
+.timeline-step.is-done::after {
+  background: #198754;
+}
+
+.timeline-dot {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bs-secondary-bg, #343a40);
+  border: 1.5px solid var(--bs-border-color, #495057);
+  font-size: 14px;
+}
+
+.timeline-step.is-done .timeline-dot {
+  background: #198754;
+  border-color: #198754;
+  color: #fff;
+}
+
+.timeline-step.is-current .timeline-dot {
+  background: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.history-list {
+  position: relative;
+}
+
+.history-item {
+  position: relative;
+  padding-left: 20px;
+  padding-bottom: 16px;
+  border-left: 2px solid var(--bs-border-color, #495057);
+  margin-left: 5px;
+}
+
+.history-item:last-child {
+  border-left-color: transparent;
+  padding-bottom: 0;
+}
+
+.history-dot {
+  position: absolute;
+  left: -7px;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #198754;
+}

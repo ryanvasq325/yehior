@@ -1,0 +1,98 @@
+{# =====================================================================
+accompany.html — Acompanhar Reporte
+Ajuste o "extends" abaixo para o layout real do seu projeto
+(ex.: 'layouts/app.html' ou 'layouts/base.html')
+===================================================================== #}
+{% extends 'layouts/app.html' %}
+
+{% block title %}Acompanhar reporte #{{ report.id }} · YehiOr{% endblock %}
+
+{# Ajuste para o helper Vite que você já usa (ex.: {{ vite_entry('resources/css/pages/accompany.css') }}) #}
+{% block styles %}
+{{ parent() }}
+{{ vite_entry('resources/css/pages/accompany.css') }}
+{% endblock %}
+
+{% block content %}
+<div id="accompany-root" data-report-id="{{ report.id }}" class="container py-4" style="max-width: 720px;">
+
+    {# ---------- Cabeçalho ---------- #}
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <p class="text-muted small mb-1">Reporte #{{ report.id|number_format(0, '', '') }}</p>
+            <h1 class="h4 mb-0">{{ report.tipoProblema }} — Poste {{ report.poste }}</h1>
+        </div>
+        <span id="status-badge" class="badge rounded-pill px-3 py-2 status-badge-{{ report.status }}">
+            {{ report.statusLabel }}
+        </span>
+    </div>
+
+    {# ---------- Linha do tempo ---------- #}
+    <div class="card bg-dark-subtle border-0 rounded-4 p-3 mb-3">
+        <ol id="status-timeline" class="timeline d-flex justify-content-between list-unstyled m-0">
+            {% for step in statusSteps %}
+            <li class="timeline-step flex-fill text-center position-relative
+                    {% if step.done %}is-done{% elseif step.current %}is-current{% endif %}">
+                <span class="timeline-dot">
+                    {% if step.done %}
+                    <i class="bi bi-check-lg"></i>
+                    {% elseif step.current %}
+                    <i class="bi bi-tools"></i>
+                    {% else %}
+                    <i class="bi bi-flag"></i>
+                    {% endif %}
+                </span>
+                <p class="small mb-0 mt-2">{{ step.label }}</p>
+                <p class="text-muted" style="font-size: 11px;">{{ step.date ?: '—' }}</p>
+            </li>
+            {% endfor %}
+        </ol>
+    </div>
+
+    {# ---------- Detalhes rápidos ---------- #}
+    <div class="row g-2 mb-3">
+        <div class="col-6">
+            <div class="card bg-dark-subtle border-0 rounded-3 p-3 h-100">
+                <p class="text-muted small mb-1"><i class="bi bi-geo-alt me-1"></i>Endereço</p>
+                <p class="mb-0">{{ report.logradouro }}, {{ report.numero }} — {{ report.bairro }}</p>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card bg-dark-subtle border-0 rounded-3 p-3 h-100">
+                <p class="text-muted small mb-1"><i class="bi bi-lightbulb me-1"></i>Poste</p>
+                <p class="mb-0">{{ report.poste }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# ---------- Descrição enviada ---------- #}
+    {% if report.descricao %}
+    <div class="card bg-dark-subtle border-0 rounded-3 p-3 mb-3">
+        <p class="text-muted small mb-1">Descrição enviada</p>
+        <p class="mb-0">{{ report.descricao }}</p>
+    </div>
+    {% endif %}
+
+    {# ---------- Histórico de atualizações ---------- #}
+    <div class="card bg-dark-subtle border-0 rounded-3 p-3">
+        <p class="text-muted small mb-3">Histórico de atualizações</p>
+        <ul id="status-history" class="history-list list-unstyled mb-0">
+            {% for item in report.history %}
+            <li class="history-item">
+                <span class="history-dot"></span>
+                <p class="mb-0">{{ item.comment }}</p>
+                <p class="text-muted" style="font-size: 11px;">{{ item.createdAt }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
+{% endblock %}
+
+{# Ajuste a tag abaixo para o helper Vite que você já usa nas outras páginas
+(ex.: {{ vite_entry('resources/js/pages/accompany.js') }}) #}
+{% block scripts %}
+{{ parent() }}
+{{ vite_entry('resources/js/pages/accompany.js') }}
+{% endblock %}

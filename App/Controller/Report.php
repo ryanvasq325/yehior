@@ -255,8 +255,7 @@ final class Report extends Base
                 'r.resolvido',
                 'r.data_cadastro',
                 'r.data_atualizacao',
-                'tp.descricao as problema',
-                'tp.icon as problema_icon'
+                'tp.descricao as problema'
             )
                 ->from('reports', 'r')
                 ->leftJoin('r', 'type_problem', 'tp', 'tp.id = r.id_tipo_problema');
@@ -296,7 +295,6 @@ final class Report extends Base
                 ->withStatus(200);
         }
     }
-
     private function renderComErro($response, string $erro, array $old = [], int $status = 422)
     {
         $tipos = \App\Database\DB::select('id', 'descricao')

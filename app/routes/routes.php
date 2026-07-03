@@ -9,6 +9,7 @@ $app->get('/login', App\Controller\Login::class . ':login'); #->add(App\Middlewa
 $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/logout', App\Controller\Login::class . ':logout');
     $group->post('/authenticate', App\Controller\Login::class . ':authenticate');
+    $group->post('/google', App\Controller\Login::class . ':google');
     $group->post('/preregister', App\Controller\Login::class . ':preRegister');
 });
 $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
@@ -56,6 +57,7 @@ $app->group('/report', function (Slim\Routing\RouteCollectorProxy $group) {
 $app->group('/users', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Users::class . ':home');
     $group->post('/insert', App\Controller\Users::class . ':insert');
+    $group->get('/detalhes/{id}', App\Controller\Users::class . ':details');
     $group->post('/listingdata',  App\Controller\Users::class . ':listingdata');
     $group->post('/delete', App\Controller\Users::class . ':delete');
 });

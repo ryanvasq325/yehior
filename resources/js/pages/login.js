@@ -17,6 +17,42 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// =============================================================================
+// FEEDBACK DO LOGIN VIA GOOGLE
+// O backend redireciona para /login?google=pendente ou /login?google=erro
+// após tentativas de login com Google. Aqui a gente lê esse parâmetro e
+// mostra a mensagem correspondente assim que a página carrega.
+// =============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('google');
+
+    if (!status) return;
+
+    const mensagens = {
+        pendente: {
+            icon: 'info',
+            title: 'Quase lá!',
+            text: 'Cadastro recebido. Espere o administrador liberar seu acesso para poder entrar.',
+        },
+        erro: {
+            icon: 'error',
+            title: 'Ops...',
+            text: 'Não foi possível concluir o login com o Google. Tente novamente.',
+        },
+    };
+
+    const msg = mensagens[status];
+    if (msg) {
+        Swal.fire({ ...msg, confirmButtonColor: '#F5C518' });
+    }
+
+    // Remove o parâmetro da URL para não repetir a mensagem em um F5
+    params.delete('google');
+    const novaUrl = window.location.pathname + (params.toString() ? `?${params}` : '');
+    window.history.replaceState({}, '', novaUrl);
+});
+
 mdPreRegister.addEventListener('click', () => {
     $('#modalPreRegisterUser').modal('show');
 });

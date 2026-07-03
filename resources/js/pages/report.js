@@ -121,6 +121,14 @@ if (formEl) {
 // Converte coordenadas (lat, lng) em endereço legível.
 // Chamado automaticamente após o usuário confirmar o pin no mapa.
 // API gratuita e sem chave — respeita o limite de 1 req/seg.
+//
+// ⚠️ O bairro retornado pelo Nominatim depende de quão bem mapeada a região
+// está no OpenStreetMap. Em cidades menores, muitos bairros não têm polígono
+// desenhado — nesses casos o Nominatim "arredonda" para o bairro mapeado mais
+// próximo, mesmo que ele não seja o correto, ou não retorna bairro nenhum.
+// zoom=16 pede um nível de detalhe mais próximo ao de bairro/distrito (em vez
+// do padrão, que tende a generalizar mais), mas não elimina o problema —
+// por isso sempre avisamos o usuário para conferir o campo manualmente.
 // =============================================================================
 async function preencherEnderecoDoMapa(lat, lng) {
   const cepInfo = document.getElementById('cep-info');
@@ -130,8 +138,9 @@ async function preencherEnderecoDoMapa(lat, lng) {
   try {
     // Nominatim reverse geocoding — retorna JSON com dados de endereço
     // Accept-Language: pt-BR para nomes em português
+    // zoom=16 favorece precisão de bairro/rua em vez de generalizar para a cidade
     const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
+      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=16`,
       { headers: { 'Accept-Language': 'pt-BR' } }
     );
 
@@ -156,8 +165,14 @@ async function preencherEnderecoDoMapa(lat, lng) {
       document.getElementById('cep').value = cep.replace(/(\d{5})(\d{3})/, '$1-$2');
     }
 
-    cepInfo.innerHTML = `<i class="fa-solid fa-circle-check me-1" style="color:var(--amarelo)"></i>
-      Endereço preenchido pelo mapa. Confira e ajuste se necessário.`;
+    // Aviso diferente dependendo se o bairro veio ou não — o dado de bairro
+    // do OSM é o mais propenso a estar incorreto nessa região, então o
+    // usuário é sempre orientado a conferir antes de enviar.
+    cepInfo.innerHTML = bairro
+      ? `<i class="fa-solid fa-triangle-exclamation me-1 text-warning"></i>
+         Endereço estimado pelo mapa. <strong>Confira o bairro</strong> — o dado do mapa pode não ser exato nesta região.`
+      : `<i class="fa-solid fa-circle-check me-1" style="color:var(--amarelo)"></i>
+         Endereço preenchido pelo mapa. Bairro não identificado — preencha manualmente.`;
 
   } catch {
     cepInfo.innerHTML = '<span class="text-warning"><i class="fa-solid fa-wifi me-1"></i>Não foi possível buscar o endereço.</span>';

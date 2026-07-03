@@ -1,0 +1,26 @@
+/* ===== CARDS DE RESUMO ===== */
+.accompany-resumo-card {
+  background: var(--cinza-card);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+}
+
+.accompany-resumo-pendente .fs-3 { color: #fd7e14; }
+.accompany-resumo-resolvido .fs-3 { color: #198754; }
+
+/* ===== CARD DE CADA REPORTE ===== */
+.accompany-card {
+  background: var(--cinza-card);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  transition: border-color .2s ease, transform .15s ease;
+}
+
+.accompany-card:hover {
+  border-color: color-mix(in srgb, var(--amarelo) 30%, transparent);
+  transform: translateY(-2px);
+}
+
+.accompany-card-footer {
+  border-top: 1px solid var(--card-border);
+}

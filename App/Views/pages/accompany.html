@@ -1,0 +1,110 @@
+{% extends 'layouts/main.html' %}
+
+{% block css %}
+{{ vite('resources/css/pages/accompany.css') }}
+{% endblock %}
+
+{% block main %}
+
+<div class="col-12">
+  <div class="row justify-content-center">
+    <div class="col-lg-9 col-md-11 py-4">
+
+      <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+        <h1 class="h2 mb-0">
+          <i class="fa-solid fa-clipboard-list me-2 text-amarelo"></i>Meus Reportes
+        </h1>
+        <a href="/report/home" class="btn btn-amarelo">
+          <i class="fa-solid fa-plus me-1"></i>Novo reporte
+        </a>
+      </div>
+
+      {% if erro %}
+      <div class="alert alert-danger d-flex align-items-center gap-2 mb-4" role="alert">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ erro }}</span>
+      </div>
+      {% endif %}
+
+      <!-- ===================== RESUMO ===================== -->
+      <div class="row g-3 mb-4">
+        <div class="col-4">
+          <div class="accompany-resumo-card text-center py-3">
+            <div class="fs-3 fw-bold">{{ total }}</div>
+            <div class="small text-secondary">Total</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="accompany-resumo-card accompany-resumo-pendente text-center py-3">
+            <div class="fs-3 fw-bold">{{ pendentes }}</div>
+            <div class="small text-secondary">Pendentes</div>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="accompany-resumo-card accompany-resumo-resolvido text-center py-3">
+            <div class="fs-3 fw-bold">{{ resolvidos }}</div>
+            <div class="small text-secondary">Resolvidos</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===================== LISTA DE REPORTES ===================== -->
+      {% if reports|length > 0 %}
+      <div class="d-flex flex-column gap-3">
+        {% for r in reports %}
+        <div class="accompany-card p-4">
+          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+            <h5 class="mb-0 fw-semibold">
+              {{ r.problema_icon }} {{ r.problema ?? 'Problema não especificado' }}
+            </h5>
+            {% if r.resolvido %}
+            <span class="badge text-bg-success">
+              <i class="fa-solid fa-circle-check me-1"></i>Resolvido
+            </span>
+            {% else %}
+            <span class="badge text-bg-warning text-dark">
+              <i class="fa-solid fa-clock me-1"></i>Pendente
+            </span>
+            {% endif %}
+          </div>
+
+          <p class="text-secondary mb-2">
+            <i class="fa-solid fa-location-dot me-1"></i>
+            {{ r.endereco }}, {{ r.numero }} — {{ r.bairro }}
+            {% if r.poste %} · Poste {{ r.poste }}{% endif %}
+          </p>
+
+          {% if r.descricao %}
+          <p class="mb-2">{{ r.descricao }}</p>
+          {% endif %}
+
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3 pt-2 accompany-card-footer">
+            <span class="small text-secondary">
+              <i class="fa-solid fa-calendar me-1"></i>
+              Reportado em {{ r.data_cadastro | date('d/m/Y \\à\\s H:i') }}
+            </span>
+            {% if r.resolvido and r.data_atualizacao %}
+            <span class="small text-secondary">
+              <i class="fa-solid fa-check-double me-1"></i>
+              Resolvido em {{ r.data_atualizacao | date('d/m/Y') }}
+            </span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center py-5">
+        <i class="fa-solid fa-inbox fs-1 text-secondary mb-3 d-block"></i>
+        <p class="text-secondary mb-3">Você ainda não fez nenhum reporte.</p>
+        <a href="/report/home" class="btn btn-amarelo">
+          <i class="fa-solid fa-bullhorn me-2"></i>Fazer meu primeiro reporte
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

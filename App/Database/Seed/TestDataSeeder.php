@@ -13,8 +13,10 @@ class TestDataSeeder extends AbstractSeed
 
     public function run(): void
     {
-        // Customers
-        $customers = [
+        // Users (dados de teste — senha padrão "senha123" para todos)
+        $senhaHash = password_hash('senha123', PASSWORD_DEFAULT);
+
+        $users = [
             ['id' => 1, 'nome' => 'João',    'sobrenome' => 'Silva',    'cpf' => '11111111111', 'rg' => '111111111'],
             ['id' => 2, 'nome' => 'Maria',   'sobrenome' => 'Souza',    'cpf' => '22222222222', 'rg' => '222222222'],
             ['id' => 3, 'nome' => 'Carlos',  'sobrenome' => 'Pereira',  'cpf' => '33333333333', 'rg' => '333333333'],
@@ -22,15 +24,16 @@ class TestDataSeeder extends AbstractSeed
             ['id' => 5, 'nome' => 'Pedro',   'sobrenome' => 'Costa',    'cpf' => '55555555555', 'rg' => '555555555'],
         ];
 
-        foreach ($customers as $c) {
-            $exists = $this->fetchRow('SELECT id FROM customer WHERE id = ' . $c['id']);
+        foreach ($users as $u) {
+            $exists = $this->fetchRow('SELECT id FROM users WHERE id = ' . $u['id']);
             if (!$exists) {
-                $this->table('customer')->insert([
-                    'id'               => $c['id'],
-                    'nome'    => $c['nome'],
-                    'sobrenome'  => $c['sobrenome'],
-                    'cpf'         => $c['cpf'],
-                    'rg'         => $c['rg'],
+                $this->table('users')->insert([
+                    'id'               => $u['id'],
+                    'nome'             => $u['nome'],
+                    'sobrenome'        => $u['sobrenome'],
+                    'cpf'              => $u['cpf'],
+                    'rg'               => $u['rg'],
+                    'senha'            => $senhaHash,
                     'ativo'            => true,
                     'data_cadastro'    => date('Y-m-d H:i:s'),
                     'data_atualizacao' => date('Y-m-d H:i:s'),
@@ -38,13 +41,13 @@ class TestDataSeeder extends AbstractSeed
             }
         }
 
-        // Addresses
+        // Addresses (vinculados a users via id_users)
         $addresses = [
-            ['id' => 1, 'id_customer' => 1, 'bairro' => 'Centro',         'cep' => '76960-000'],
-            ['id' => 2, 'id_customer' => 2, 'bairro' => 'Centro',         'cep' => '76960-000'],
-            ['id' => 3, 'id_customer' => 3, 'bairro' => 'Jardim América', 'cep' => '76961-000'],
-            ['id' => 4, 'id_customer' => 4, 'bairro' => 'Jardim América', 'cep' => '76961-000'],
-            ['id' => 5, 'id_customer' => 5, 'bairro' => 'Nova Cacoal',    'cep' => '76962-000'],
+            ['id' => 1, 'id_users' => 1, 'bairro' => 'Centro',         'cep' => '76960-000'],
+            ['id' => 2, 'id_users' => 2, 'bairro' => 'Centro',         'cep' => '76960-000'],
+            ['id' => 3, 'id_users' => 3, 'bairro' => 'Jardim América', 'cep' => '76961-000'],
+            ['id' => 4, 'id_users' => 4, 'bairro' => 'Jardim América', 'cep' => '76961-000'],
+            ['id' => 5, 'id_users' => 5, 'bairro' => 'Nova Cacoal',    'cep' => '76962-000'],
         ];
 
         foreach ($addresses as $a) {
@@ -52,7 +55,7 @@ class TestDataSeeder extends AbstractSeed
             if (!$exists) {
                 $this->table('address')->insert([
                     'id'               => $a['id'],
-                    'id_customer'      => $a['id_customer'],
+                    'id_users'         => $a['id_users'],
                     'id_supplier'      => null,
                     'bairro'           => $a['bairro'],
                     'cep'              => $a['cep'],
@@ -84,12 +87,12 @@ class TestDataSeeder extends AbstractSeed
             [60,  1, 1],
         ];
 
-        foreach ($reports as [$id, $id_tipo, $id_customer]) {
+        foreach ($reports as [$id, $id_tipo, $id_users]) {
             $exists = $this->fetchRow('SELECT id FROM reports WHERE id = ' . $id);
             if (!$exists) {
                 $this->table('reports')->insert([
                     'id'               => $id,
-                    'id_customer'      => $id_customer,
+                    'id_users'         => $id_users,
                     'id_tipo_problema' => $id_tipo,
                     'cep'              => '76960-000',
                     'descricao'        => 'Teste seed',

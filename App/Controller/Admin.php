@@ -20,16 +20,13 @@ final class Admin extends Base
                 'r.poste',
                 'r.resolvido',
                 'tp.descricao AS tipo',
-                'c.nome AS cidadao'
+                'u.nome AS cidadao'
             )
             ->from('reports', 'r')
             ->leftJoin('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
-            ->leftJoin('r', 'customer',     'c',  'r.id_customer = c.id')
+            ->leftJoin('r', 'users',        'u',  'r.id_users = u.id')
             ->where('r.latitude IS NOT NULL AND r.longitude IS NOT NULL')
             ->fetchAllAssociative();
-
-        // ⚠️ Ajuste os nomes das tabelas abaixo (users/supplier/products) caso
-        // sejam diferentes no seu schema real.
 
         $totalPendentes = (int) \App\Database\DB::select('COUNT(*)')
             ->from('reports')
@@ -55,7 +52,7 @@ final class Admin extends Base
         // Últimos reportes cadastrados, para a tabela "Reportes recentes"
         $recentReports = \App\Database\DB::select(
                 'r.id',
-                'c.nome AS customer_nome',
+                'u.nome AS customer_nome',
                 'tp.descricao AS problema',
                 'r.cep',
                 'r.resolvido',
@@ -63,7 +60,7 @@ final class Admin extends Base
             )
             ->from('reports', 'r')
             ->leftJoin('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
-            ->leftJoin('r', 'customer',     'c',  'r.id_customer = c.id')
+            ->leftJoin('r', 'users',        'u',  'r.id_users = u.id')
             ->orderBy('r.data_cadastro', 'DESC')
             ->setMaxResults(6)
             ->fetchAllAssociative();
@@ -165,11 +162,11 @@ final class Admin extends Base
                 'r.resolvido',
                 'r.data_cadastro AS criado_em',
                 'tp.descricao AS tipo_descricao',
-                'c.nome AS customer_nome'
+                'u.nome AS customer_nome'
             )
             ->from('reports', 'r')
             ->leftJoin('r', 'type_problem', 'tp', 'r.id_tipo_problema = tp.id')
-            ->leftJoin('r', 'customer',     'c',  'r.id_customer = c.id');
+            ->leftJoin('r', 'users',        'u',  'r.id_users = u.id');
 
         // Filtro de status: só aceita '0' ou '1' explicitamente, então o literal
         // é seguro de embutir direto (sem passar por bind de parâmetro), evitando

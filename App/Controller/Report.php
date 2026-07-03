@@ -64,15 +64,11 @@ final class Report extends Base
             ], 422);
         }
 
-        // ⚠️ Ajuste para o seu fluxo real de autenticação (JWT em cookie httpOnly).
-        // Se o middleware já injeta o usuário autenticado na request, troque a linha abaixo
-        // pelo nome correto do atributo (ex: $request->getAttribute('user_id')).
-        $user       = $request->getAttribute('user');
-        $idCustomer = $user->id ?? null;
+        $userId = $_SESSION['user']['id'] ?? null;
 
         try {
             \App\Database\DB::connection()->insert('reports', [
-                'id_customer'      => $idCustomer,
+                'id_users'         => $userId,
                 'id_tipo_problema' => (int) $idTipoProblema,
                 'cep'              => $cep,
                 'endereco'         => $endereco,
@@ -159,7 +155,7 @@ final class Report extends Base
 
         $columns = [
             0 => 'id',
-            1 => 'id_customer',
+            1 => 'id_users',
             2 => 'id_tipo_problema',
             3 => 'id_produto',
             4 => 'cep',
@@ -186,12 +182,13 @@ final class Report extends Base
                 $query->setParameter('term', '%' . $term . '%');
 
                 $query->where('CAST(id AS TEXT) ILIKE :term')
-                    ->orWhere('id_customer ILIKE :term')
-                    ->orWhere('id_tipo_problema ILIKE :term')
-                    ->orWhere('id_produto ILIKE :term')
+                    ->orWhere('CAST(id_users AS TEXT) ILIKE :term')
+                    ->orWhere('CAST(id_tipo_problema AS TEXT) ILIKE :term')
+                    ->orWhere('CAST(id_produto AS TEXT) ILIKE :term')
                     ->orWhere('cep ILIKE :term')
-                    ->orWhere("TO_CHAR(criado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term")
-                    ->orWhere("TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
+                    ->orWhere('descricao ILIKE :term')
+                    ->orWhere("TO_CHAR(data_cadastro, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term")
+                    ->orWhere("TO_CHAR(data_atualizacao, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
             }
 
             $filteredRecords = (int) (clone $query)
@@ -208,11 +205,11 @@ final class Report extends Base
             foreach ($reports as $key => $value) {
                 $rows[$key] = [
                     $value['id'],
-                    $value['id_customer']     ?? '',
+                    $value['id_users']         ?? '',
                     $value['id_tipo_problema'] ?? '',
-                    $value['id_produto']         ?? '',
-                    $value['cep']           ?? '',
-                    $value['descricao']         ?? '',
+                    $value['id_produto']       ?? '',
+                    $value['cep']              ?? '',
+                    $value['descricao']        ?? '',
                     ($value['resolvido'] == true) ? 'Resolvido' : 'Pendente',
                     "<td>
             <a class='btn btn-sm btn-warning' href='/produto/detalhes/" . $value['id'] . "'>
@@ -235,6 +232,68 @@ final class Report extends Base
                 'msg'    => 'Restrição: ' . $e->getMessage(),
                 'id'     => 0,
             ], 500);
+        }
+    }
+
+    public function accompany($request, $response)
+    {
+        $userId = $_SESSION['user']['id'] ?? null;
+
+        if (!$userId) {
+            return $response->withHeader('Location', '/login')->withStatus(302);
+        }
+
+        try {
+            $qb = \App\Database\DB::select(
+                'r.id',
+                'r.cep',
+                'r.endereco',
+                'r.numero',
+                'r.bairro',
+                'r.poste',
+                'r.descricao',
+                'r.resolvido',
+                'r.data_cadastro',
+                'r.data_atualizacao',
+                'tp.descricao as problema',
+                'tp.icon as problema_icon'
+            )
+                ->from('reports', 'r')
+                ->leftJoin('r', 'type_problem', 'tp', 'tp.id = r.id_tipo_problema');
+
+            $userIdParam = $qb->createNamedParameter($userId);
+            $qb->where('r.id_users = ' . $userIdParam)
+                ->orderBy('r.data_cadastro', 'DESC');
+
+            $reports = $qb->fetchAllAssociative();
+
+            $total      = count($reports);
+            $resolvidos = count(array_filter($reports, fn($r) => (bool) $r['resolvido']));
+            $pendentes  = $total - $resolvidos;
+
+            return $this->getTwig()
+                ->render($response, $this->setView('accompany'), [
+                    'titulo'     => 'Meus Reportes',
+                    'reports'    => $reports,
+                    'total'      => $total,
+                    'resolvidos' => $resolvidos,
+                    'pendentes'  => $pendentes,
+                ])
+                ->withHeader('Content-Type', 'text/html')
+                ->withStatus(200);
+        } catch (\Throwable $e) {
+            error_log('[report][accompany] ' . $e->getMessage());
+            return $this->getTwig()
+                ->render($response, $this->setView('accompany'), [
+                    'titulo'     => 'Meus Reportes',
+                    'reports'    => [],
+                    'total'      => 0,
+                    'resolvidos' => 0,
+                    'pendentes'  => 0,
+                    'erro'       => 'Não foi possível carregar seus reportes no momento.',
+                ])
+                ->withHeader('Content-Type', 'text/html')
+                ->withStatus(200);
         }
     }
 

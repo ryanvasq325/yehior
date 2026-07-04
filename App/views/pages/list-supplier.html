@@ -35,6 +35,13 @@
             </div>
             <div class="col-6">
               <div class="form-floating mb-3">
+                <input type="text" id="inscricaoEstadual" name="inscricaoEstadual" class="form-control" placeholder="inscricaoEstadual"
+                  value="{{ supplier.inscricao_estadual }}" required>
+                <label for="inscricaoEstadual">Digite sua inscrição estadual *</label>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-floating mb-3">
                 <input type="text" id="numeroDocumento" name="numeroDocumento" class="form-control"
                   placeholder="CPF/CNPJ" required value="{{ supplier.cpf_cnpj }}">
                 <label for="numeroDocumento">CPF/CNPJ *</label>

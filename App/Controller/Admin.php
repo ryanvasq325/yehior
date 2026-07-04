@@ -110,11 +110,6 @@ final class Admin extends Base
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
-
-    /**
-     * Converte uma descricao (ex: "Lâmpada apagada") em slug snake_case
-     * (ex: "lampada_apagada"), removendo acentos e caracteres especiais.
-     */
     private function slugify(string $texto): string
     {
         $texto = mb_strtolower($texto, 'UTF-8');
@@ -122,26 +117,6 @@ final class Admin extends Base
         $texto = preg_replace('/[^a-z0-9]+/', '_', $texto) ?? $texto;
 
         return trim($texto, '_');
-    }
-
-    public function users($request, $response)
-    {
-        return $this->getTwig()
-            ->render($response, $this->setView('users'), [
-                'titulo' => '',
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
-    }
-
-    public function listusers($request, $response)
-    {
-        return $this->getTwig()
-            ->render($response, $this->setView('list-users'), [
-                'titulo' => '',
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
     }
 
     public function listreport($request, $response)
@@ -202,25 +177,6 @@ final class Admin extends Base
                 'titulo'        => '',
                 'reports'       => $reports,
                 'tiposProblema' => $tiposProblema,
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
-    }
-
-    public function listsupplier($request, $response)
-    {
-        return $this->getTwig()
-            ->render($response, $this->setView('list-supplier'), [
-                'titulo' => '',
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
-    }
-    public function products($request, $response)
-    {
-        return $this->getTwig()
-            ->render($response, $this->setView('products'), [
-                'titulo' => '',
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
@@ -405,9 +361,6 @@ final class Admin extends Base
         }
     }
 
-    /**
-     * Converte "2026-07" em "Jul/2026" para exibir nos rótulos do gráfico.
-     */
     private function formatarMesAno(string $mes): string
     {
         $nomes = [

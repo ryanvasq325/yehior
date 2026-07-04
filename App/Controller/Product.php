@@ -6,6 +6,15 @@ namespace App\Controller;
 
 final class Product extends Base
 {
+    public function home($request, $response)
+    {
+        return $this->getTwig()
+            ->render($response, $this->setView('products'), [
+                'titulo' => '',
+            ])
+            ->withHeader('Content-Type', 'text/html')
+            ->withStatus(200);
+    }
     public function insert($request, $response)
     {
         $form = $request->getParsedBody();

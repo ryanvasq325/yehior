@@ -17,7 +17,6 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/listreport', App\Controller\Admin::class . ':listreport');
     $group->get('/listsupplier', App\Controller\Admin::class . ':listsupplier');
     $group->get('/users', App\Controller\Admin::class . ':users');
-    $group->get('/listusers', App\Controller\Admin::class . ':listusers');
     $group->get('/products', App\Controller\Admin::class . ':products');
     $group->get('/relatorio', App\Controller\Admin::class . ':relatorio');
     $group->post('/listingdata',  App\Controller\Admin::class . ':listingdata');
@@ -31,13 +30,14 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     });
 });
 $app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
+    $group->get('/home', App\Controller\Product::class . ':home');
     $group->post('/insert', App\Controller\Product::class . ':insert');
     $group->post('/update', App\Controller\Product::class . ':update');
     $group->post('/delete',       App\Controller\Product::class . ':delete');
     $group->post('/listingdata',  App\Controller\Product::class . ':listingdata');
 });
 $app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
-    $group->get('/home', App\Controller\Supplier::class . ':listsupplier');
+    $group->get('/home', App\Controller\Supplier::class . ':home');
     $group->post('/insert', App\Controller\Supplier::class . ':insert');
     $group->get('/detalhes',      App\Controller\Supplier::class . ':details');
     $group->get('/detalhes/{id}', App\Controller\Supplier::class . ':details');
@@ -57,7 +57,9 @@ $app->group('/report', function (Slim\Routing\RouteCollectorProxy $group) {
 $app->group('/users', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Users::class . ':home');
     $group->post('/insert', App\Controller\Users::class . ':insert');
+    $group->get('/detalhes', App\Controller\Users::class . ':details');
     $group->get('/detalhes/{id}', App\Controller\Users::class . ':details');
     $group->post('/listingdata',  App\Controller\Users::class . ':listingdata');
+    $group->post('/update', App\Controller\Users::class . ':update');
     $group->post('/delete', App\Controller\Users::class . ':delete');
 });

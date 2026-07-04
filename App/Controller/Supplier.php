@@ -6,7 +6,7 @@ namespace App\Controller;
 
 final class Supplier extends Base
 {
-    public function listsupplier($request, $response)
+    public function home($request, $response)
     {
         return $this->getTwig()
             ->render($response, $this->setView('list-supplier'), [

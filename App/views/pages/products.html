@@ -10,7 +10,7 @@
 
   <!-- Cabeçalho -->
   <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
-    <h1 class="h2 mb-0 text-white">
+    <h1 class="h2 mb-0">
       <i class="fa-solid fa-boxes-stacked me-2 text-amarelo"></i>Estoque
     </h1>
     <div class="d-flex gap-2">
@@ -127,6 +127,7 @@
               <th>Preço Compra</th>
               <th>Descrição</th>
               <th>Status</th>
+              <th>Estoque</th>
               <th class="text-center">Ações</th>
             </tr>
           </thead>
@@ -139,7 +140,7 @@
   </form>
 </div>
 
-<!-- ===================== MODAL DETALHES ===================== -->
+<!-- ===================== MODAL CADASTRO/EDIÇÃO DE PRODUTO ===================== -->
 <div class="modal fade" id="modalProducts" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
   aria-labelledby="modalProductsLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -198,6 +199,38 @@
       </div>
       <div class="modal-footer">
         <button type="button" id="buttonRegister" class="btn btn-outline-success" form="formProduct">
+          Salvar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== MODAL AJUSTE DE ESTOQUE ===================== -->
+<div class="modal fade" id="modalstock" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+  aria-labelledby="modalstockLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="modalstockLabel">Ajustar Estoque</h1>
+        <button type="button" class="btn-close btn-close-red" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formEstoque">
+          <input type="hidden" id="idEstoque" name="id" value="">
+          <div class="mb-3">
+            <label class="form-label">Estoque atual</label>
+            <input type="text" id="quantidade_atual" class="form-control" disabled>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="nova_quantidade">Nova quantidade</label>
+            <input type="text" id="nova_quantidade" name="nova_quantidade" class="form-control"
+              placeholder="Informe a nova quantidade">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="buttonEstoque" class="btn btn-outline-success">
           Salvar
         </button>
       </div>

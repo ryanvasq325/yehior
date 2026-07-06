@@ -2,9 +2,13 @@ import Requests from "../components/requests.js";
 import Validate from "../components/validate.js";
 import DataTables from '../components/data-tables.js';
 
-const Id      = document.getElementById('id');
-const Insert  = document.getElementById('buttonRegister');
+const Id       = document.getElementById('id');
+const Insert   = document.getElementById('buttonRegister');
 const FormUser = document.getElementById('formUser');
+const FormUserId    = document.getElementById('formUserId');
+const ModalTitle     = document.getElementById('modalRegisterUserLabel');
+const SenhaInput     = document.getElementById('senhaCadastro');
+const SenhaLabel     = document.getElementById('labelSenha');
 
 const table = DataTables.SetId('table-users').setRequestVariables([]).post('/users/listingdata');
 
@@ -24,8 +28,24 @@ if (telefoneInput) {
     }).mask(telefoneInput);
 }
 
+// ── Alterna o modal entre modo "cadastro" e modo "edição" ─────────
+function setModoCadastro() {
+    FormUserId.value = '';
+    ModalTitle.textContent = 'Cadastro de Usuário';
+    SenhaInput.required = true;
+    SenhaLabel.textContent = 'Informe sua senha *';
+}
+
+function setModoEdicao() {
+    ModalTitle.textContent = 'Editar Usuário';
+    // Na edição, a senha é opcional — deixar em branco mantém a atual.
+    SenhaInput.required = false;
+    SenhaLabel.textContent = 'Nova senha (deixe em branco para manter a atual)';
+}
+
 mdRegister.addEventListener('click', () => {
     FormUser.reset();
+    setModoCadastro();
     $('#modalRegisterUser').modal('show');
 });
 
@@ -33,11 +53,54 @@ mdBack.addEventListener('click', () => {
     window.location.href = '/admin/gestao';
 });
 
-// ── Cadastro de usuário ──────────────────────────────────────────
-async function insertUser() {
+
+async function EditUser(id) {
     const requests = new Requests();
     try {
-        const response = await requests.setForm('formUser').post('/users/insert');
+        const response = await requests.get(`/users/detalhes/${id}`);
+
+        if (!response.status) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: response.msg,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            return;
+        }
+
+        const user = response.data;
+
+        FormUser.reset();
+        FormUserId.value = user.id;
+        document.getElementById('nome').value      = user.nome ?? '';
+        document.getElementById('sobrenome').value = user.sobrenome ?? '';
+        document.getElementById('cpf').value       = user.cpf ?? '';
+        document.getElementById('rg').value        = user.rg ?? '';
+        document.getElementById('telefone').value  = user.telefone ?? '';
+        document.getElementById('email').value     = user.email ?? '';
+
+        setModoEdicao();
+        $('#modalRegisterUser').modal('show');
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: `Restrição: ${error}`,
+            timer: 3000,
+            timerProgressBar: true,
+        });
+    }
+}
+
+async function saveUser() {
+    const requests = new Requests();
+    const isEdicao = FormUserId.value !== '';
+    const url      = isEdicao ? '/users/update' : '/users/insert';
+
+    try {
+        const response = await requests.setForm('formUser').post(url);
         return response;
     } catch (error) {
         return { status: false, msg: `Restrição: ${error}` };
@@ -47,7 +110,7 @@ async function insertUser() {
 Insert.addEventListener('click', async () => {
     if (!FormUser.reportValidity()) return;
 
-    const response = await insertUser();
+    const response = await saveUser();
 
     if (!response.status) {
         Swal.fire({
@@ -62,9 +125,10 @@ Insert.addEventListener('click', async () => {
 
     $('#modalRegisterUser').modal('hide');
     FormUser.reset();
+    setModoCadastro();
 
     Swal.fire({
-        title: 'Cadastrado!',
+        title: 'Sucesso!',
         text: response.msg,
         icon: 'success',
         timer: 2000,
@@ -122,3 +186,4 @@ async function ShowModal(id) {
 }
 
 window.ShowModal = ShowModal;
+window.EditUser  = EditUser;

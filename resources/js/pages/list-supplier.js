@@ -2,19 +2,11 @@ import Requests from "../components/requests.js";
 import Validate from "../components/validate.js";
 import DataTables from '../components/data-tables.js';
 
-const table = DataTables.SetId('table-supplier').setRequestVariables([]).post('/fornecedor/listingdata');
-const Action = document.getElementById('action');
-const Id = document.getElementById('id');
-const Cnpj = document.getElementById('numeroDocumento');
-const Insert = document.getElementById('buttonRegister');
-
-mdRegister.addEventListener('click', () => {
-    $('#modalRegisterSupplier').modal('show');
-});
-
-mdBack.addEventListener('click', () => {
-    window.location.href = '/admin/gestao';
-});
+const table   = DataTables.SetId('table-supplier').setRequestVariables([]).post('/fornecedor/listingdata');
+const Action  = document.getElementById('action');
+const Id      = document.getElementById('id');
+const Insert  = document.getElementById('buttonRegister');
+const FormSupplier = document.getElementById('formSupplier');
 
 Inputmask({ mask: ['999.999.999-99', '99.999.999/9999-99'], keepStatic: true }).mask("#numeroDocumento");
 Inputmask({ mask: ['99/99/9999'] }).mask("#dataRegistro");
@@ -24,6 +16,70 @@ $('#dataRegistro').flatpickr({
     locale: "pt"
 });
 
+// ── Alterna o modal entre modo "cadastro" e modo "edição" ─────────
+function setModoCadastro() {
+    Action.value = 'c';
+    Id.value     = '';
+    document.getElementById('modalRegisterSupplierLabel').textContent = 'Cadastro de Fornecedor';
+}
+
+function setModoEdicao() {
+    Action.value = 'e';
+    document.getElementById('modalRegisterSupplierLabel').textContent = 'Editar Fornecedor';
+}
+
+mdRegister.addEventListener('click', () => {
+    FormSupplier.reset();
+    setModoCadastro();
+    $('#modalRegisterSupplier').modal('show');
+});
+
+mdBack.addEventListener('click', () => {
+    window.location.href = '/admin/gestao';
+});
+
+// ── Busca os dados do fornecedor e abre o modal preenchido ────────
+async function EditSupplier(id) {
+    const requests = new Requests();
+    try {
+        const response = await requests.get(`/fornecedor/detalhes/${id}`);
+
+        if (!response.status) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: response.msg,
+                timer: 3000,
+                timerProgressBar: true,
+            });
+            return;
+        }
+
+        const supplier = response.data;
+
+        FormSupplier.reset();
+        document.getElementById('nomeExibicao').value      = supplier.nome_fantasia ?? '';
+        document.getElementById('nomeLegal').value         = supplier.sobrenome_razao ?? '';
+        document.getElementById('numeroDocumento').value   = supplier.cpf_cnpj ?? '';
+        document.getElementById('inscricaoEstadual').value = supplier.inscricao_estadual ?? '';
+        document.getElementById('dataRegistro').value      = supplier.nascimento_fundacao ?? '';
+
+        setModoEdicao();
+        Id.value = supplier.id;
+
+        $('#modalRegisterSupplier').modal('show');
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: `Restrição: ${error}`,
+            timer: 3000,
+            timerProgressBar: true,
+        });
+    }
+}
+
+// ── Cadastro / atualização de fornecedor ──────────────────────────
 async function applyChanges() {
     const IsValid = Validate.SetForm('formSupplier').Validate();
     if (!IsValid) {
@@ -41,9 +97,10 @@ async function applyChanges() {
 
     const requests = new Requests();
     try {
-        const response = (Action.value !== 'e')
-            ? await requests.setForm('formSupplier').post('/fornecedor/insert')
-            : await requests.setForm('formSupplier').post('/fornecedor/update');
+        const response = (Action.value === 'e')
+            ? await requests.setForm('formSupplier').post('/fornecedor/update')
+            : await requests.setForm('formSupplier').post('/fornecedor/insert');
+
         if (!response.status) {
             Swal.fire({
                 icon: 'error',
@@ -54,29 +111,19 @@ async function applyChanges() {
             });
             return;
         }
-        const baseUrl = window.location.origin;
-        const redirectUrl = `${baseUrl}/admin/listsuppliers/detalhes/${response.id}`;
-        if (Action.value === 'e') {
-            Swal.fire({
-                icon: 'success',
-                title: 'Sucesso',
-                text: response.msg || 'Dados do fornecedor alterados com sucesso.',
-                timer: 3000,
-                timerProgressBar: true,
-            }).then(() => {
-                window.location.href = '/admin/listsuppliers';
-            });
-            return;
-        }
-        Action.value = 'e';
-        Id.value = response.id;
-        window.history.pushState({}, '', redirectUrl);
+
+        $('#modalRegisterSupplier').modal('hide');
+        FormSupplier.reset();
+        setModoCadastro();
+
         Swal.fire({
             icon: 'success',
             title: 'Sucesso',
             text: response.msg || 'Fornecedor salvo com sucesso!',
-            timer: 3000,
+            timer: 2000,
             timerProgressBar: true,
+        }).then(() => {
+            table.ajax.reload();
         });
     } catch (error) {
         Swal.fire({
@@ -95,20 +142,14 @@ Insert.addEventListener('click', async () => {
     await applyChanges();
 });
 
-
+// ── Exclusão de fornecedor ─────────────────────────────────────────
 async function deleteSupplier() {
     const requests = new Requests();
     try {
         const response = await requests.setForm('formSupplier').post('/fornecedor/delete');
         return response;
     } catch (error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Erro',
-            text: `Restrição: ${error}`,
-            timer: 3000,
-            timerProgressBar: true,
-        });
+        return { status: false, msg: `Restrição: ${error}` };
     }
 }
 
@@ -148,4 +189,5 @@ async function ShowModal(id) {
     });
 }
 
-window.ShowModal = ShowModal;
+window.ShowModal     = ShowModal;
+window.EditSupplier  = EditSupplier;

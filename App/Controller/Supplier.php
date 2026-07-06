@@ -8,13 +8,19 @@ final class Supplier extends Base
 {
     public function home($request, $response)
     {
+        $totalSuppliers = (int) \App\Database\DB::select('COUNT(*)')
+            ->from('supplier')
+            ->fetchOne();
+
         return $this->getTwig()
             ->render($response, $this->setView('list-supplier'), [
-                'titulo' => '',
+                'titulo'         => '',
+                'totalSuppliers' => $totalSuppliers,
             ])
             ->withHeader('Content-Type', 'text/html')
             ->withStatus(200);
     }
+
     public function insert($request, $response)
     {
         $form = $request->getParsedBody();
@@ -30,28 +36,27 @@ final class Supplier extends Base
         try {
             $IsInserted = \App\Database\DB::connection()->insert('supplier', $FieldsAndValues);
             if (!$IsInserted) {
-                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsInserted, 'id' => 0], 500);
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsInserted, 'id' => 0], 200);
             }
             $id = \App\Database\DB::connection()->lastInsertId();
             return $this->json($response, ['status' => true, 'msg' => 'Fornecedor salvo com sucesso!', 'id' => $id], 201);
         } catch (\Exception $e) {
-            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 200);
         }
     }
+
     public function update($request, $response)
     {
         $form = $request->getParsedBody();
         $id = $form['id'] ?? null;
-        if (is_null($id)) {
-            return $this->json($response, ['status' => false, 'msg' => 'Por favor informe o ID do registro', 'id' => 0], 403);
+        if (is_null($id) || $id === '') {
+            return $this->json($response, ['status' => false, 'msg' => 'Por favor informe o ID do registro', 'id' => 0], 200);
         }
 
-        var_dump($form);
-
         $FieldsAndValues = [
-            'nome_fantasia'     => $form['nomeExibicao'],
-            'sobrenome_razao' => $form['nomeLegal']        ?? null,
-            'cpf_cnpj'         => $form['numeroDocumento']  ?? null,
+            'nome_fantasia'       => $form['nomeExibicao']       ?? null,
+            'sobrenome_razao'     => $form['nomeLegal']          ?? null,
+            'cpf_cnpj'            => $form['numeroDocumento']    ?? null,
             'inscricao_estadual'  => $form['inscricaoEstadual']  ?? null,
             'nascimento_fundacao' => $form['dataRegistro']       ?? null,
             'ativo'               => (int)(($form['ativo'] ?? '') === 'true'),
@@ -59,30 +64,32 @@ final class Supplier extends Base
         try {
             $IsUpdated = \App\Database\DB::connection()->update('supplier', $FieldsAndValues, ['id' => $id]);
             if (!$IsUpdated) {
-                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsUpdated, 'id' => 0], 403);
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsUpdated, 'id' => 0], 200);
             }
-            return $this->json($response, ['status' => true, 'msg' => 'Alterado com sucesso!', 'id' => $id], 201);
+            return $this->json($response, ['status' => true, 'msg' => 'Alterado com sucesso!', 'id' => $id], 200);
         } catch (\Exception $e) {
-            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 200);
         }
     }
+
     public function delete($request, $response)
     {
         $form = $request->getParsedBody();
         $id = $form['id'] ?? null;
         if (is_null($id) || $id === '') {
-            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do Fornecedor', 'id' => 0], 403);
+            return $this->json($response, ['status' => false, 'msg' => 'Informe o código do Fornecedor', 'id' => 0], 200);
         }
         try {
             $IsDeleted = \App\Database\DB::connection()->delete('supplier', ['id' => $id]);
             if (!$IsDeleted) {
-                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsDeleted, 'id' => $id], 403);
+                return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $IsDeleted, 'id' => $id], 200);
             }
             return $this->json($response, ['status' => true, 'msg' => 'Removido com sucesso!', 'id' => $id]);
         } catch (\Exception $e) {
-            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 200);
         }
     }
+
     public function listingdata($request, $response)
     {
         $form = $request->getParsedBody();
@@ -90,7 +97,6 @@ final class Supplier extends Base
         $term   = $form['search']['value'] ?? null;
         $start  = (int) ($form['start']  ?? 0);
         $length = (int) ($form['length'] ?? 10);
-
 
         $columns = [
             0 => 'id',
@@ -144,7 +150,6 @@ final class Supplier extends Base
                 ->fetchAllAssociative();
 
             # Formatação para o DataTables
-            # Formatação para o DataTables
             $rows = [];
             foreach ($supplier as $key => $value) {
                 $rows[$key] = [
@@ -155,9 +160,9 @@ final class Supplier extends Base
                     $value['inscricao_estadual']           ?? '',
                     ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
                     "<td>
-            <a class='btn btn-sm btn-warning' href='/fornecedor/detalhes/" . $value['id'] . "'>
+            <button type='button' class='btn btn-sm btn-warning' onclick='EditSupplier(" . $value['id'] . ");'>
                 <i class='fa-solid fa-pen-to-square'></i> Editar
-            </a>
+            </button>
             <button type='button' class='btn btn-sm btn-danger' onclick='ShowModal(" . $value['id'] . ");'>
                 <i class='fa-solid fa-trash'></i> Excluir
             </button>
@@ -174,29 +179,31 @@ final class Supplier extends Base
                 'status' => false,
                 'msg'    => 'Restrição: ' . $e->getMessage(),
                 'id'     => 0,
-            ], 500);
+            ], 200);
         }
     }
-     public function details($request, $response, $args)
+
+    /**
+     * Retorna os dados de um fornecedor em JSON, para preencher o modal
+     * de edição via fetch (sem recarregar a página).
+     */
+    public function details($request, $response, $args)
     {
         $id = $args['id'] ?? null;
-        $action = ($id === null) ? 'c' : 'e';
-        $supplier = [];
-        if (!is_null($id)) {
-            $qb = \App\Database\DB::select('*')->from('supplier');
 
-            $supplier = $qb
-                ->where('id = ' . $qb->createPositionalParameter($id, \Doctrine\DBAL\ParameterType::INTEGER))
-                ->fetchAssociative();
+        if (is_null($id) || !is_numeric($id)) {
+            return $this->json($response, ['status' => false, 'msg' => 'ID inválido.'], 200);
         }
-        return $this->getTwig()
-            ->render($response, $this->setView('list-supplier'), [
-                'titulo' => 'Detalhes do Fornecedor',
-                'id' => $id,
-                'action' => $action,
-                'supplier' => $supplier
-            ])
-            ->withHeader('Content-Type', 'text/html')
-            ->withStatus(200);
+
+        $supplier = \App\Database\DB::select('*')
+            ->from('supplier')
+            ->where('id = ' . (int) $id)
+            ->fetchAssociative();
+
+        if (!$supplier) {
+            return $this->json($response, ['status' => false, 'msg' => 'Fornecedor não encontrado.'], 200);
+        }
+
+        return $this->json($response, ['status' => true, 'data' => $supplier], 200);
     }
 }

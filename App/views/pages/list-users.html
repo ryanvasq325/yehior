@@ -16,6 +16,8 @@
       </div>
       <div class="modal-body">
         <form id="formUser">
+          <!-- Vazio = cadastro novo. Preenchido pelo EditUser() = edição. -->
+          <input type="hidden" id="formUserId" name="id" value="">
           <div class="row">
             <div class="col-6">
               <div class="form-floating mb-3">
@@ -58,7 +60,7 @@
               <div class="form-floating mb-3">
                 <input type="password" id="senhaCadastro" name="senhaCadastro" class="form-control" placeholder="Senha"
                   required>
-                <label for="senhaCadastro">Informe sua senha *</label>
+                <label for="senhaCadastro" id="labelSenha">Informe sua senha *</label>
               </div>
             </div>
           </div>
@@ -102,9 +104,6 @@
       </button>
     </div>
   </div>
-
-  <!-- FILTROS -->
-
 
   <!-- ===================== FILTROS ===================== -->
   <div class="admin-card mb-4">

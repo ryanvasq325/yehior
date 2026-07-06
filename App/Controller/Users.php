@@ -53,7 +53,6 @@ final class Users extends Base
                 'sobrenome'     => $sobrenome,
                 'cpf'           => $cpf,
                 'rg'            => $rg !== '' ? $rg : null,
-                // Nunca salva senha em texto puro — password_hash já cuida do salt.
                 'senha'         => password_hash($senha, PASSWORD_DEFAULT),
                 'ativo'         => 1,
                 'administrador' => 0,
@@ -64,8 +63,6 @@ final class Users extends Base
             // ex: $conn->lastInsertId('users_id_seq'). Se der erro, testa essa variação.
             $idUser = (int) $conn->lastInsertId();
 
-            // email/telefone não são colunas de "users" — ficam em "contact",
-            // que é de onde a view vw_user busca esses dados (tipo EMAIL/TELEFONE).
             if ($email !== '') {
                 $conn->insert('contact', [
                     'id_users' => $idUser,
@@ -97,6 +94,110 @@ final class Users extends Base
         }
     }
 
+    public function details($request, $response, $args)
+    {
+        $id = $args['id'] ?? null;
+
+        if (is_null($id) || !is_numeric($id)) {
+            return $this->json($response, ['status' => false, 'msg' => 'ID inválido.'], 400);
+        }
+
+        // vw_user já traz email/telefone prontos (agregados da tabela contact)
+        $user = \App\Database\DB::select('id', 'nome', 'sobrenome', 'cpf', 'rg', 'email', 'telefone', 'ativo', 'administrador')
+            ->from('vw_user')
+            ->where('id = ' . (int) $id)
+            ->fetchAssociative();
+
+        if (!$user) {
+            return $this->json($response, ['status' => false, 'msg' => 'Usuário não encontrado.'], 404);
+        }
+
+        return $this->json($response, ['status' => true, 'data' => $user], 200);
+    }
+
+    public function update($request, $response)
+    {
+        $form = $request->getParsedBody();
+
+        $id        = $form['id'] ?? null;
+        $nome      = trim((string) ($form['nome'] ?? ''));
+        $sobrenome = trim((string) ($form['sobrenome'] ?? ''));
+        $cpf       = trim((string) ($form['cpf'] ?? ''));
+        $rg        = trim((string) ($form['rg'] ?? ''));
+        $telefone  = trim((string) ($form['telefone'] ?? ''));
+        $email     = trim((string) ($form['email'] ?? ''));
+        $senha     = (string) ($form['senhaCadastro'] ?? '');
+
+        if (is_null($id) || !is_numeric($id)) {
+            return $this->json($response, ['status' => false, 'msg' => 'Usuário inválido.'], 400);
+        }
+
+        $erros = [];
+        if ($nome === '')      $erros[] = 'Informe o nome.';
+        if ($sobrenome === '') $erros[] = 'Informe o sobrenome.';
+        if ($cpf === '')       $erros[] = 'Informe o CPF.';
+
+        if (!empty($erros)) {
+            return $this->json($response, ['status' => false, 'msg' => implode(' ', $erros)], 422);
+        }
+
+        $conn = \App\Database\DB::connection();
+
+        try {
+            $conn->beginTransaction();
+
+            $dadosUsuario = [
+                'nome'             => $nome,
+                'sobrenome'        => $sobrenome,
+                'cpf'              => $cpf,
+                'rg'               => $rg !== '' ? $rg : null,
+                'data_atualizacao' => date('Y-m-d H:i:s'),
+            ];
+
+            // Senha só é alterada se o campo vier preenchido — em branco mantém a atual,
+            // já que na edição o campo deixa de ser obrigatório.
+            if ($senha !== '') {
+                $dadosUsuario['senha'] = password_hash($senha, PASSWORD_DEFAULT);
+            }
+
+            $conn->update('users', $dadosUsuario, ['id' => (int) $id]);
+
+            // Upsert simples: apaga os contatos antigos desses tipos e recria com os
+            // valores atuais do formulário — evita ter que descobrir se já existe linha.
+            $conn->delete('contact', ['id_users' => (int) $id, 'tipo' => 'EMAIL']);
+            $conn->delete('contact', ['id_users' => (int) $id, 'tipo' => 'TELEFONE']);
+
+            if ($email !== '') {
+                $conn->insert('contact', [
+                    'id_users' => (int) $id,
+                    'tipo'     => 'EMAIL',
+                    'contato'  => $email,
+                ]);
+            }
+
+            if ($telefone !== '') {
+                $conn->insert('contact', [
+                    'id_users' => (int) $id,
+                    'tipo'     => 'TELEFONE',
+                    'contato'  => $telefone,
+                ]);
+            }
+
+            $conn->commit();
+
+            return $this->json($response, [
+                'status' => true,
+                'msg'    => 'Usuário atualizado com sucesso!',
+                'id'     => $id,
+            ], 200);
+        } catch (\Exception $e) {
+            if ($conn->isTransactionActive()) {
+                $conn->rollBack();
+            }
+            return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function delete($request, $response)
     {
         $form = $request->getParsedBody();
@@ -114,14 +215,14 @@ final class Users extends Base
             return $this->json($response, ['status' => false, 'msg' => 'Restrição: ' . $e->getMessage(), 'id' => 0], 500);
         }
     }
-     public function listingdata($request, $response)
+
+    public function listingdata($request, $response)
     {
         $form = $request->getParsedBody();
 
         $term   = $form['search']['value'] ?? null;
         $start  = (int) ($form['start']  ?? 0);
         $length = (int) ($form['length'] ?? 10);
-
 
         $columns = [
             0 => 'id',
@@ -137,18 +238,15 @@ final class Users extends Base
             ? (int) $form['order'][0]['column']
             : 0;
 
-        # Validação da direção evita SQL injection no ORDER BY
         $orderType  = strtoupper($form['order'][0]['dir'] ?? 'DESC');
         $orderType  = in_array($orderType, ['ASC', 'DESC'], true) ? $orderType : 'DESC';
         $orderField = $columns[$posField];
 
         try {
-            # Total geral DataTables: recordsTotal
             $totalRecords = (int) \App\Database\DB::select('COUNT(*)')
                 ->from('users')
                 ->fetchOne();
 
-            # Query principal com WHERE opcional
             $query = \App\Database\DB::select('*')->from('users');
 
             if (!is_null($term) && $term !== '') {
@@ -163,20 +261,16 @@ final class Users extends Base
                     ->orWhere("TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
             }
 
-            # Total com filtro aplicado — clona o query e troca o SELECT por COUNT
             $filteredRecords = (int) (clone $query)
                 ->select('COUNT(*)')
                 ->fetchOne();
 
-            # Resultados paginados e ordenados
             $users = $query
                 ->orderBy($orderField, $orderType)
                 ->setFirstResult($start)
                 ->setMaxResults($length)
                 ->fetchAllAssociative();
 
-            # Formatação para o DataTables
-            # Formatação para o DataTables
             $rows = [];
             foreach ($users as $key => $value) {
                 $rows[$key] = [
@@ -188,9 +282,9 @@ final class Users extends Base
                     ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
                     ($value['administrador'] == true) ? 'Sim' : 'Não',
                     "<td>
-            <a class='btn btn-sm btn-warning' href='/usuario/detalhes/" . $value['id'] . "'>
+            <button type='button' class='btn btn-sm btn-warning' onclick='EditUser(" . $value['id'] . ");'>
                 <i class='fa-solid fa-pen-to-square'></i> Editar
-            </a>
+            </button>
             <button type='button' class='btn btn-sm btn-danger' onclick='ShowModal(" . $value['id'] . ");'>
                 <i class='fa-solid fa-trash'></i> Excluir
             </button>

@@ -31,10 +31,12 @@ $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
 });
 $app->group('/produto', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Product::class . ':home');
+    $group->get('/detalhes/{id}', App\Controller\Product::class . ':details');
     $group->post('/insert', App\Controller\Product::class . ':insert');
     $group->post('/update', App\Controller\Product::class . ':update');
     $group->post('/delete',       App\Controller\Product::class . ':delete');
     $group->post('/listingdata',  App\Controller\Product::class . ':listingdata');
+    $group->post('/selecionarestoque', App\Controller\Product::class . ':selecionarestoque');
 });
 $app->group('/fornecedor', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/home', App\Controller\Supplier::class . ':home');

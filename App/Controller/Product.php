@@ -224,7 +224,6 @@ final class Product extends Base
             3 => 'p.unidade',
             4 => 'p.preco_compra',
             5 => 'p.descricao',
-            6 => 'p.ativo',
             7 => 'm.estoque_atual',
         ];
 
@@ -273,7 +272,6 @@ final class Product extends Base
                     $value['unidade']      ?? '',
                     $value['preco_compra'] ?? '',
                     $value['descricao']    ?? '',
-                    ($value['ativo'] == true) ? 'Ativo' : 'Inativo',
                     $value['estoque_atual'] ?? 0,
                     "<td>
             <button type='button' class='btn btn-sm btn-warning' onclick='EditProduct(" . $value['id'] . ");'>

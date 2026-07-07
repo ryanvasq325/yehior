@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-$app->get('/', App\Controller\Home::class . ':home');#->add(App\Middleware\Middleware::web());
-$app->get('/home', App\Controller\Home::class . ':home');#->add(App\Middleware\Middleware::web());
-$app->get('/login', App\Controller\Login::class . ':login');#->add(App\Middleware\Middleware::web());
+$app->get('/', App\Controller\Home::class . ':home')->add(App\Middleware\Middleware::web());
+$app->get('/home', App\Controller\Home::class . ':home')->add(App\Middleware\Middleware::web());
+$app->get('/login', App\Controller\Login::class . ':login')->add(App\Middleware\Middleware::web());
 
 $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/logout', App\Controller\Login::class . ':logout');

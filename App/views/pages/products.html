@@ -76,43 +76,6 @@
     </div>
   </div>
 
-  <!-- ===================== CARDS RESUMO ===================== -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-4">
-      <div class="summary-card d-flex align-items-center gap-3 p-3">
-        <div class="summary-icon bg-primary">
-          <i class="fa-solid fa-cubes-stacked"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalItens | default(0) }}</div>
-          <div class="small text-secondary">Total de itens</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="summary-card d-flex align-items-center gap-3 p-3">
-        <div class="summary-icon bg-success">
-          <i class="fa-solid fa-circle-check"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalAtivos | default(0) }}</div>
-          <div class="small text-secondary">Itens ativos</div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-4">
-      <div class="summary-card d-flex align-items-center gap-3 p-3">
-        <div class="summary-icon bg-warning">
-          <i class="fa-solid fa-circle-xmark"></i>
-        </div>
-        <div>
-          <div class="fs-4 fw-bold">{{ totalInativos | default(0) }}</div>
-          <div class="small text-secondary">Itens inativos</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- ===================== TABELA ===================== -->
   <div class="admin-card">
     <div class="admin-card-body p-0">
@@ -126,7 +89,6 @@
               <th>Unidade</th>
               <th>Preço Compra</th>
               <th>Descrição</th>
-              <th>Status</th>
               <th>Estoque</th>
               <th class="text-center">Ações</th>
             </tr>

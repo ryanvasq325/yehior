@@ -10,6 +10,7 @@ final class Users extends Base
     {
         $totalUsers = (int) \App\Database\DB::select('COUNT(*)')
             ->from('users')
+            ->where('administrador = true')
             ->fetchOne();
 
         return $this->getTwig()
@@ -32,6 +33,9 @@ final class Users extends Base
         $telefone  = trim((string) ($form['telefone'] ?? ''));
         $email     = trim((string) ($form['email'] ?? ''));
         $senha     = (string) ($form['senhaCadastro'] ?? '');
+        // Checkbox desmarcado não vem no FormData — ausência = false.
+        $ativo         = isset($form['ativo']) ? 1 : 0;
+        $administrador = isset($form['administrador']) ? 1 : 0;
 
         $erros = [];
         if ($nome === '')      $erros[] = 'Informe o nome.';
@@ -54,8 +58,8 @@ final class Users extends Base
                 'cpf'           => $cpf,
                 'rg'            => $rg !== '' ? $rg : null,
                 'senha'         => password_hash($senha, PASSWORD_DEFAULT),
-                'ativo'         => 1,
-                'administrador' => 0,
+                'ativo'         => $ativo,
+                'administrador' => $administrador,
                 'excluido'      => 0,
             ]);
 
@@ -127,6 +131,8 @@ final class Users extends Base
         $telefone  = trim((string) ($form['telefone'] ?? ''));
         $email     = trim((string) ($form['email'] ?? ''));
         $senha     = (string) ($form['senhaCadastro'] ?? '');
+        $ativo         = isset($form['ativo']) ? 1 : 0;
+        $administrador = isset($form['administrador']) ? 1 : 0;
 
         if (is_null($id) || !is_numeric($id)) {
             return $this->json($response, ['status' => false, 'msg' => 'Usuário inválido.'], 400);
@@ -151,6 +157,8 @@ final class Users extends Base
                 'sobrenome'        => $sobrenome,
                 'cpf'              => $cpf,
                 'rg'               => $rg !== '' ? $rg : null,
+                'ativo'            => $ativo,
+                'administrador'    => $administrador,
                 'data_atualizacao' => date('Y-m-d H:i:s'),
             ];
 
@@ -245,20 +253,23 @@ final class Users extends Base
         try {
             $totalRecords = (int) \App\Database\DB::select('COUNT(*)')
                 ->from('users')
+                ->where('administrador = true')
                 ->fetchOne();
 
-            $query = \App\Database\DB::select('*')->from('users');
+            $query = \App\Database\DB::select('*')
+                ->from('users')
+                ->where('administrador = true');
 
             if (!is_null($term) && $term !== '') {
                 $query->setParameter('term', '%' . $term . '%');
 
-                $query->where('CAST(id AS TEXT) ILIKE :term')
-                    ->orWhere('nome ILIKE :term')
-                    ->orWhere('sobrenome ILIKE :term')
-                    ->orWhere('cpf ILIKE :term')
-                    ->orWhere('rg ILIKE :term')
-                    ->orWhere("TO_CHAR(criado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term")
-                    ->orWhere("TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
+                $query->andWhere('CAST(id AS TEXT) ILIKE :term'
+                    . ' OR nome ILIKE :term'
+                    . ' OR sobrenome ILIKE :term'
+                    . ' OR cpf ILIKE :term'
+                    . ' OR rg ILIKE :term'
+                    . " OR TO_CHAR(criado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term"
+                    . " OR TO_CHAR(atualizado_em, 'DD/MM/YYYY HH24:MI:SS') ILIKE :term");
             }
 
             $filteredRecords = (int) (clone $query)

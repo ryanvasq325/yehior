@@ -125,6 +125,68 @@ final class Login extends Base
         }
     }
 
+    /**
+     * Troca a senha do usuário a partir do CPF/e-mail/telefone.
+     *
+     * ⚠️ AVISO DE SEGURANÇA: este fluxo não verifica posse da conta (não envia
+     * e-mail/SMS com token, não pede a senha atual). Qualquer pessoa que souber
+     * o CPF ou e-mail de alguém consegue trocar a senha dela. Isso é aceitável
+     * só como versão simplificada/acadêmica — para produção de verdade, isso
+     * precisa de um token de confirmação enviado por e-mail ou SMS.
+     */
+    public function changePassword($request, $response)
+    {
+        $form           = $request->getParsedBody();
+        $login          = trim((string) ($form['login'] ?? ''));
+        $novaSenha      = (string) ($form['novaSenha'] ?? '');
+        $confirmarSenha = (string) ($form['confirmarSenha'] ?? '');
+
+        if ($login === '' || $novaSenha === '' || $confirmarSenha === '') {
+            return $this->json($response, ['status' => false, 'msg' => 'Preencha todos os campos.'], 200);
+        }
+
+        if ($novaSenha !== $confirmarSenha) {
+            return $this->json($response, ['status' => false, 'msg' => 'As senhas não conferem.'], 200);
+        }
+
+        if (mb_strlen($novaSenha) < 6) {
+            return $this->json($response, ['status' => false, 'msg' => 'A senha deve ter pelo menos 6 caracteres.'], 200);
+        }
+
+        try {
+            $qb        = \App\Database\DB::select('id')->from('vw_user');
+            $loginBind = $qb->createNamedParameter($login);
+
+            $qb->where('cpf = ' . $loginBind)
+                ->orWhere('email = '    . $loginBind)
+                ->orWhere('telefone = ' . $loginBind);
+
+            $user = $qb->fetchAssociative();
+
+            // Mensagem genérica de propósito: não revela se o CPF/e-mail existe
+            // ou não na base, para não dar pista a quem estiver tentando adivinhar contas.
+            $mensagemGenerica = 'Se os dados informados estiverem corretos, a senha foi atualizada.';
+
+            if (!$user) {
+                return $this->json($response, ['status' => true, 'msg' => $mensagemGenerica], 200);
+            }
+
+            \App\Database\DB::connection()->update(
+                'users',
+                [
+                    'senha'            => password_hash($novaSenha, PASSWORD_DEFAULT),
+                    'data_atualizacao' => date('Y-m-d H:i:s'),
+                ],
+                ['id' => $user['id']]
+            );
+
+            return $this->json($response, ['status' => true, 'msg' => $mensagemGenerica], 200);
+        } catch (\Throwable $e) {
+            error_log('[changePassword] ' . $e->getMessage());
+            return $this->json($response, ['status' => false, 'msg' => 'Erro ao alterar a senha. Tente novamente.'], 200);
+        }
+    }
+
     public function logout($request, $response)
     {
         $_SESSION = [];
@@ -215,24 +277,21 @@ final class Login extends Base
             ], 500);
         }
     }
-
     public function google($request, $response)
     {
         $form = $request->getParsedBody();
 
-        $credential           = $form['credential']     ?? null;
-        $form_g_csrf_token    = $form['g_csrf_token']    ?? null;
-        $cookie_g_csrf_token  = $_COOKIE['g_csrf_token'] ?? null;
-        $google_client_id     = $_ENV['GOOGLE_CLIENT_ID'] ?? null;
+        $credential        = $form['credential']    ?? null;
+        $form_g_csrf_token = $form['g_csrf_token']  ?? null;
+        $cookie_g_csrf_token = $_COOKIE['g_csrf_token'] ?? null;
+        $google_client_id  = $_ENV['GOOGLE_CLIENT_ID'] ?? null;
 
-        // Valida presença dos dados obrigatórios
         if (is_null($credential) || is_null($form_g_csrf_token) || is_null($cookie_g_csrf_token)) {
-            return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
+            return $this->json($response, ['status' => false, 'msg' => 'Dados do Google ausentes.', 'id' => 0], 400);
         }
 
-        // Valida o CSRF token do Google (cookie deve bater com o campo do formulário)
         if (!hash_equals($cookie_g_csrf_token, $form_g_csrf_token)) {
-            return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
+            return $this->json($response, ['status' => false, 'msg' => 'Token CSRF inválido.', 'id' => 0], 403);
         }
 
         try {
@@ -250,69 +309,36 @@ final class Login extends Base
 
             $claims = json_decode((string) $httpResponse->getBody(), true, flags: JSON_THROW_ON_ERROR);
 
-            // Valida que o token foi emitido para o seu app
             if (($claims['aud'] ?? '') !== $google_client_id) {
-                return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
+                return $this->json($response, ['status' => false, 'msg' => 'Token inválido.', 'id' => 0], 403);
             }
 
             $email = $claims['email'] ?? null;
 
             if (is_null($email)) {
-                return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
+                return $this->json($response, ['status' => false, 'msg' => 'E-mail não disponível na conta Google.', 'id' => 0], 400);
             }
 
-            // Busca o usuário na vw_user pelo e-mail do Google
             $qb = \App\Database\DB::select('*')->from('vw_user');
             $qb->where('email = ' . $qb->createNamedParameter($email));
             $user = $qb->fetchAssociative();
 
-            // Nenhuma conta encontrada com esse e-mail: cria automaticamente,
-            // já como inativa, aguardando aprovação do administrador.
             if (!$user) {
-                $nome      = $claims['given_name']  ?? '';
-                $sobrenome = $claims['family_name'] ?? '';
-
-                $conn = \App\Database\DB::connection();
-
-                try {
-                    $conn->beginTransaction();
-
-                    $conn->insert('users', [
-                        'nome'             => $nome,
-                        'sobrenome'        => $sobrenome,
-                        'cpf'              => null,
-                        'rg'               => null,
-                        'senha'            => null, // login via Google não usa senha local
-                        'ativo'            => false,
-                        'administrador'    => false,
-                        'data_cadastro'    => date('Y-m-d H:i:s'),
-                        'data_atualizacao' => date('Y-m-d H:i:s'),
-                    ]);
-                    $idUsuario = (int) $conn->lastInsertId();
-
-                    $conn->insert('contact', [
-                        'id_users' => $idUsuario,
-                        'tipo'     => 'EMAIL',
-                        'contato'  => $email,
-                    ]);
-
-                    $conn->commit();
-                } catch (\Throwable $e) {
-                    $conn->rollBack();
-                    error_log('[auth][GOOGLE][criar_usuario] ' . $e->getMessage());
-                    return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
-                }
-
-                // Conta recém-criada: sempre precisa de aprovação do administrador.
-                return $response->withHeader('Location', '/login?google=pendente')->withStatus(302);
+                return $this->json($response, [
+                    'status' => false,
+                    'msg'    => 'Nenhuma conta encontrada com este e-mail do Google. Faça o pré-cadastro.',
+                    'id'     => 0,
+                ], 404);
             }
 
-            // Conta já existe, mas ainda não foi aprovada pelo administrador
             if (!$user['ativo']) {
-                return $response->withHeader('Location', '/login?google=pendente')->withStatus(302);
+                return $this->json($response, [
+                    'status' => false,
+                    'msg'    => 'Por enquanto você ainda não está autorizado, por favor aguarde...',
+                    'id'     => 0,
+                ], 403);
             }
 
-            // Login válido — cria a sessão
             session_regenerate_id(true);
 
             unset($user['senha']);
@@ -342,15 +368,18 @@ final class Login extends Base
             $_SESSION['user']['sessao_criada_em'] = (new \DateTime())->format('Y-m-d H:i:s');
             $_SESSION['user']['sessao_expira_em'] = (new \DateTime())->modify("+{$lifetime} seconds")->format('Y-m-d H:i:s');
 
-            // Direciona para /admin/gestao se administrador, ou /home para usuários comuns
-            $destino = $user['administrador'] ? '/admin/gestao' : '/home';
+            $destino = $user['administrador'] ? '/adm' : '/home';
 
             return $response
                 ->withHeader('Location', $destino)
                 ->withStatus(302);
         } catch (\Throwable $e) {
             error_log('[auth][GOOGLE] ' . $e->getMessage());
-            return $response->withHeader('Location', '/login?google=erro')->withStatus(302);
+            return $this->json($response, [
+                'status' => false,
+                'msg'    => 'Falha na autenticação com o Google. Tente novamente.',
+                'id'     => 0,
+            ], 500);
         }
     }
 }

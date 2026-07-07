@@ -2,15 +2,16 @@
 
 declare(strict_types=1);
 
-$app->get('/', App\Controller\Home::class . ':home')->add(App\Middleware\Middleware::web());
-$app->get('/home', App\Controller\Home::class . ':home')->add(App\Middleware\Middleware::web());
-$app->get('/login', App\Controller\Login::class . ':login')->add(App\Middleware\Middleware::web());
+$app->get('/', App\Controller\Home::class . ':home');#->add(App\Middleware\Middleware::web());
+$app->get('/home', App\Controller\Home::class . ':home');#->add(App\Middleware\Middleware::web());
+$app->get('/login', App\Controller\Login::class . ':login');#->add(App\Middleware\Middleware::web());
 
 $app->group('/authentication', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/logout', App\Controller\Login::class . ':logout');
     $group->post('/authenticate', App\Controller\Login::class . ':authenticate');
     $group->post('/google', App\Controller\Login::class . ':google');
     $group->post('/preregister', App\Controller\Login::class . ':preRegister');
+    $group->post('/change-password', App\Controller\Login::class . ':changePassword');
 });
 $app->group('/admin', function (Slim\Routing\RouteCollectorProxy $group) {
     $group->get('/gestao', App\Controller\Admin::class . ':gestao');

@@ -5,9 +5,11 @@ import Request from "../components/requests.js";
 Inputmask('999.999.999-99').mask('#cpf');
 Inputmask('(99) 9999-9999').mask('#telefone');
 
-const mdPreRegister     = document.getElementById('mdPreRegister');
-const buttonPreRegister = document.getElementById('buttonPreRegister');
-const buttonLogin       = document.getElementById('buttonLogin');
+const mdPreRegister         = document.getElementById('mdPreRegister');
+const buttonPreRegister     = document.getElementById('buttonPreRegister');
+const buttonLogin           = document.getElementById('buttonLogin');
+const buttonChangePassword  = document.getElementById('buttonChangePassword');
+const formChangePassword    = document.getElementById('formChangePassword');
 
 // Ajusta largura do botão Google para bater com o botão Entrar
 document.addEventListener('DOMContentLoaded', () => {
@@ -127,5 +129,73 @@ buttonPreRegister.addEventListener('click', async () => {
     } finally {
         buttonPreRegister.disabled    = false;
         buttonPreRegister.textContent = originalText;
+    }
+});
+
+// ── Alterar senha ──────────────────────────────────────────────────
+buttonChangePassword.addEventListener('click', async () => {
+    const validou = Validate.SetForm('formChangePassword').Validate();
+    if (!validou) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Ops...',
+            text: 'Preencha os campos corretamente!',
+            timer: 2500,
+            timerProgressBar: true
+        });
+        return;
+    }
+
+    const novaSenha      = document.getElementById('novaSenha').value;
+    const confirmarSenha = document.getElementById('confirmarSenha').value;
+
+    if (novaSenha !== confirmarSenha) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Ops...',
+            text: 'As senhas não conferem!',
+            timer: 2500,
+            timerProgressBar: true
+        });
+        return;
+    }
+
+    const requests     = new Request();
+    const originalText = buttonChangePassword.textContent;
+
+    try {
+        buttonChangePassword.textContent = 'Salvando, por favor aguarde...';
+        buttonChangePassword.disabled    = true;
+
+        const response = await requests.setForm('formChangePassword').post('/authentication/change-password');
+
+        if (!response.status) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ops...',
+                text: response.msg,
+                timer: 2500,
+                timerProgressBar: true
+            });
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            title: 'Sucesso!',
+            text: response.msg,
+            timer: 2500,
+            timerProgressBar: true
+        }).then(() => {
+            $('#modalChangePassword').modal('hide');
+            formChangePassword.reset();
+        });
+
+    } catch (error) {
+        const texto = error.data?.msg || error.message || 'Ocorreu um erro ao alterar a senha!';
+        Swal.fire({ icon: 'error', title: 'Ops...', text: texto, timer: 2500, timerProgressBar: true });
+    } finally {
+        buttonChangePassword.disabled    = false;
+        buttonChangePassword.textContent = originalText;
     }
 });

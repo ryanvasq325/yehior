@@ -53,7 +53,7 @@ mdBack.addEventListener('click', () => {
     window.location.href = '/admin/gestao';
 });
 
-
+// ── Busca os dados do usuário e abre o modal preenchido ───────────
 async function EditUser(id) {
     const requests = new Requests();
     try {
@@ -80,6 +80,8 @@ async function EditUser(id) {
         document.getElementById('rg').value        = user.rg ?? '';
         document.getElementById('telefone').value  = user.telefone ?? '';
         document.getElementById('email').value     = user.email ?? '';
+        document.getElementById('ativo').checked         = user.ativo == true;
+        document.getElementById('administrador').checked = user.administrador == true;
 
         setModoEdicao();
         $('#modalRegisterUser').modal('show');
@@ -94,6 +96,7 @@ async function EditUser(id) {
     }
 }
 
+// ── Cadastro / atualização de usuário ─────────────────────────────
 async function saveUser() {
     const requests = new Requests();
     const isEdicao = FormUserId.value !== '';

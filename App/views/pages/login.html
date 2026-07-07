@@ -79,6 +79,40 @@
     </div>
   </form>
 
+  <!-- MODAL ALTERAR SENHA -->
+  <div class="modal fade" id="modalChangePassword" tabindex="-1" aria-labelledby="modalChangePasswordLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="modalChangePasswordLabel">Alterar minha senha</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formChangePassword">
+            <div class="form-floating mb-3">
+              <input type="text" id="loginAlterarSenha" name="login" class="form-control" placeholder="CPF ou e-mail" required>
+              <label for="loginAlterarSenha">CPF ou e-mail *</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" id="novaSenha" name="novaSenha" class="form-control" placeholder="Nova senha" required>
+              <label for="novaSenha">Nova senha *</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" id="confirmarSenha" name="confirmarSenha" class="form-control" placeholder="Confirmar senha" required>
+              <label for="confirmarSenha">Confirmar nova senha *</label>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="buttonChangePassword" class="btn btn-outline-success">
+            Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- FORM DE LOGIN -->
   <form id="form">
     <div class="container-fluid vh-100 login-bg">
@@ -97,6 +131,13 @@
             <div class="mb-2">
               <label class="form-label text-light">Senha</label>
               <input type="password" id="senhaLogin" name="senha" class="form-control input-dark" />
+            </div>
+
+            <div class="text-end mb-2">
+              <button type="button" class="btn btn-link btn-sm p-0" data-bs-toggle="modal"
+                data-bs-target="#modalChangePassword">
+                Esqueci minha senha
+              </button>
             </div>
 
             <!-- <div class="google-wrapper mt-3">
